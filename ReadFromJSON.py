@@ -11,6 +11,6 @@ with open('melbpc-members3.json', 'r') as file:
   #more = members['values']
 
   for member in members.values():
-	for api_Membership_get in member.iteritems():
 		print("Contact id:", member['contact_id'], " Name:", member['first_name'], member['last_name'], "Post Code:", member['postal_code'], "membership No.:", member['custom_8'], "Expiry Date:", member['membership_type_id'])
+	for api_Membership_get in member.items():
   #print(members)
