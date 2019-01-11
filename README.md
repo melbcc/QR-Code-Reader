@@ -12,11 +12,11 @@ but you possibly cannot see this without me getting an authorisation organized.
 
 In broad terms the project was to
 
-    create a local copy of some fields of the CiviCRM membership database (and have it updated daily to check for member expiry)
-    have a card reader scan member card for member ID number when arriving for a meeting at Moorabbin
-    look up local DB and alert if membership had expired
-    create an attendance record for each member in a local attendance DB
-    upload the attendance DB records for the meeting to CiviEvents for later review
+    1. create a local copy of some fields of the CiviCRM membership database (and have it updated daily to check for member expiry)
+    2. have a card reader scan member card for member ID number when arriving for a meeting at Moorabbin
+    3. look up local DB and alert if membership had expired
+    4. create an attendance record for each member in a local attendance DB
+    5. upload the attendance DB records for the meeting to CiviEvents for later review
 
 
 I hope that is clearer as a project description.
