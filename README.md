@@ -57,7 +57,7 @@ Result is a JSON file with content like this per member:
 
 With the api_Membership_get part arising from the table join to get the required fields.
 
-Which is messy because of the table join to get end_date and status_id.
+Which is messy because of the table join to get 'end_date' and 'status_id'.
 
 I then use
 ```
