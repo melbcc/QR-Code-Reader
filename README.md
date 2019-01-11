@@ -68,8 +68,10 @@ to create a local copy.
 I was intending to use a python script to load the required fields and write them to a MariaDB file on the Rasp Pi from this but is made difficult (for me) because of the joined fields.
 
 See my [`ReadFromJSON.py`](ReadFromJSON.py) - **not working**. The fetch for the 'end_date' and 'status_date' fields is not correct and throws errors. 
+
 Python3 gives ''TabError: inconsistent use of tabs and spaces in indentation'' at line 14.
 Python2-7 gives ''KeyError: 'membership_type_id' ''
+
 This is the key stumbling block atm.
 
 
