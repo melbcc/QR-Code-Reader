@@ -1,4 +1,6 @@
-This is the CiviCRM API generated URL but does not work.
+**The intention of this section** is to document the work to create a local copy of the membership database from CiviCRM data.
+
+This is the CiviCRM API generated URL but *does not work*.
 'https://www.melbpc.org.au/wp-content/plugins/civicrm/civicrm/extern/rest.php?entity=Membership&action=get&api_key=userkey&key=sitekey&json={"sequential":1,"return":"contact_id.id,contact_id.last_name,contact_id.first_name,contact_id.postal_code,contact_id.custom_8,end_date,status_id.name"}'
 
 What works is 
