@@ -6,6 +6,31 @@ Includes code for download from CiviCRM's API to a local database, a script for 
 
 **The intention of this section** is to document the work to create a local copy of the membership database from CiviCRM data.
 
+We have mapped out some user stories for the project in a Trello board https://trello.com/b/tOOTKhYW/2018-12-qr-code-reader
+
+but you possibly cannot see this without me getting an authorisation organized.
+
+In broad terms the project was to
+
+    create a local copy of some fields of the CiviCRM membership database (and have it updated daily to check for member expiry)
+    have a card reader scan member card for member ID number when arriving for a meeting at Moorabbin
+    look up local DB and alert if membership had expired
+    create an attendance record for each member in a local attendance DB
+    upload the attendance DB records for the meeting to CiviEvents for later review
+
+
+I hope that is clearer as a project description.
+
+The php could be hosted on a Raspberry Pi web server as could the other components of the system.
+
+**The php script I am looking to develop is around items 2, 3 and 4. **
+
+Python could be used to handle 1 and 4. 
+
+Item 1 seems best achieved as a rest api query from CiviCRM as it is quite quick.  A table join to get two additional fields adds to the complexity but we can pull the data into a JSON file and from there into a MariaDB on the Pi.  Maybe there is a more efficient, direct way of doing this.
+
+
+
 This is the CiviCRM API generated URL but **does not work**.
 
 ```
