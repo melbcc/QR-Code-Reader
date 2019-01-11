@@ -17,8 +17,9 @@ to create a local copy.
 
 I was intending to use a python script to load the required fields and write them to a MariaDB file on the Rasp Pi from this but 
 is made difficult (for me) because of the joined fields.
-See my ReadFromJSON.py
+See my ReadFromJSON.py - not working.
 
 Another option to pursue is to use this query 
 'https://www.melbpc.org.au/index.php/qrcheck/?contact_id=855'
 and python's Beautiful Soup and requests but to pull in from 3000 records could be very slow.  150 records took  a couple of minutes whereas the API route is very quick.
+
