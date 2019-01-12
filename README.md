@@ -92,7 +92,7 @@ to create a local copy.
 
 I was intending to use a python script to load the required fields and write them to a MariaDB file on the Rasp Pi from this but is made difficult (for me) because of the joined fields.
 
-See my [`ReadFromJSON.py`](ReadFromJSON.py) 
+See [`ReadFromJSON.py`](ReadFromJSON.py) 
 
 Another option to pursue is to use this query
 'https://www.melbpc.org.au/index.php/qrcheck/?contact_id=855'
