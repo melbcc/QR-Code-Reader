@@ -25,7 +25,27 @@ group.add_argument(
     help="key the second (default: environment variable CIVICRM_APIKEY)",
 )
 
-#group = parser.add_argument_group('Local Database Options')
+group = parser.add_argument_group('Local Database Options')
+group.add_argument(
+	'--user', '-U', dest='user', default='postgres',
+	help="database service username",
+)
+group.add_argument(
+	'--password', '-P', dest='password', default='secret',
+	help="database service password",
+)
+group.add_argument(
+	'--domain', '-D', dest='domain', default='localhost',
+	help="database service domain, host name, or IP address",
+)
+group.add_argument(
+	'--port', '-p', dest='port', type=int, default=5432,
+	help="database service port",
+)
+group.add_argument(
+	'--dbname', '-d', dest='dbname', default='mydb',
+	help="database name",
+)
 
 args = parser.parse_args()
 
@@ -41,13 +61,15 @@ if None in (args.key, args.api_key):
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+__import__('ipdb').set_trace()
+
 engine = create_engine(
-	'postgresql+psycopg2://{user}:{password}@{domain}/{db}?port={port}'.format(
-		user='postgres',
-		password='secret',
-		domain='localhost',
-		port=5432,
-		db='mydb',
+	'postgresql+psycopg2://{user}:{password}@{domain}/{dbname}?port={port}'.format(
+		user=args.user,
+		password=args.password,
+		domain=args.domain,
+		port=args.port,
+		dbname=args.dbname,
 	),
 	#pool_recycle=3600,
 )
