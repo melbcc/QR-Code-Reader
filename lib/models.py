@@ -2,10 +2,10 @@ import sqlalchemy
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, ForeignKey, Integer, String, Date
 
-Base = declarative_base()
+BaseModel = declarative_base()
 
 
-class Member(Base):
+class Member(BaseModel):
     __tablename__ = 'members'
     id = Column(Integer, primary_key=True)
 

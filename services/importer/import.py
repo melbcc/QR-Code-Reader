@@ -4,6 +4,13 @@ import argparse
 import requests
 import os
 import sys
+import inspect
+
+# add ../lib folder
+_this_path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+sys.path.insert(0, os.path.join(_this_path, '..', '..', 'lib'))
+
+from models import BaseModel, Member
 
 
 # --------- Parse Arguments
@@ -22,12 +29,33 @@ group.add_argument(
 
 args = parser.parse_args()
 
+
 # --- Verify parameters
 if None in (args.key, args.api_key):
     print("Authentication keys not set...")
     parser.print_help()
     sys.exit(1)
 
+
+# ------ Connect to Local Database
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
+engine = create_engine(
+	'postgresql+psycopg2://{user}:{password}@{domain}/{db}?port={port}'.format(
+		user='postgres',
+		password='secret',
+		domain='localhost',
+		port=5432,
+		db='mydb',
+	),
+	#pool_recycle=3600,
+)
+
+BaseModel.metadata.create_all(engine)  # creates tables if they don't already exist
+BaseModel.metadata.bind = engine
+DBSession = sessionmaker(bind=engine)
+session = DBSession()
 
 # ------ Fetch User Data (from CiviCRM)
 uri = 'https://www.melbpc.org.au/wp-content/plugins/civicrm/civicrm/extern/rest.php'
@@ -45,26 +73,30 @@ request = requests.get(uri + '?' + '&'.join(params))
 data = request.json()  # format: {'count': <int>, 'values': <members dict>, ... }
 
 
-# ------ Upload to local db
-for member in data['values'].values():
+# ------ Upload to Local Database
+
+for member_dict in data['values'].values():
 	# Nested fields
 	exp_date = None
 	status_id = None
-	values = member.get('api_Membership_get', {}).get('values', None)
+	values = member_dict.get('api_Membership_get', {}).get('values', None)
 	if values:
 		exp_date = values[0].get('end_date', None)
 		status_id = values[0].get('status_id', None)
 
 	# TODO: write to local database
-	print((
-		"Contact id: {contact_id} "
-		"Name: {first_name} {last_name} "
-		"Post Code: {postal_code} "
-		"Membership No.: {custom_8} "
-		"Expiry Date: {exp_date} "
-		"Status ID: {status_id} "
-	).format(
-		exp_date=exp_date,
-		status_id=status_id,
-		**member
-	))
+	member = Member(
+	    id=member_dict['id'],
+	    # Personal Data
+	    first_name=member_dict['first_name'],
+	    last_name=member_dict['last_name'],
+	    postal_code=member_dict['postal_code'],
+
+	    # Membership & Status
+	    membshipnum=member_dict['custom_8'],
+	    end_date=exp_date,
+	    status_id=status_id,
+	    #status_name=???,
+	)
+	session.add(member)
+	session.commit()
