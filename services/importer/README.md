@@ -3,7 +3,7 @@
 ## Running Script
 
 ```bash
-./test.py --key=acbd18db4cc2f85cedef654fccc4a4d8 --apikey=fdba98970961edb2
+./import.py --key=acbd18db4cc2f85cedef654fccc4a4d8 --apikey=fdba98970961edb2
 ```
 
 ## Setting Default Keys
@@ -24,5 +24,5 @@ Note: the above keys are made up, so replace them with actual keys
 
 ```bash
 source api_keys.sh
-./test.py
+./import.py
 ```
