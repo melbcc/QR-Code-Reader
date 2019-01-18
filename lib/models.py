@@ -19,3 +19,14 @@ class Member(BaseModel):
     end_date = Column(Date())
     status_id = Column(String(250))
     status_name = Column(String(250))
+
+    @property
+    def as_dict(self):
+        return {
+            key: getattr(self, key)
+            for key in (
+                'id',
+                'first_name', 'last_name', 'postal_code',
+                'membshipnum', 'end_date', 'status_id', 'status_name',
+            )
+        }
