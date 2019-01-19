@@ -6,7 +6,7 @@ import inspect
 import re
 
 import argparse
-from flask import Flask, jsonify, abort
+from flask import Flask, jsonify, abort, render_template, send_from_directory
 
 # add ../lib folder
 _this_path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
@@ -57,6 +57,18 @@ def get_coffee(cup_count):
     if cup_count != 0:
         abort(418)  # RFC 7168 compliance
     return("Done!")
+
+@app.route('/', methods=['GET'])
+def render_root():
+    return render_template('root.html')
+
+@app.route('/scanner', methods=['GET'])
+def render_scanner():
+    return render_template('scanner.html')
+
+@app.route('/static/<path:path>')
+def send_js(path):
+    return send_from_directory('static', path)
 
 
 app.run(debug=True)
