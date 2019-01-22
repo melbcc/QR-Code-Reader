@@ -30,3 +30,18 @@ class Member(BaseModel):
                 'membshipnum', 'end_date', 'status_id', 'status_name',
             )
         }
+
+#class Event(BaseModel):
+#    __tablename__ = 'events'
+#    id = Column(Integer, primary_key=True)
+#    title = Column(String(250))
+#
+#class Attendance(BaseModel):
+#    __tablename__ = 'attendance'
+#    id = Column(Integer, primary_key=True)
+#    member = ForeignKey(Member)
+#    event = ForeignKey(Event)
+
+class Location(BaseModel):
+    __tablename__ = 'locations'
+    id = Column(Integer, primary_key=True)

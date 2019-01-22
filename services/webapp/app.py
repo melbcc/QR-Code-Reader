@@ -6,7 +6,7 @@ import inspect
 import re
 
 import argparse
-from flask import Flask, jsonify, abort
+from flask import Flask, jsonify, abort, render_template, send_from_directory
 
 # add ../lib folder
 _this_path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
@@ -23,7 +23,6 @@ local.add_arguments(parser)
 args = parser.parse_args()
 
 
-
 # ----- Connect to Local Database
 session = local.get_session(
 	user=args.user,
@@ -32,31 +31,9 @@ session = local.get_session(
 	port=args.port,
 	dbname=args.dbname,
 )
-
+from weblib.base import set_session
+set_session(session)
 
 # ----- Flask Application
-app = Flask(__name__)
-
-@app.route('/api/v1.0/member/<int:member_id>', methods=['GET'])
-def get_tasks(member_id):
-    # Query database
-    members = session.query(Member).filter_by(membshipnum=str(member_id))
-
-    # Validate result
-    if members.count() == 0:
-        abort(404)  # no entries found
-    elif members.count() > 1:
-        abort(500)  # more than one entry found (should not be possible)
-
-    # Return the member found
-    member = members.first()
-    return jsonify(member.as_dict)
-
-@app.route('/api/v1.0/coffeepot/request/<int:cup_count>', methods=['GET'])
-def get_coffee(cup_count):
-    if cup_count != 0:
-        abort(418)  # RFC 7168 compliance
-    return("Done!")
-
-
+from weblib.base import app
 app.run(debug=True)
