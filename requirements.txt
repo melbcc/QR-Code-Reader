@@ -1,5 +1,1 @@
-sqlalchemy
-requests
-pymysql
-psycopg2-binary
-flask
+Django
