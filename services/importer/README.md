@@ -1,4 +1,8 @@
-# Database Export
+# Database Import
+
+## Function
+
+Service intended to run periodically (say every hour) to pull in new members & changed statuses (and new events and locations) from CiviCRM REST API database.
 
 ## Running Script
 
