@@ -22,3 +22,15 @@ class Member(models.Model):
                 'membshipnum', 'end_date', 'status_id',
             )
         }
+
+class Venue(models.Model):
+    name = models.CharField(max_length=200, blank=True)
+    key = models.CharField(max_length=20)
+
+class Event(models.Model):
+    title = models.CharField(max_length=200)
+    venue = models.ForeignKey(Venue, on_delete=models.CASCADE)
+
+class Attendance(models.Model):
+    member = models.ForeignKey(Member, on_delete=models.CASCADE)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
