@@ -4,6 +4,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <script src="/static/js/jquery.min.js"></script>
+    <!-- TODO: on-screen keyboard
+    one potential lib: https://github.com/Mottie/Keyboard
+    <script src="/static/js/some-kb-lib.js"></script>
+    <link rel="stylesheet" href="/static/style/keyboard-basic.min.css" type="text/css"></link>
+    -->
     <script>
       const queryQRCode = async () => {
         /* Get member id */
@@ -42,15 +47,23 @@
     <h1>QR Code Scanner</h1>
     <p>Scan your code here</p>
     <form id="scanform" onsubmit="queryQRCode(); return false;">
-      <input name="memberid" type="text" size="35" />
+      <p>
+        <b>Scan Your Membership Card</b><br/>
+        <input name="memberid" type="text" size="35" />
+      </p>
+      OR
+      <p>
+        <b>Sign in as Guest</b><br/>
+        <input name="Name" type="text" size="45" />
+      </p>
       <input type="submit" />
     </form>
     <ul>
       <li>Name: <span id="first_name"></span> <span id="last_name"></span></li>
       <li>Status: <span id="status_id"></span></li>
     </ul>
-    <h1>Events</h1>
-    <p>List of events</p>
+    <h1>Select Event</h1>
+    <p>Which event are you attending?</p>
     <form>
       <input type="radio" name="event" value="0" checked>Event 1<br />
       <input type="radio" name="event" value="1">Event 2<br />
