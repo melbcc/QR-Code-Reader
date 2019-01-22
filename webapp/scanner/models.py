@@ -9,8 +9,8 @@ class Member(models.Model):
 
     # Membership & Status
     membshipnum = models.CharField(max_length=20)
-    end_date = models.DateTimeField('membership end')
-    status_id = models.IntegerField()
+    end_date = models.DateTimeField('membership end', null=True)
+    status_id = models.IntegerField(null=True)
 
     @property
     def as_dict(self):
