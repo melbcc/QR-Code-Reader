@@ -97,3 +97,22 @@ See [`ReadFromJSON.py`](ReadFromJSON.py)
 Another option to pursue is to use this query
 'https://www.melbpc.org.au/index.php/qrcheck/?contact_id=855'
 and python's Beautiful Soup and requests but to pull in from 3000 records could be very slow.  150 records took  a couple of minutes whereas the API route is very quick.
+
+EVENT DATABASE DESIGN
+1 table for events, should be built to sync with civi at a later date and have the same fields. 
+1 table for attendee's uses Event ID as an index to link attendee's to the event. 
+
+MULTIPLE EVENTS AND ATTENDEES SCENARIO 
+*Attendees will select event if more than one event is being held, 
+*Scan card => machine respondse "welcome user name", beeps if not a current member. 
+
+INTERFACE DESIGN
+Large Tile buttons, large font, large keyboard when required. 
+Create event will be a step through process with next and back buttons. 
+E.g starts with choose Sig location, large tile buttons with Sig location options, 
+User selects location then next, user is prompted to enter Sig name by selecting from tile options given, followed by next. 
+User is prompted to select meeting type or other.
+*Create event page - as we are not yet sure how planned events will work and if it will be feasible to download(at the moment not all events are in the civi database) 
+
+
+
