@@ -1,2 +1,6 @@
+# Django
 Django
+django-extensions
+
+# Other
 requests
