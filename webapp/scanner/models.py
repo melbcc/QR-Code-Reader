@@ -12,6 +12,14 @@ class Member(models.Model):
     end_date = models.DateTimeField('membership end', null=True)
     status_id = models.IntegerField(null=True)
 
+    def __repr__(self):
+        return "<{cls}: {first_name} {last_name} [{membshipnum}]>".format(
+            cls=type(self).__name__,
+            first_name=self.first_name,
+            last_name=self.last_name,
+            membshipnum=self.membshipnum,
+        )
+
     @property
     def as_dict(self):
         return {
