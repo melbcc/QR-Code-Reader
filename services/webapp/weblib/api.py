@@ -8,7 +8,7 @@ from .base import app
 def get_tasks(member_id):
     from .base import session
     # Query database
-    members = session.query(Member).filter_by(membshipnum=str(member_id))
+    members = session.query(Member).filter_by(membership_num=str(member_id))
 
     # Validate result
     if members.count() == 0:

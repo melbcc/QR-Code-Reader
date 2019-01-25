@@ -62,7 +62,7 @@ class Command(BaseCommand):
                 postal_code=member_dict['postal_code'],
 
                 # Membership & Status
-                membshipnum=member_dict['custom_8'],
+                membership_num=member_dict['custom_8'],
                 end_date=exp_date,
                 status_id=status_id,
             )

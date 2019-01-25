@@ -1,6 +1,7 @@
 # Django
 Django
 django-extensions
+djangorestframework
 
 # Other
 requests

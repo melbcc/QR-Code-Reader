@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
                 ('first_name', models.CharField(max_length=200)),
                 ('last_name', models.CharField(max_length=200)),
                 ('postal_code', models.CharField(max_length=20)),
-                ('membshipnum', models.CharField(max_length=20)),
+                ('membership_num', models.CharField(max_length=20)),
                 ('end_date', models.DateTimeField(verbose_name='membership end')),
                 ('status_id', models.IntegerField()),
             ],

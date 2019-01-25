@@ -8,28 +8,17 @@ class Member(models.Model):
     postal_code = models.CharField(max_length=20)
 
     # Membership & Status
-    membshipnum = models.CharField(max_length=20)
-    end_date = models.DateTimeField('membership end', null=True)
-    status_id = models.IntegerField(null=True)
+    membership_num = models.CharField(max_length=20)
+    end_date = models.DateTimeField('membership end', null=True, blank=True)
+    status_id = models.IntegerField(null=True, blank=True)
 
     def __repr__(self):
-        return "<{cls}: {first_name} {last_name} [{membshipnum}]>".format(
+        return "<{cls}: {first_name} {last_name} [{membership_num}]>".format(
             cls=type(self).__name__,
             first_name=self.first_name,
             last_name=self.last_name,
-            membshipnum=self.membshipnum,
+            membership_num=self.membership_num,
         )
-
-    @property
-    def as_dict(self):
-        return {
-            key: getattr(self, key)
-            for key in (
-                'pk',
-                'first_name', 'last_name', 'postal_code',
-                'membshipnum', 'end_date', 'status_id',
-            )
-        }
 
 class Venue(models.Model):
     name = models.CharField(max_length=200, blank=True)

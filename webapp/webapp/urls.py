@@ -16,8 +16,39 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 
+from django.conf.urls import url, include
+from django.contrib.auth.models import User
+from rest_framework import routers, serializers, viewsets
 
+from scanner.models import Member
+
+
+class MyDefaultRouter(routers.DefaultRouter):
+    """
+    Extends `DefaultRouter` class to add a method for extending url routes from another router.
+    """
+    # ref: https://stackoverflow.com/questions/31483282/#40904241
+    def extend(self, router):
+        """
+        Extend the routes with url routes of the passed in router.
+
+        Args:
+             router: SimpleRouter instance containing route definitions.
+        """
+        self.registry.extend(router.registry)
+
+
+# Routers provide an easy way of automatically determining the URL conf.
+router = MyDefaultRouter()
+from scanner.urls import router as scanner_router
+router.extend(scanner_router)
+
+
+# Wire up our API using automatic URL routing.
+# Additionally, we include login URLs for the browsable API.
 urlpatterns = [
+    url(r'^api/', include(router.urls)),
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('scanner/', include('scanner.urls')),
     path('admin/', admin.site.urls),
 ]
