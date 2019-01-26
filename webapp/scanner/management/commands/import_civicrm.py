@@ -75,19 +75,20 @@ class Command(BaseCommand):
 
             # TODO: write to local database
             if contact_id:
-                member = Member(
-                    # Personal Data
-                    first_name=member_dict['first_name'],
-                    last_name=member_dict['last_name'],
-                    postal_code=member_dict['postal_code'],
-
-                    # Membership & Status
+                Member.objects.update_or_create(
                     contact_id=contact_id,
-                    membership_num=member_dict['custom_8'],
-                    end_date=exp_date,
-                    status_id=status_id,
+                    defaults={
+                        # Personal Data
+                        'first_name': member_dict['first_name'],
+                        'last_name': member_dict['last_name'],
+                        'postal_code': member_dict['postal_code'],
+
+                        # Membership & Status
+                        'membership_num': member_dict['custom_8'],
+                        'end_date': exp_date,
+                        'status_id': status_id,
+                    }
                 )
-                member.save()
                 count += 1
 
         self.stdout.write(self.style.SUCCESS(
