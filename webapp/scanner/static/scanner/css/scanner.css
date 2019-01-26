@@ -1,0 +1,37 @@
+html, body {
+    height: 100%;
+    margin: 0px;
+}
+
+.screen {
+    height: 100%;
+    width: 100%;
+    margin: 0px;
+    padding: 0px;
+    display: inline-block;
+}
+
+.section {
+    height: 90%;
+    width: 94%;
+    /* border */
+    border: 5px;
+    border-style: dashed;
+    border-radius: 20px;
+
+    /* spacing */
+    margin: 10px;
+    padding: 20px;
+
+    /* background */
+    background: #eee;
+}
+
+.section h1 {
+    margin-top: 0;
+}
+
+#recording img {
+    height: 50%;
+    width: auto;
+}

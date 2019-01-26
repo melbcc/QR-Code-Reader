@@ -4,6 +4,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <link type="text/css" rel="stylesheet" href="/static/scanner/css/scanner.css"></link>
     <script src="/static/scanner/js/jquery.min.js"></script>
     <!-- TODO: on-screen keyboard
     one potential lib: https://github.com/Mottie/Keyboard
@@ -13,38 +14,65 @@
     <script src="/static/scanner/js/scanner.js"></script>
   </head>
   <body>
-    <h1>QR Code Scanner</h1>
-    <p>Scan your code here</p>
-    <form id="scanform" onsubmit="queryQRCode(); return false;">
-      <p>
-        <b>Scan Your Membership Card</b><br/>
-        <input name="contact_id" type="text" size="35" />
-      </p>
-      OR
-      <p>
-        <b>Sign in as Guest</b><br/>
+    <!-- ============== Scan ============== -->
+    <div><a id="123"></a></div>
+    <div class="screen" id="scan"><div class="section">
+      <h1>QR Code Scanner</h1>
+      <p>Scan your code here</p>
+      <form id="scanform" onsubmit="queryQRCode(); return false;">
+        <p>
+          <b>Scan Your Membership Card</b><br/>
+          <input name="contact_id" type="text" size="35" />
+        </p>
+        OR
+        <a href="#signin">Guest</a>
+        <input type="submit" />
+      </form>
+    </div></div>
+
+    <!-- ============== Sign in as Guest ============== -->
+    <div class="screen" id="signin"><div class="section">
+      <h1>Sign in as Guest</h1>
+      <form>
         <input name="Name" type="text" size="45" />
-      </p>
-      <input type="submit" />
-    </form>
+        <input type="submit" />
+      </form>
+    </div></div>
+
     <ul>
       <li>Name: <span id="first_name"></span> <span id="last_name"></span></li>
       <li>Status: <span id="status_id"></span></li>
     </ul>
-    <h1>Select Event</h1>
-    <p>Which event are you attending?</p>
-    <form>
-      <input type="radio" name="event" value="0" checked>Event 1<br />
-      <input type="radio" name="event" value="1">Event 2<br />
-      <input type="radio" name="event" value="2">Event 3<br />
-      <input type="radio" name="event" value="3">Event 4<br />
-      <input type="radio" name="event" value="4">Event 5<br />
-      <input type="radio" name="event" value="5">Event 6<br />
-      <input type="radio" name="event" value="6">Event 7<br />
-      <input type="radio" name="event" value="7">Event 8<br />
-      <input type="radio" name="event" value="8">Event 9<br />
-      <input type="radio" name="event" value="9">Event 10<br />
-      <input type="submit" />
-    </form>
+
+
+    <!-- ============== Event Selection ============== -->
+    <div class="screen" id="events"><div class="section">
+      <h1>Select Event</h1>
+      <p>Which event are you attending?</p>
+      <form>
+        <input type="radio" name="event" value="0" checked>Event 1<br />
+        <input type="radio" name="event" value="1">Event 2<br />
+        <input type="radio" name="event" value="2">Event 3<br />
+        <input type="radio" name="event" value="3">Event 4<br />
+        <input type="radio" name="event" value="4">Event 5<br />
+        <input type="radio" name="event" value="5">Event 6<br />
+        <input type="radio" name="event" value="6">Event 7<br />
+        <input type="radio" name="event" value="7">Event 8<br />
+        <input type="radio" name="event" value="8">Event 9<br />
+        <input type="radio" name="event" value="9">Event 10<br />
+        <input type="submit" />
+      </form>
+    </div></div>
+
+    <!-- ============== Recording Attendance ============== -->
+    <div class="screen" id="recording"><div class="section">
+      <h1>Saving your Attendance</h1>
+      <img src="/static/scanner/img/spinny.gif" />
+    </div></div>
+
+    <!-- ============== Welcome ============== -->
+    <div class="screen" id="welcome"><div class="section">
+      <h1>Welcome!</h1>
+    </div></div>
   </body>
 </html>
