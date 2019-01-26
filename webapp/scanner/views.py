@@ -1,5 +1,15 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.views import generic
 
-def index(request):
-    return HttpResponse("Hello, world. You're at the polls index.")
+
+class TestView(generic.TemplateView):
+    template_name = 'test.html'
+
+
+class ConfigView(generic.TemplateView):
+    template_name = 'root.html'
+
+
+class ScannerView(generic.TemplateView):
+    template_name = 'scanner.html'

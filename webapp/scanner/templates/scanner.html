@@ -16,7 +16,7 @@
         memberid = qrtext.match(/\d*$/)[0];
 
         /* Fetch member data */
-        const response = await fetch('/api/v1.0/member/' + memberid);
+        const response = await fetch('/api/member/' + memberid + '/');
         const myJson = await response.json(); //extract JSON from the http response
 
         /* Inform user of status */
