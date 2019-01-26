@@ -1,0 +1,22 @@
+[
+  {
+    "model": "scanner.Member",
+    "pk": 1,
+    "fields": {
+      "first_name": "John",
+      "last_name": "Lennon",
+      "postal_code": "1234",
+      "membership_num": "123"
+    }
+  },
+  {
+    "model": "scanner.Member",
+    "pk": 2,
+    "fields": {
+      "first_name": "Paul",
+      "last_name": "McCartney",
+      "postal_code": "1234",
+      "membership_num": "124"
+    }
+  }
+]

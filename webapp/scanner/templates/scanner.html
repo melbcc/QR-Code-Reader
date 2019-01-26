@@ -1,9 +1,10 @@
+{% load static %}
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/scanner/js/jquery.min.js"></script>
     <!-- TODO: on-screen keyboard
     one potential lib: https://github.com/Mottie/Keyboard
     <script src="/static/js/some-kb-lib.js"></script>
@@ -16,14 +17,19 @@
         memberid = qrtext.match(/\d*$/)[0];
 
         /* Fetch member data */
-        const response = await fetch('/api/v1.0/member/' + memberid);
-        const myJson = await response.json(); //extract JSON from the http response
-
-        /* Inform user of status */
-        console.log(myJson);
-        $('#first_name').text(myJson['first_name']);
-        $('#last_name').text(myJson['last_name']);
-        $('#status_id').text(myJson['status_id']);
+        const response = await fetch('/api/members/' + memberid + '/');
+        const member = await response.json(); //extract JSON from the http response
+        if (response.status == 200) {
+          /* Inform user of status */
+          console.log(member);
+          $('#first_name').text(member['first_name']);
+          $('#last_name').text(member['last_name']);
+          $('#status_id').text(member['status_id']);
+        } else {
+          $('#first_name').text(member['detail']);
+          $('#last_name').text('');
+          $('#status_id').text('');
+        }
 
         /* Fetch events */
         // TODO: pull relevant for this location
