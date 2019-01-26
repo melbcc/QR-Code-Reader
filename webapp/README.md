@@ -5,13 +5,23 @@
 First start the [database service](../database)
 
 ```bash
+# Install required libraries
 python -m pip install -r requirements.txt
 
+# Initialize Database
 ./manage.py migrate
 echo "from django.contrib.auth.models import User; User.objects.create_superuser('admin', 'admin@nowhere.com', 'admin')" | python manage.py shell
 
+# Start local HTTP service
 ./manage.py runserver
 ```
+
+That last command should give you a url you can use to see the scanner's
+page (probably https://localhost:8000/)
+
+_note_: if anything goes wrong with the database during setup (most likely
+the `migrate` command), call `wipe-data.sh` in the [database](../database)
+folder.
 
 ## Sample Data
 
@@ -39,7 +49,7 @@ Note: the above keys are made up, so replace them with actual keys
 
 ```bash
 source api_keys.sh
-./manage.py import_members
+./manage.py import_civicrm
 ```
 
 ## Admin Access
