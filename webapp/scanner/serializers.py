@@ -1,6 +1,9 @@
 from rest_framework import serializers, viewsets, generics
 
-from .models import Member, Attendance
+from .models import Member
+from .models import Location
+from .models import Event
+from .models import Attendance
 
 
 # ---------- Members
@@ -16,8 +19,38 @@ class MemberViewSet(viewsets.ModelViewSet):
     lookup_field = 'contact_id'
 
 
-# ---------- Events
+# ---------- Locations
+class LocationSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Location
+        fields = ('pk', 'name')
 
+class LocationViewSet(viewsets.ModelViewSet):
+    queryset = Location.objects.all()
+    serializer_class = LocationSerializer
+
+
+# ---------- Events
+#class EventSerializer(serializers.HyperlinkedModelSerializer):
+#    class Meta:
+#        model = Event
+#        #fields = ('pk', 'title', 'location')
+#        fields = '__all__'
+#    #title = serializers.CharField()
+
+class EventSerializer(serializers.Serializer):
+    pk = serializers.IntegerField()
+    title = serializers.CharField()
+    location = LocationSerializer()
+    #email = serializers.EmailField()
+    #content = serializers.CharField(max_length=200)
+    #created = serializers.DateTimeField()
+    is_upcoming = serializers.BooleanField()
+    start_time_epoch = serializers.IntegerField()
+
+class EventViewSet(viewsets.ModelViewSet):
+    queryset = Event.objects.all()
+    serializer_class = EventSerializer
 
 
 # ---------- Attendance

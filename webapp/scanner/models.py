@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 
 class Member(models.Model):
@@ -48,6 +49,18 @@ class Event(models.Model):
 
     def __str__(self):
         return self.title
+
+    @property
+    def is_upcoming(self):
+        """True if event is a plausible candidate for a scanner"""
+        delta = self.start_time - timezone.now()
+        delta_hours = delta.total_seconds() / (60 * 60)
+        return (-6 <= delta_hours <= 12)
+
+    @property
+    def start_time_epoch(self):
+        return self.start_time.timestamp()
+
 
 class Attendance(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
