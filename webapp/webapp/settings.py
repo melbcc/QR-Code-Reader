@@ -31,7 +31,9 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    # Internal Apps
     'scanner.apps.ScannerConfig',
+    # Framework Apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
