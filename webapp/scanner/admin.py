@@ -11,15 +11,17 @@ class MemberAdmin(admin.ModelAdmin):
         'first_name', 'last_name', 'status_id',
     )
 
+
 @admin.register(Location)
 class LocationAdmin(admin.ModelAdmin):
     list_display = ('remote_key', 'name')
 
+
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
-    list_display = ('remote_key', 'title', 'location')
+    list_display = ('remote_key', 'start_time', 'title', 'location')
 
 
 @admin.register(Attendance)
 class AttendanceAdmin(admin.ModelAdmin):
-    list_display = ()
+    list_display = ('event', 'member')

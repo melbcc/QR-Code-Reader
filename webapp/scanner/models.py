@@ -25,9 +25,8 @@ class Member(models.Model):
         null=True, blank=True,
     )
 
-    def __repr__(self):
-        return "<{cls}: {first_name} {last_name} [{membership_num}]>".format(
-            cls=type(self).__name__,
+    def __str__(self):
+        return "{first_name} {last_name} [{membership_num}]".format(
             first_name=self.first_name,
             last_name=self.last_name,
             membership_num=self.membership_num,
@@ -38,13 +37,18 @@ class Location(models.Model):
     name = models.CharField(max_length=200, blank=True)
     remote_key = models.CharField(max_length=20)
 
+    def __str__(self):
+        return self.name
 
 class Event(models.Model):
     remote_key = models.CharField(max_length=20, unique=True)
     title = models.CharField(max_length=200)
     location = models.ForeignKey(Location, on_delete=models.CASCADE)
+    start_time = models.DateTimeField('start time')
 
+    def __str__(self):
+        return self.title
 
 class Attendance(models.Model):
-    member = models.ForeignKey(Member, on_delete=models.CASCADE)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    member = models.ForeignKey(Member, on_delete=models.CASCADE)
