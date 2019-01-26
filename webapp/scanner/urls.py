@@ -11,8 +11,9 @@ urlpatterns = [
 ]
 
 # ----- REST API
-from .serializers import MemberViewSet
+from .serializers import MemberViewSet, AttendanceViewSet
 
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.SimpleRouter()
 router.register(r'members', MemberViewSet)
+router.register(r'attendance', AttendanceViewSet)

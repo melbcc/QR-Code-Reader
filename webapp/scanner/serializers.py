@@ -1,6 +1,6 @@
 from rest_framework import serializers, viewsets, generics
 
-from .models import Member
+from .models import Member, Attendance
 
 
 # ---------- Members
@@ -13,4 +13,21 @@ class MemberSerializer(serializers.HyperlinkedModelSerializer):
 class MemberViewSet(viewsets.ModelViewSet):
     queryset = Member.objects.all()
     serializer_class = MemberSerializer
-    lookup_field = 'membership_num'
+    lookup_field = 'contact_id'
+
+
+# ---------- Events
+
+
+
+# ---------- Attendance
+class AttendanceSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Attendance
+        fields = ('pk',)  # FIXME
+        #fields = ('member', 'event')
+
+
+class AttendanceViewSet(viewsets.ModelViewSet):
+    queryset = Attendance.objects.all()
+    serializer_class = AttendanceSerializer
