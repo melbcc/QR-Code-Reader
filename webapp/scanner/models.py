@@ -33,14 +33,17 @@ class Member(models.Model):
             membership_num=self.membership_num,
         )
 
+
 class Location(models.Model):
     name = models.CharField(max_length=200, blank=True)
     remote_key = models.CharField(max_length=20)
+
 
 class Event(models.Model):
     remote_key = models.CharField(max_length=20, unique=True)
     title = models.CharField(max_length=200)
     location = models.ForeignKey(Location, on_delete=models.CASCADE)
+
 
 class Attendance(models.Model):
     member = models.ForeignKey(Member, on_delete=models.CASCADE)

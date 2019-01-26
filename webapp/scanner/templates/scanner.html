@@ -10,44 +10,7 @@
     <script src="/static/js/some-kb-lib.js"></script>
     <link rel="stylesheet" href="/static/style/keyboard-basic.min.css" type="text/css"></link>
     -->
-    <script>
-      const queryQRCode = async () => {
-        /* Get member id */
-        var qrtext = $('#scanform input[name=memberid]').val();
-        memberid = qrtext.match(/\d*$/)[0];
-
-        /* Fetch member data */
-        const response = await fetch('/api/members/' + memberid + '/');
-        const member = await response.json(); //extract JSON from the http response
-        if (response.status == 200) {
-          /* Inform user of status */
-          console.log(member);
-          $('#first_name').text(member['first_name']);
-          $('#last_name').text(member['last_name']);
-          $('#status_id').text(member['status_id']);
-        } else {
-          $('#first_name').text(member['detail']);
-          $('#last_name').text('');
-          $('#status_id').text('');
-        }
-
-        /* Fetch events */
-        // TODO: pull relevant for this location
-        //    select events that:
-        //        are in 1 of the selected locations
-        //        starts in <= 2hrs
-        //        is currently in session, or
-        //        ended <= 2hrs ago
-        //    sorted by abs(start_time - current_time)
-
-        /* Ask user which event */
-        // TODO: if more than 1 event is available
-        //    make visible a 2nd selection of the events.
-
-        /* Give the "OK, og ahead" signal */
-        // TODO: make OK overlay visible, and clear
-      }
-    </script>
+    <script src="/static/scanner/js/scanner.js"></script>
   </head>
   <body>
     <h1>QR Code Scanner</h1>
