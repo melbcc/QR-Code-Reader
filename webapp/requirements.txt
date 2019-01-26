@@ -3,5 +3,9 @@ Django
 django-extensions
 djangorestframework
 
+# Database
+pymysql
+psycopg2-binary
+
 # Other
 requests
