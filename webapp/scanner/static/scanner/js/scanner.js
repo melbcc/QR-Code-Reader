@@ -1,20 +1,37 @@
-const getMember = async (membership_num) => {
+/* ========== Local REST ========== */
+const getMember = async (contact_id) => {
     // Clean up ID
     // be tollerant of noise (like that from the QR code)
-    memberid = membership_num.match(/\d*$/)[0];
+    contact_id = contact_id.match(/\d*$/)[0];
 
-    // Query REST
-    const response = await fetch('/api/members/' + memberid + '/');
-    var member = await response.json(); //extract JSON from the http response
-    if (response.status != 200) {
-        member = null;
+    // Send Query
+    const response = await fetch('/api/members/' + contact_id + '/');
+
+    // Return Member object or null
+    var member = null;
+    if (response.status == 200) {
+        member = await response.json(); //extract JSON from the http response;
     }
+    console.log(member);
     return member;
 }
 
+
+const getLocationList = async () => {
+    // Lists all locations
+    
+}
+
+
+const getEventList = async (location_id) => {
+
+}
+
+
+/* ========== Event Handlers ========== */
 const queryQRCode = async () => {
     /* Get member */
-    var qrtext = $('#scanform input[name=memberid]').val();
+    var qrtext = $('#scanform input[name=contact_id]').val();
     const member = await getMember(qrtext);
 
     if (member) {
