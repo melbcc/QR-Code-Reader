@@ -2,6 +2,8 @@ import os
 import requests
 import re
 import argparse
+from datetime import datetime
+import pytz
 
 from django.core.management.base import BaseCommand, CommandError
 from scanner.models import Member
@@ -47,6 +49,8 @@ class Command(BaseCommand):
 
     def import_members(self, *args, **kwargs):
         """Method to download and iterate through member data"""
+        self.stdout.write(self.style.NOTICE('Members'))
+        self.stdout.write('Fetching data from CiviCRM ...')
         params = [
             'entity=Contact',
             'action=get',
@@ -59,9 +63,11 @@ class Command(BaseCommand):
         ]
         request = requests.get(self.REST_URL_BASE + '?' + '&'.join(params))
         raw_data = request.json()  # format: {'count': <int>, 'values': <members dict>, ... }
+        self.stdout.write('   ' + self.style.SUCCESS('[ok]') + ' received data for {} members'.format(raw_data['count']))
 
         # Just return iterator for each member dict
-        count = 0
+        self.stdout.write('Writing to local database ...')
+        count = {'created': 0, 'updated': 0}
         for member_dict in raw_data['values'].values():
             # Nested fields
             exp_date = None
@@ -69,13 +75,20 @@ class Command(BaseCommand):
             contact_id = None
             values = member_dict.get('api_Membership_get', {}).get('values', None)
             if values:
+                # contact_id
                 contact_id = values[0].get('contact_id', None)
-                exp_date = values[0].get('end_date', None)
+                # exp_date
+                exp_date_str = values[0].get('end_date', None)
+                if exp_date_str:
+                    exp_date = pytz.utc.localize(datetime.strptime(
+                        exp_date_str, '%Y-%m-%d' #'%Y-%m-%d %H:%M:%S'
+                    ))
+                # status_id
                 status_id = values[0].get('status_id', None)
 
             # TODO: write to local database
             if contact_id:
-                Member.objects.update_or_create(
+                (member, created) = Member.objects.update_or_create(
                     contact_id=contact_id,
                     defaults={
                         # Personal Data
@@ -89,25 +102,34 @@ class Command(BaseCommand):
                         'status_id': status_id,
                     }
                 )
-                count += 1
+                count['created' if created else 'updated'] += 1
 
-        self.stdout.write(self.style.SUCCESS(
-            'Successfully imported {} Members'.format(count)
-        ))
+        self.stdout.write(
+            '   ' + self.style.SUCCESS('[ok]') + ' ' +
+            'Members imported (added {created}, updated {updated})'.format(**count)
+        )
 
     def import_events(self, *args, **kwargs):
-        count = -1
+        self.stdout.write(self.style.NOTICE('Events'))
+        count = {'created': 0, 'updated': 0}
+
         # TODO
-        self.stdout.write(self.style.SUCCESS(
-            'Successfully imported {} Events'.format(count + 1)
-        ))
+
+        self.stdout.write(
+            '   ' + self.style.SUCCESS('[ok]') + ' ' +
+            'Events imported (added {created}, updated {updated})'.format(**count)
+        )
 
     def import_locations(self, *args, **kwargs):
-        count = -1
+        self.stdout.write(self.style.NOTICE('Locations'))
+        count = {'created': 0, 'updated': 0}
+
         # TODO
-        self.stdout.write(self.style.SUCCESS(
-            'Successfully imported {} Locations'.format(count + 1)
-        ))
+
+        self.stdout.write(
+            '   ' + self.style.SUCCESS('[ok]') + ' ' +
+            'Locations imported (added {created}, updated {updated})'.format(**count)
+        )
 
     def handle(self, *args, **options):
         # ----- Verify Argument(s)
