@@ -1,33 +1,38 @@
 html, body {
     height: 100%;
-    margin: 0px;
+    margin: 0em;
 }
 
 .screen {
     height: 100%;
     width: 100%;
-    margin: 0px;
-    padding: 0px;
+    margin: 0em;
+    padding: 0em;
     display: inline-block;
 }
 
 .section {
-    height: 90%;
-    width: 94%;
+    height: 80vh;
+    width: 80vw;
+
     /* border */
-    border: 5px;
+    border: 1vh;
     border-style: dashed;
-    border-radius: 20px;
+    border-radius: 1em;
 
     /* spacing */
-    margin: 10px;
-    padding: 20px;
+    margin: 0.5em;
+    padding: 1em;
+
+    /* Content */
+    font-size: 5vh;
 
     /* background */
     background: #eee;
 }
 
 .section h1 {
+    font-size: 10vh;
     margin-top: 0;
 }
 
