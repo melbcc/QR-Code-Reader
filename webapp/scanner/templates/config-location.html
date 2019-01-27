@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <!-- CSS -->
     <link type="text/css" rel="stylesheet" href="/static/scanner/css/config.css">
     <link type="text/css" rel="stylesheet" href="/static/scanner/css/checkboxes.css">
     <style>
@@ -12,10 +13,11 @@
         height: auto;
       }
     </style>
+    <!-- JavaScript -->
+    <script src="/static/scanner/js/jquery.min.js"></script>
   </head>
   <body>
     <!-- TODO:
-      - for loop of all locations with PKs
       - selection sets cookie value
     -->
 
@@ -27,15 +29,13 @@
 
     <h1>Select Location</h1>
     <form class="form" action="{% url 'scanner-config-events' %}">
+      {% for location in locations %}
       <div class="radiocheck">
-        <input type="radio" class="radio" id="loc0" name="l" value="1"/>
-        <label for="loc0">Location 1</label>
+        <input type="radio" class="radio" id="loc{{ location.pk }}" name="loc" value="{{ location.pk }}"/>
+        <label for="loc{{ location.pk }}">{{ location.name }}</label>
       </div>
+      {% endfor %}
 
-      <div class="radiocheck">
-        <input type="radio" class="radio" id="loc1" name="l" value="2"/>
-        <label for="loc1">Location Number 2</label>
-      </div>
       <input type="submit" value="Continue">
     </form>
   </body>

@@ -20,17 +20,17 @@
       </a>
     </div>
 
-    <h1>Select Events</h2>
+    <h1>Select Event(s)</h2>
+    <p>
+      Events at: {{ location.name }}
+    </p>
     <form class="form">
+      {% for event in events %}
       <div class="radiocheck check">
-        <input id="option1" name="option1" class="checkbox" type="checkbox"/>
-        <label for="option1">Event Number 1</label>
-      <div class="radiocheck check">
+        <input id="ev{{ event.pk }}" name="ev{{ event.pk }}" class="checkbox" type="checkbox"/>
+        <label for="ev{{ event.pk }}">{{ event.title }}</label>
       </div>
-
-        <input id="option2" name="option2" class="checkbox" type="checkbox"/>
-        <label for="option2">Event Number 2</label>
-      </div>
+      {% endfor %}
     </form>
 
     <p>
