@@ -4,25 +4,25 @@ html, body {
 }
 
 .screen {
-    height: 100%;
-    width: 100%;
-    margin: 0em;
-    padding: 0em;
+    height: 100vh;
+    width: calc(100vw - 17px);
+    margin: 0;
+    padding: 0;
     display: inline-block;
 }
 
 .section {
-    height: 80vh;
-    width: 80vw;
+    height: calc(100vh - 22vh);
+    width: calc(100vw - 22vh - 17px);
 
     /* border */
     border: 1vh;
     border-style: dashed;
-    border-radius: 1em;
+    border-radius: 10vh;
 
     /* spacing */
-    margin: 0.5em;
-    padding: 1em;
+    margin: 5vh;
+    padding: 5vh;
 
     /* Content */
     font-size: 5vh;
