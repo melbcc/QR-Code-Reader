@@ -5,9 +5,9 @@ from rest_framework import routers, serializers, viewsets
 from . import views
 
 urlpatterns = [
-    path(r'test', views.TestView.as_view(), name='test'),
-    path(r'scan', views.ScannerView.as_view(), name='scan'),
-    path(r'config', views.ConfigView.as_view(), name='config'),
+    path(r'test', views.TestView.as_view(), name='scanner-test'),
+    path(r'scan', views.ScannerView.as_view(), name='scanner-scan'),
+    path(r'', views.ConfigView.as_view(), name='scanner-config'),
 ]
 
 # ----- REST API
