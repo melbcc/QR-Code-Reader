@@ -13,16 +13,16 @@ class Member(models.Model):
     membership_num = models.CharField(max_length=20)
     end_date = models.DateTimeField('membership end', null=True, blank=True)
 
-    STATUS_ID_CHOICES = (
-        (2, "CURRENT"),
-        (3, "GRACE"),
-        (4, "EXPIRED"),
-        (5, "__blank5__"),
-        (6, "__blank6__"),
-        (7, "DECEASED"),
-    )
+    STATUS_ID_CHOICES = {
+        2: "CURRENT",
+        3: "GRACE",
+        4: "EXPIRED",
+        5: "__blank5__",
+        6: "__blank6__",
+        7: "DECEASED",
+    }
     status_id = models.IntegerField(
-        choices=STATUS_ID_CHOICES,
+        choices=sorted(STATUS_ID_CHOICES.items(), key=lambda x: x[0]),
         null=True, blank=True,
     )
 
