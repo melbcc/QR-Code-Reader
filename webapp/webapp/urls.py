@@ -49,6 +49,6 @@ router.extend(scanner_router)
 urlpatterns = [
     url(r'^api/', include(router.urls)),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    path('scanner/', include('scanner.urls')),
+    path('', include('scanner.urls')),
     path('admin/', admin.site.urls),
 ]
