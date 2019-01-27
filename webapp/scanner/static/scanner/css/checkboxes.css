@@ -1,0 +1,88 @@
+/* source: https://codepen.io/arsistyle/pen/zoKpoN */
+
+@charset "UTF-8";
+body {
+  padding: 50px;
+}
+
+div:not(.radiocheck) {
+  margin-bottom: 50px;
+}
+
+/* Aquí comienzan los estilos a usar*/
+.radiocheck {
+  margin-bottom: 10px;
+}
+.radiocheck .radio, .radiocheck .checkbox {
+  visibility: hidden;
+  position: absolute;
+  left: -9999px;
+}
+.radiocheck .radio:checked + label:before, .radiocheck .checkbox:checked + label:before {
+  -webkit-animation: checked 600ms 10ms 1;
+          animation: checked 600ms 10ms 1;
+  background: #004d80;
+}
+.radiocheck .radio:checked + label, .radiocheck .checkbox:checked + label {
+  color: #004d80;
+}
+.radiocheck label {
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  line-height: 1.5;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+}
+.radiocheck label:before {
+  content: '';
+  display: inline-block;
+  background: #fff;
+  margin-right: 10px;
+  margin-left: 2px;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 2px #999;
+  vertical-align: middle;
+	cursor: pointer;
+  border-radius: 50%;
+  -webkit-transition: all ease 200ms;
+  transition: all ease 200ms;
+}
+.radiocheck.check label:before {
+  border-radius: 4px;
+}
+.radiocheck.en-linea {
+  display: inline-block;
+}
+.radiocheck.en-linea label {
+  margin-right: 20px;
+}
+
+@-webkit-keyframes checked {
+  0%, 100% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+  }
+  10% {
+    -webkit-transform: scale(0.8, 0.7);
+            transform: scale(0.8, 0.7);
+  }
+}
+
+@keyframes checked {
+  0%, 100% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+  }
+  10% {
+    -webkit-transform: scale(0.8, 0.7);
+            transform: scale(0.8, 0.7);
+  }
+}

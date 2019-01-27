@@ -1,8 +1,36 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <link type="text/css" rel="stylesheet" href="/static/scanner/css/checkboxes.css"></link>
+  </head>
   <body>
-    <h1>Configure</h1>
-    <p>TODO: this page sets things like location, and events... blah blah</p>
-    <p><a href="{% url 'scanner-scan' %}">Start Scanning</a></p>
+    <h1>Select Location</h1>
+    <div class="radiocheck">
+     <input type="radio" class="radio" id="radio" name="radio" />
+     <label for="radio">Location 1</label>
+    </div>
+
+    <div class="radiocheck">
+     <input type="radio" class="radio" id="radio2" name="radio" />
+     <label for="radio2">Location Number 2</label>
+    </div>
+
+    <h1>Select Events</h2>
+    <form class="form">
+      <div class="radiocheck check">
+        <input id="option1" name="option1" class="checkbox" type="checkbox"/>
+        <label for="option1">Event Number 1</label>
+      <div class="radiocheck check">
+      </div>
+
+        <input id="option2" name="option2" class="checkbox" type="checkbox"/>
+        <label for="option2">Event Number 2</label>
+      </div>
+    </form>
+
+    <p>
+      <h1>Start Scanning</h2>
+      <a href="{% url 'scanner-scan' %}">Start Scanning</a>
+    </p>
   </body>
 </html>
