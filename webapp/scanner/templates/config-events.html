@@ -1,18 +1,23 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <link type="text/css" rel="stylesheet" href="/static/scanner/css/checkboxes.css"></link>
+    <link type="text/css" rel="stylesheet" href="/static/scanner/css/config.css">
+    <link type="text/css" rel="stylesheet" href="/static/scanner/css/checkboxes.css">
+    <style>
+      .home-btn {
+        float: right;
+      }
+      .home-btn img {
+        width: 10vh;
+        height: auto;
+      }
+    </style>
   </head>
   <body>
-    <h1>Select Location</h1>
-    <div class="radiocheck">
-     <input type="radio" class="radio" id="radio" name="radio" />
-     <label for="radio">Location 1</label>
-    </div>
-
-    <div class="radiocheck">
-     <input type="radio" class="radio" id="radio2" name="radio" />
-     <label for="radio2">Location Number 2</label>
+    <div class="home-btn">
+      <a href="{% url 'index' %}">
+        <img src="/static/scanner/img/home.svg">
+      </a>
     </div>
 
     <h1>Select Events</h2>
@@ -29,7 +34,6 @@
     </form>
 
     <p>
-      <h1>Start Scanning</h2>
       <a href="{% url 'scanner-scan' %}">Start Scanning</a>
     </p>
   </body>

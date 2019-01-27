@@ -3,13 +3,19 @@ from django.http import HttpResponse
 from django.views import generic
 
 
-class TestView(generic.TemplateView):
-    template_name = 'test.html'
+class RootView(generic.TemplateView):
+    template_name = 'index.html'
 
 
-class ConfigView(generic.TemplateView):
-    template_name = 'config.html'
+# ---------- Configure
+class ConfigLocationView(generic.TemplateView):
+    template_name = 'config-location.html'
 
 
+class ConfigEventsView(generic.TemplateView):
+    template_name = 'config-events.html'
+
+
+# ---------- Scanner
 class ScannerView(generic.TemplateView):
     template_name = 'scanner.html'

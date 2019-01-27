@@ -5,9 +5,10 @@ from rest_framework import routers, serializers, viewsets
 from . import views
 
 urlpatterns = [
-    path(r'test', views.TestView.as_view(), name='scanner-test'),
+    path(r'', views.RootView.as_view(), name='index'),
+    path(r'config/location', views.ConfigLocationView.as_view(), name='scanner-config-location'),
+    path(r'config/events', views.ConfigEventsView.as_view(), name='scanner-config-events'),
     path(r'scan', views.ScannerView.as_view(), name='scanner-scan'),
-    path(r'', views.ConfigView.as_view(), name='scanner-config'),
 ]
 
 # ----- REST API

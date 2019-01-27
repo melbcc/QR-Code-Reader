@@ -1,13 +1,5 @@
-/* source: https://codepen.io/arsistyle/pen/zoKpoN */
-
 @charset "UTF-8";
-body {
-  padding: 50px;
-}
-
-div:not(.radiocheck) {
-  margin-bottom: 50px;
-}
+/* source: https://codepen.io/arsistyle/pen/zoKpoN */
 
 /* Aquí comienzan los estilos a usar*/
 .radiocheck {

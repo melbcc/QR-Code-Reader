@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link type="text/css" rel="stylesheet" href="/static/scanner/css/config.css">
+    <style>
+      li {
+        padding: 2vh;
+      }
+    </style>
+  </head>
+  <body>
+      <h1>MelbPC QR-Code Scanner</h1>
+      <p>
+          This is the sign-in terminal for <a href="https://www.melbpc.org.au/">MelbPC</a> events.
+      </p>
+      <p>
+        <h3>What you can do from here:</h3>
+        <ul>
+          <li><a href="{% url 'scanner-config-location' %}">Configure for an Event</a></li>
+          <li><a href="{% url 'scanner-scan' %}">Start Scanning</a></li>
+          <li><a href="/admin">Browse the database</a></li>
+          <li><a href="/api">Browse the REST API</a></li>
+        </ul>
+      </p>
+
+  </body>
+</html>
