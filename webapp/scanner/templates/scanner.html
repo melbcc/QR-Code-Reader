@@ -18,16 +18,25 @@
     <!-- ============== Scan ============== -->
     <div><a id="123"></a></div>
     <div class="screen" id="scan"><div class="section">
-      <h1>QR Code Scanner</h1>
-      <p>Scan your code here</p>
+      <h1>Sign In</h1>
+
+      <div style="display:inline-block; text-align:center;">
+        <div class="tile tile-large">
+          <h2>Member</h2>
+          <img class="qrcode" src="/static/scanner/img/qrcode-sample.svg">
+        </div>
+        <div class="tile tile-thin">
+          <span style="height:15vh; display:inline-block;">&nbsp;</span>
+          <h1>OR</h1>
+        </div>
+        <div class="tile tile-large">
+          <h2>Guest</h2>
+          <div class="button" onclick="jumpTo('signin');">Sign in<br/>as Guest</div>
+        </div>
+      </div>
+
       <form id="scanform" onsubmit="queryQRCode(); return false;">
-        <p>
-          <b>Scan Your Membership Card</b><br/>
-          <input name="contact_id" type="text" size="35" />
-        </p>
-        OR
-        <a href="#signin">Guest</a>
-        <input type="submit" />
+        <input name="contact_id" type="text" size="35" />
       </form>
     </div></div>
 

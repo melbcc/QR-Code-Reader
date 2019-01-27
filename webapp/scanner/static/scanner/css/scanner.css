@@ -37,7 +37,46 @@ html, body {
     text-align: center;
 }
 
+img.qrcode {
+    height: 30vh;
+    width: auto;
+}
+
 #recording img {
     height: 50%;
     width: auto;
+}
+
+.tile {
+    display: inline-block;
+    float: left;
+}
+
+.tile-large {
+    height: 50vh;
+    width: 30vw;
+}
+
+.tile-thin {
+    height: 50vh;
+    width: 20vw;
+}
+
+.tile-signinsml {
+}
+
+.tile h1,h2,h3,h4 {
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 2vh;
+}
+
+.button {
+    border: 2vh;
+    border-color: #00f;
+    border-radius: 2vh;
+    background: #55f;
+    padding: 1vh 2vh;
+    text-align: center;
+    color: #fff;
 }

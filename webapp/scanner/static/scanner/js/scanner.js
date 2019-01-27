@@ -1,3 +1,12 @@
+/* ========== Basic Navigation =========== */
+function jumpTo(h) {
+    // ref: https://stackoverflow.com/questions/13735912/#13736194
+    var url = location.href;
+    location.href = "#" + h;
+    history.replaceState(null, null, url);
+}
+
+
 /* ========== Local REST ========== */
 const getMember = async (contact_id) => {
     // Clean up ID
