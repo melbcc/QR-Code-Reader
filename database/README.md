@@ -19,6 +19,18 @@ This will start a `postgres` database service accessibe with URI:
 postgresql+psycopg2://postgres:secret@localhost/mydb?port=5432
 ```
 
+## Deleting Persistent Data
+
+If you want to start again with a fresh database, you can delete the existing
+one by running the `wipe-data.sh` command
+
+```bash
+./wipe-data.sh
+```
+
+This will simply remove the `data` folder in this directory.
+
+
 ## Example Commands
 
 **pre-requisite**

@@ -4,84 +4,71 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <link type="text/css" rel="stylesheet" href="/static/scanner/css/scanner.css"></link>
+    <link type="text/css" rel="stylesheet" href="/static/scanner/css/spinner.css"></link>
     <script src="/static/scanner/js/jquery.min.js"></script>
     <!-- TODO: on-screen keyboard
     one potential lib: https://github.com/Mottie/Keyboard
     <script src="/static/js/some-kb-lib.js"></script>
     <link rel="stylesheet" href="/static/style/keyboard-basic.min.css" type="text/css"></link>
     -->
-    <script>
-      const queryQRCode = async () => {
-        /* Get member id */
-        var qrtext = $('#scanform input[name=memberid]').val();
-        memberid = qrtext.match(/\d*$/)[0];
-
-        /* Fetch member data */
-        const response = await fetch('/api/members/' + memberid + '/');
-        const member = await response.json(); //extract JSON from the http response
-        if (response.status == 200) {
-          /* Inform user of status */
-          console.log(member);
-          $('#first_name').text(member['first_name']);
-          $('#last_name').text(member['last_name']);
-          $('#status_id').text(member['status_id']);
-        } else {
-          $('#first_name').text(member['detail']);
-          $('#last_name').text('');
-          $('#status_id').text('');
-        }
-
-        /* Fetch events */
-        // TODO: pull relevant for this location
-        //    select events that:
-        //        are in 1 of the selected locations
-        //        starts in <= 2hrs
-        //        is currently in session, or
-        //        ended <= 2hrs ago
-        //    sorted by abs(start_time - current_time)
-
-        /* Ask user which event */
-        // TODO: if more than 1 event is available
-        //    make visible a 2nd selection of the events.
-
-        /* Give the "OK, og ahead" signal */
-        // TODO: make OK overlay visible, and clear
-      }
-    </script>
+    <script src="/static/scanner/js/scanner.js"></script>
   </head>
   <body>
-    <h1>QR Code Scanner</h1>
-    <p>Scan your code here</p>
-    <form id="scanform" onsubmit="queryQRCode(); return false;">
-      <p>
-        <b>Scan Your Membership Card</b><br/>
-        <input name="memberid" type="text" size="35" />
-      </p>
-      OR
-      <p>
-        <b>Sign in as Guest</b><br/>
+    <!-- ============== Scan ============== -->
+    <div><a id="123"></a></div>
+    <div class="screen" id="scan"><div class="section">
+      <h1>QR Code Scanner</h1>
+      <p>Scan your code here</p>
+      <form id="scanform" onsubmit="queryQRCode(); return false;">
+        <p>
+          <b>Scan Your Membership Card</b><br/>
+          <input name="contact_id" type="text" size="35" />
+        </p>
+        OR
+        <a href="#signin">Guest</a>
+        <input type="submit" />
+      </form>
+    </div></div>
+
+    <!-- ============== Sign in as Guest ============== -->
+    <div class="screen" id="signin"><div class="section">
+      <h1>Sign in as Guest</h1>
+      <form>
         <input name="Name" type="text" size="45" />
-      </p>
-      <input type="submit" />
-    </form>
+        <input type="submit" />
+      </form>
+    </div></div>
+
     <ul>
       <li>Name: <span id="first_name"></span> <span id="last_name"></span></li>
       <li>Status: <span id="status_id"></span></li>
     </ul>
-    <h1>Select Event</h1>
-    <p>Which event are you attending?</p>
-    <form>
-      <input type="radio" name="event" value="0" checked>Event 1<br />
-      <input type="radio" name="event" value="1">Event 2<br />
-      <input type="radio" name="event" value="2">Event 3<br />
-      <input type="radio" name="event" value="3">Event 4<br />
-      <input type="radio" name="event" value="4">Event 5<br />
-      <input type="radio" name="event" value="5">Event 6<br />
-      <input type="radio" name="event" value="6">Event 7<br />
-      <input type="radio" name="event" value="7">Event 8<br />
-      <input type="radio" name="event" value="8">Event 9<br />
-      <input type="radio" name="event" value="9">Event 10<br />
-      <input type="submit" />
-    </form>
+
+
+    <!-- ============== Event Selection ============== -->
+    <div class="screen" id="events"><div class="section">
+      <h1>Select Event</h1>
+      <p>Which event are you attending?</p>
+      <form>
+        <input type="radio" name="event" value="0" checked>Event 1<br />
+        <input type="radio" name="event" value="1">Event 2<br />
+        <input type="radio" name="event" value="2">Event 3<br />
+        <input type="radio" name="event" value="3">Event 4<br />
+        <input type="radio" name="event" value="4">Event 5<br />
+        <input type="submit" />
+      </form>
+    </div></div>
+
+    <!-- ============== Recording Attendance ============== -->
+    <div class="screen" id="recording"><div class="section">
+      <h1>Saving</h1>
+      <div class="spinner"></div>
+    </div></div>
+
+    <!-- ============== Welcome ============== -->
+    <div class="screen" id="welcome"><div class="section">
+      <h1>Welcome!</h1>
+    </div></div>
   </body>
 </html>
