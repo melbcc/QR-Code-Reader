@@ -8,7 +8,7 @@ class TestView(generic.TemplateView):
 
 
 class ConfigView(generic.TemplateView):
-    template_name = 'root.html'
+    template_name = 'config.html'
 
 
 class ScannerView(generic.TemplateView):
