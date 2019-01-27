@@ -1,3 +1,19 @@
+/* Hide Scrollbar */
+/* ref: https://stackoverflow.com/questions/16670931/#30680994 */
+html {
+    overflow: scroll;
+    overflow-x: hidden;
+}
+::-webkit-scrollbar {
+    width: 0px;  /* remove scrollbar space */
+    background: transparent;  /* optional: just make scrollbar invisible */
+}
+/* optional: show position indicator in red */
+::-webkit-scrollbar-thumb {
+    background: #FF0000;
+}
+
+
 html, body {
     height: 100%;
     margin: 0em;
@@ -5,7 +21,8 @@ html, body {
 
 .screen {
     height: 100vh;
-    width: calc(100vw - 17px);
+    /*width: calc(100vw - 17px);*/
+    width: 100vw;
     margin: 0;
     padding: 0;
     display: inline-block;
@@ -13,7 +30,8 @@ html, body {
 
 .section {
     height: calc(100vh - 22vh);
-    width: calc(100vw - 22vh - 17px);
+    /*width: calc(100vw - 22vh - 17px);*/
+    width: calc(100vw - 22vh);
 
     /* border */
     border: 1vh;
