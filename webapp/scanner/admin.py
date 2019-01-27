@@ -21,7 +21,6 @@ class MemberAdmin(admin.ModelAdmin):
         'EXPIRED': ['background: #d00', 'color: #fff', 'font-weight: bold'],
         'DECEASED': ['background: #aaa', 'color: #fff', 'font-weight: bold'],
     }
-
     def status_pill(self, obj):
         status_name = Member.STATUS_ID_CHOICES[obj.status_id]
         return format_html('<div style="{style}">{text}</div>'.format(
@@ -32,8 +31,6 @@ class MemberAdmin(admin.ModelAdmin):
             ] + self.STATUS_PILL_STYLE.get(status_name, [])),
             text=status_name,
         ))
-        #return '<div style="width:100%%; height:100%%; background-color:orange;">%s</div>' % obj.status()
-        #return obj.status()
 
     status_pill.allow_tags = True
 
