@@ -21,14 +21,24 @@ const getMember = async (contact_id) => {
     if (response.status == 200) {
         member = await response.json(); //extract JSON from the http response;
     }
+    
     console.log(member);
     return member;
 }
 
 
 const getLocationList = async () => {
-    // Lists all locations
-    
+    // Lists all locations (pull from REST)
+    const response = await fetch('/api/locations/');
+
+    // Extract location list from response
+    var locations = null;
+    if (response.status == 200) {
+        locations = await response.json();
+    }
+
+    console.log(locations);
+    return locations;
 }
 
 
