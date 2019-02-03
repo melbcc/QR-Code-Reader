@@ -106,10 +106,17 @@ const submitScan = async () => {
     }
 
     if (g_events.length > 1) {
+        // Play sound
+        $('#sound_scan')[0].play();
         jumpTo("events");
     } else {
         $('span.event_name').text(g_events[0]['title'])
         $('#attendanceform input[name=event_pk]').val(g_events[0]['pk']);
+        if (member_obj['status_isok']) {
+            $('#sound_scan')[0].play();
+        } else {
+            $('#sound_badmember')[0].play();
+        }
         jumpTo("saving");
         saveAttendance(member_obj['pk'], g_events[0]['pk']);
     }
