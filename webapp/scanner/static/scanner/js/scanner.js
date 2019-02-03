@@ -76,7 +76,7 @@ const resetPage = async () => {
     $('#eventform input[type=radio]').prop('checked', false);
 
     // Attendance hidden form (in "saving" state)
-    $('#attendanceform input[name=member_pk]').val('');
+    $('#attendanceform input[name=contact_id]').val('');
     $('#attendanceform input[name=event_pk]').val('');
 
     /* Move to top */
@@ -98,7 +98,7 @@ const submitScan = async () => {
         $('span.last_name').text(member_obj['last_name']);
         $('span.status_name').text(member_obj['status']);
         // Set Member for attendance record
-        $('#attendanceform input[name=member_pk]').val(member_obj['pk']);
+        $('#attendanceform input[name=contact_id]').val(member_obj['contact_id']);
     } else {
         resetPage();
         // Do nothing; just reset the page
@@ -112,6 +112,7 @@ const submitScan = async () => {
     } else {
         $('span.event_name').text(g_events[0]['title'])
         $('#attendanceform input[name=event_pk]').val(g_events[0]['pk']);
+        // Play Sound
         if (member_obj['status_isok']) {
             $('#sound_scan')[0].play();
         } else {
@@ -137,8 +138,17 @@ const submitEvent = async () => {
         $('#attendanceform input[name=event_pk]').val(event_pk);
     }
 
+    // Get Member Data
+    var member_obj = await getMember($('#attendanceform input[name=contact_id]').val());
+
+    if (member_obj['status_isok']) {
+        //$('#sound_scan')[0].play();
+    } else {
+        $('#sound_badmember')[0].play();
+    }
+
     jumpTo("saving");
-    saveAttendance($('#attendanceform input[name=member_pk]').val(), event_pk);
+    saveAttendance(member_obj['pk'], event_pk);
 }
 
 const saveAttendance = (member_pk, event_pk) => {
