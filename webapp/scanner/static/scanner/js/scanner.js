@@ -12,61 +12,162 @@ const getMember = async (contact_id) => {
     // Clean up ID
     // be tollerant of noise (like that from the QR code)
     contact_id = contact_id.match(/\d*$/)[0];
+    // TODO: accept only a pure number, or a fully qualified URL.
+    //       otherwise return null
 
     // Send Query
     const response = await fetch('/api/members/' + contact_id + '/');
 
     // Return Member object or null
-    var member = null;
+    var member_obj = null;
     if (response.status == 200) {
-        member = await response.json(); //extract JSON from the http response;
+        member_obj = await response.json(); //extract JSON from the http response;
     }
-    console.log(member);
-    return member;
+
+    console.log(member_obj);
+    return member_obj;
+}
+
+
+const getEvent = async (pk) => {
+    // Send Query
+    const response = await fetch('/api/events/' + pk + '/');
+
+    // Return Event object or null
+    var event_obj = null;
+    if (response.status == 200) {
+        event_obj = await response.json(); //extract JSON from the http response;
+    }
+
+    console.log(event_obj);
+    return event_obj;
 }
 
 
 const getLocationList = async () => {
-    // Lists all locations
-    
-}
+    // Lists all locations (pull from REST)
+    const response = await fetch('/api/locations/');
 
+    // Extract location list from response
+    var locations = null;
+    if (response.status == 200) {
+        locations = await response.json();
+    }
 
-const getEventList = async (location_id) => {
-
+    console.log(locations);
+    return locations;
 }
 
 
 /* ========== Event Handlers ========== */
-const queryQRCode = async () => {
-    /* Get member */
-    var qrtext = $('#scanform input[name=contact_id]').val();
-    const member = await getMember(qrtext);
+const resetPage = async () => {
+    // Body Text
+    $('span.first_name').text('');
+    $('span.last_name').text('');
+    $('span.status_name').text('');
+    $('span.event_name').text('');
 
-    if (member) {
-          /* Inform user of status */
-          $('#first_name').text(member['first_name']);
-          $('#last_name').text(member['last_name']);
-          $('#status_id').text(member['status_id']);
+    /* Clear Form Data */
+    // Scan
+    $('#scanform input[name=contact_id]').val('');
+    // Guest
+    $('#guestform input[type=text]').val('');
+    // Event Selection
+    $('#eventform input[type=radio]').prop('checked', false);
+
+    // Attendance hidden form (in "saving" state)
+    $('#attendanceform input[name=contact_id]').val('');
+    $('#attendanceform input[name=event_pk]').val('');
+
+    /* Move to top */
+    jumpTo("scan");
+
+    /* Focus Scan Input */
+    $('#scanform input[name=contact_id]').focus();
+}
+
+const submitScan = async () => {
+    /* Run when submitting the QR-Code */
+    // Get member
+    var qrtext = $('#scanform input[name=contact_id]').val();
+    const member_obj = await getMember(qrtext);
+
+    if (member_obj) {
+        // Inform user of status
+        $('span.first_name').text(member_obj['first_name']);
+        $('span.last_name').text(member_obj['last_name']);
+        $('span.status_name').text(member_obj['status']);
+        // Set Member for attendance record
+        $('#attendanceform input[name=contact_id]').val(member_obj['contact_id']);
     } else {
-          $('#first_name').text('error');
-          $('#last_name').text('');
-          $('#status_id').text('');
+        resetPage();
+        // Do nothing; just reset the page
+        return;
     }
 
-    /* Fetch events */
-    // TODO: pull relevant for this location
-    //    select events that:
-    //        are in 1 of the selected locations
-    //        starts in <= 2hrs
-    //        is currently in session, or
-    //        ended <= 2hrs ago
-    //    sorted by abs(start_time - current_time)
+    if (g_events.length > 1) {
+        // Play sound
+        $('#sound_scan')[0].play();
+        jumpTo("events");
+    } else {
+        $('span.event_name').text(g_events[0]['title'])
+        $('#attendanceform input[name=event_pk]').val(g_events[0]['pk']);
+        // Play Sound
+        if (member_obj['status_isok']) {
+            $('#sound_scan')[0].play();
+        } else {
+            $('#sound_badmember')[0].play();
+        }
+        jumpTo("saving");
+        saveAttendance(member_obj['pk'], g_events[0]['pk']);
+    }
+}
 
-    /* Ask user which event */
-    // TODO: if more than 1 event is available
-    //    make visible a 2nd selection of the events.
+const submitEvent = async () => {
+    // Get Selected Event
+    var event_id = $('#eventform input[name=event]:checked').prop('id');
+    if (event_id === undefined) {
+        // no event was selected, do nothing
+        return;
+    }
 
-    /* Give the "OK, og ahead" signal */
-    // TODO: make OK overlay visible, and clear
+    // Get Event Object
+    var event_pk = event_id.match(/\d+$/)[0];
+    var event_obj = await getEvent(event_pk);
+    if (event_obj) { // just checking it exists
+        $('#attendanceform input[name=event_pk]').val(event_pk);
+    }
+
+    // Get Member Data
+    var member_obj = await getMember($('#attendanceform input[name=contact_id]').val());
+
+    if (member_obj['status_isok']) {
+        //$('#sound_scan')[0].play();
+    } else {
+        $('#sound_badmember')[0].play();
+    }
+
+    jumpTo("saving");
+    saveAttendance(member_obj['pk'], event_pk);
+}
+
+const saveAttendance = (member_pk, event_pk) => {
+    // Submit Attendance to REST API
+    attendance_obj = {
+        "csrfmiddlewaretoken": $('#attendanceform input[name=csrfmiddlewaretoken]').val(),
+        "member": member_pk,
+        "event": event_pk
+    }
+    console.log(attendance_obj);
+
+    $.post(
+        "/api/attendance/",
+        attendance_obj,
+        (data) => {
+            console.log(data);
+        }
+    );
+
+    // Get
+    jumpTo("welcome");
 }

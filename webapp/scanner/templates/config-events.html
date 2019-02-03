@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <!-- Style -->
     <link type="text/css" rel="stylesheet" href="/static/scanner/css/config.css">
     <link type="text/css" rel="stylesheet" href="/static/scanner/css/checkboxes.css">
     <style>
@@ -12,6 +13,7 @@
         height: auto;
       }
     </style>
+    <!-- JavaScript -->
   </head>
   <body>
     <div class="home-btn">
@@ -22,19 +24,31 @@
 
     <h1>Select Event(s)</h2>
     <p>
-      Events at: {{ location.name }}
+      {% if location %}
+        Events at: <b>{{ location.name }}</b>
+      {% else %}
+        Hosted anywhere (no location set)
+      {% endif %}
+      </b>
     </p>
-    <form class="form">
-      {% for event in events %}
-      <div class="radiocheck check">
-        <input id="ev{{ event.pk }}" name="ev{{ event.pk }}" class="checkbox" type="checkbox"/>
-        <label for="ev{{ event.pk }}">{{ event.title }}</label>
-      </div>
-      {% endfor %}
+    <form class="form" action="{% url 'scanner-scan' %}">
+      <!-- {% csrf_token %} -->
+
+      {% if events %}
+        {% for event in events %}
+        <div class="radiocheck check">
+          <input id="ev{{ event.pk }}" name="ev{{ event.pk }}" class="checkbox" type="checkbox"/>
+          <label for="ev{{ event.pk }}">{{ event.title }}</label>
+        </div>
+        {% endfor %}
+      {% else %}
+        No events were found
+      {% endif %}
+
+      <p>
+        <input type="submit" value="Start Scanning">
+      </p>
     </form>
 
-    <p>
-      <a href="{% url 'scanner-scan' %}">Start Scanning</a>
-    </p>
   </body>
 </html>

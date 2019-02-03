@@ -16,8 +16,11 @@
       <p>
         <h3>What to do from here:</h3>
         <ul>
-          <li><a href="{% url 'scanner-config-location' %}">Configure for an Event</a></li>
-          <li><a href="{% url 'scanner-scan' %}">Start Scanning</a></li>
+          <li>Configure:
+            <a href="{% url 'scanner-config-location' %}?clear_location=1&clear_events=1">Location &gt; Event</a>
+            or
+            <a href="{% url 'scanner-config-events' %}?clear_location=1&clear_events=1">Event</a>
+          </li>
           <li><a href="/admin">Browse the database</a></li>
           <li><a href="/api">Browse the REST API</a></li>
         </ul>

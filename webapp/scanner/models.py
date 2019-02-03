@@ -26,6 +26,14 @@ class Member(models.Model):
         null=True, blank=True,
     )
 
+    @property
+    def status(self):
+        return self.STATUS_ID_CHOICES[self.status_id]
+
+    @property
+    def status_isok(self):
+        return (self.status_id <= 3)
+
     def __str__(self):
         return "{first_name} {last_name} [{membership_num}]".format(
             first_name=self.first_name,
@@ -65,3 +73,4 @@ class Event(models.Model):
 class Attendance(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     member = models.ForeignKey(Member, on_delete=models.CASCADE)
+    checkin_time = models.DateTimeField('checkin time', null=True, blank=True)

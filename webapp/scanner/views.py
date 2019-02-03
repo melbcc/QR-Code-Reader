@@ -1,12 +1,72 @@
+import re
+import json
+
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.views import generic, View
+from django.template import RequestContext
+from django.views.decorators.csrf import csrf_exempt
+from django.core.serializers.json import DjangoJSONEncoder
 
 from .models import Location, Event
-
+from .serializers import EventSerializer, LocationSerializer
 
 class RootView(generic.TemplateView):
     template_name = 'index.html'
+
+
+# ---------- Session Management
+# TODO: instead of using request.GET or request.POST to
+# populate request.sesson, could we use requests.COOKIES instead?
+def std_session(request):
+    # Location: loc (either an int, or None)
+    if request.GET.get('clear_location', None):
+        request.session['location'] = None
+    if 'loc' in request.GET:
+        location_pk = request.GET['loc']
+        if location_pk is not None:
+            location_pk = int(location_pk)
+        request.session['location'] = location_pk
+
+    # Events: ev<pk>=on
+    if request.GET.get('clear_events', None):
+        request.session['events'] = []
+    else:
+        event_pks = set(
+            int(k[2:])
+            for (k, v) in request.GET.items()
+            if (k.startswith('ev') and v.lower() == 'on')
+        )
+        if event_pks:
+            request.session['events'] = sorted(event_pks)  # list
+
+    # return original request (optional)
+    return request
+
+
+def get_location(request):
+    # Get location and relevant events
+    location_pk = request.session.get('location', None)
+    location = None
+    if location_pk is not None:
+        location = Location.objects.filter(
+            pk=location_pk
+        ).first()
+    return location
+
+
+def get_events(request, only_upcoming=True):
+    event_pks = request.session.get('events', [])
+    if event_pks:
+        events = Event.objects.filter(pk__in=event_pks)
+    else:
+        events = []
+
+    # FIXME: filter queryset filter, this is a slow way to do this.
+    if only_upcoming:
+        events = [e for e in events if e.is_upcoming]
+
+    return events
 
 
 # ---------- Configure
@@ -27,17 +87,52 @@ class ConfigEventsView(View):
     template_name = 'config-events.html'
 
     def get(self, request, *args, **kwargs):
-        # Get location and relevant events
-        location = Location.objects.filter(pk=int(request.GET['loc'])).first()
-        events = Event.objects.filter(location=location)
+        std_session(request)
+
+        location = get_location(request)
+        events = Event.objects.all()
+        if location is not None:
+            events = events.filter(location=location)
         events = [e for e in events if e.is_upcoming]
 
         # Render & Return
-        return render(request, self.template_name, {
-            'location': location,
-            'events': events,
-        })
+        return render(
+            request,
+            self.template_name, {
+                'location': location,
+                'events': events,
+            },
+        )
 
 # ---------- Scanner
-class ScannerView(generic.TemplateView):
+class ScannerView(View):
     template_name = 'scanner.html'
+
+    def get(self, request, *args, **kwargs):
+        std_session(request)
+
+        # Get Objects from Session
+        location = get_location(request)
+        events = get_events(request)
+
+        # Serialize Objects
+        location_ser = None
+        if location:
+            location_ser = LocationSerializer(location).data
+        events_ser = []
+        if events:
+            events_ser = [EventSerializer(e).data for e in events]
+
+        # Render & Return
+        return render(
+            request,
+            self.template_name,
+            {
+                # Objects
+                'location': location,
+                'events': events,
+                # Jsonified Objects (for javascript)
+                'location_json': json.dumps(location_ser, cls=DjangoJSONEncoder),
+                'events_json': json.dumps(events_ser, cls=DjangoJSONEncoder),
+            },
+        )

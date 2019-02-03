@@ -1,4 +1,5 @@
 from rest_framework import serializers, viewsets, generics
+from django.utils import timezone
 
 from .models import Member
 from .models import Location
@@ -7,10 +8,14 @@ from .models import Attendance
 
 
 # ---------- Members
-class MemberSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Member
-        fields = ('first_name', 'last_name', 'membership_num', 'status_id')
+class MemberSerializer(serializers.Serializer):
+    pk = serializers.IntegerField()
+    first_name = serializers.CharField()
+    last_name = serializers.CharField()
+    membership_num = serializers.CharField()
+    contact_id = serializers.CharField()
+    status = serializers.CharField()
+    status_isok = serializers.BooleanField()
 
 
 class MemberViewSet(viewsets.ModelViewSet):
@@ -54,11 +59,15 @@ class EventViewSet(viewsets.ModelViewSet):
 
 
 # ---------- Attendance
-class AttendanceSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Attendance
-        fields = ('pk',)  # FIXME
-        #fields = ('member', 'event')
+class AttendanceSerializer(serializers.Serializer):
+    member = serializers.PrimaryKeyRelatedField(queryset=Member.objects.all())
+    event = serializers.PrimaryKeyRelatedField(queryset=Event.objects.all())
+    checkin_time = serializers.DateTimeField(read_only=True)
+
+    def create(self, validated_data):
+        obj = Attendance(checkin_time=timezone.now(), **validated_data)
+        obj.save()
+        return obj
 
 
 class AttendanceViewSet(viewsets.ModelViewSet):
