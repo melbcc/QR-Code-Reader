@@ -73,3 +73,4 @@ class Event(models.Model):
 class Attendance(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     member = models.ForeignKey(Member, on_delete=models.CASCADE)
+    checkin_time = models.DateTimeField('checkin time', null=True, blank=True)

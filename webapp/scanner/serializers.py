@@ -1,4 +1,5 @@
 from rest_framework import serializers, viewsets, generics
+from django.utils import timezone
 
 from .models import Member
 from .models import Location
@@ -61,9 +62,10 @@ class EventViewSet(viewsets.ModelViewSet):
 class AttendanceSerializer(serializers.Serializer):
     member = serializers.PrimaryKeyRelatedField(queryset=Member.objects.all())
     event = serializers.PrimaryKeyRelatedField(queryset=Event.objects.all())
+    checkin_time = serializers.DateTimeField(read_only=True)
 
     def create(self, validated_data):
-        obj = Attendance(**validated_data)
+        obj = Attendance(checkin_time=timezone.now(), **validated_data)
         obj.save()
         return obj
 

@@ -64,7 +64,7 @@ class EventAdmin(admin.ModelAdmin):
 
 @admin.register(Attendance)
 class AttendanceAdmin(admin.ModelAdmin):
-    list_display = ('event', 'member')
+    list_display = ('event', 'member', 'checkin_time')
     search_fields = (
         'event__title',
         'member__first_name', 'member__last_name',
