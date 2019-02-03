@@ -26,6 +26,14 @@ class Member(models.Model):
         null=True, blank=True,
     )
 
+    @property
+    def status(self):
+        return self.STATUS_ID_CHOICES[self.status_id]
+
+    @property
+    def status_isok(self):
+        return (self.status_id <= 3)
+
     def __str__(self):
         return "{first_name} {last_name} [{membership_num}]".format(
             first_name=self.first_name,

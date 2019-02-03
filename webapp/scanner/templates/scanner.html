@@ -6,15 +6,20 @@
   <head>
     <link type="text/css" rel="stylesheet" href="/static/scanner/css/scanner.css"></link>
     <link type="text/css" rel="stylesheet" href="/static/scanner/css/spinner.css"></link>
+    <link type="text/css" rel="stylesheet" href="/static/scanner/css/checkboxes.css">
     <script src="/static/scanner/js/jquery.min.js"></script>
     <!-- TODO: on-screen keyboard
     one potential lib: https://github.com/Mottie/Keyboard
     <script src="/static/js/some-kb-lib.js"></script>
     <link rel="stylesheet" href="/static/style/keyboard-basic.min.css" type="text/css"></link>
     -->
+    <script>
+      var g_location = {{ location_json|safe }};
+      var g_events = {{ events_json|safe }};
+    </script>
     <script src="/static/scanner/js/scanner.js"></script>
   </head>
-  <body>
+  <body onload="resetPage();">
     <!-- ============== Scan ============== -->
     <div><a id="123"></a></div>
     <div class="screen" id="scan"><div class="section">
@@ -35,7 +40,7 @@
         </div>
       </div>
 
-      <form id="scanform" onsubmit="queryQRCode(); return false;">
+      <form id="scanform" onsubmit="submitScan(); return false;">
         <input name="contact_id" type="text" size="35" />
       </form>
     </div></div>
@@ -43,41 +48,62 @@
     <!-- ============== Sign in as Guest ============== -->
     <div class="screen" id="signin"><div class="section">
       <h1>Sign in as Guest</h1>
-      <form>
-        <input name="Name" type="text" size="45" />
+      <form id="guestform">
+        <p>
+          Name: <input name="name" type="text" size="45">
+        </p>
+        <p>
+          Email Address: <input name="email" type="text" size="45">
+        </p>
         <input type="submit" />
       </form>
     </div></div>
 
     <ul>
-      <li>Name: <span id="first_name"></span> <span id="last_name"></span></li>
-      <li>Status: <span id="status_id"></span></li>
+      <li>Name: <span class="first_name"></span> <span class="last_name"></span></li>
+      <li>Status: <span class="status_name"></span></li>
     </ul>
 
 
     <!-- ============== Event Selection ============== -->
     <div class="screen" id="events"><div class="section">
-      <h1>Select Event</h1>
-      <p>Which event are you attending?</p>
-      <form>
-        <input type="radio" name="event" value="0" checked>Event 1<br />
-        <input type="radio" name="event" value="1">Event 2<br />
-        <input type="radio" name="event" value="2">Event 3<br />
-        <input type="radio" name="event" value="3">Event 4<br />
-        <input type="radio" name="event" value="4">Event 5<br />
-        <input type="submit" />
+      <h2>Hello <span class="first_name"></span></h2>
+      <h3>Which event are you attending?</h3>
+      <form class="form" id="eventform">
+        {% for event in events %}
+        <div class="radiocheck">
+          <input id="ev{{ event.pk }}" name="event" class="radio" type="radio"/>
+          <label for="ev{{ event.pk }}">{{ event.title }}</label>
+        </div>
+        {% endfor %}
+        <div class="tile tile-large">
+          <div class="button" onclick="submitEvent();">Check In</div>
+        </div>
       </form>
     </div></div>
 
     <!-- ============== Recording Attendance ============== -->
-    <div class="screen" id="recording"><div class="section">
-      <h1>Saving</h1>
+    <div class="screen" id="saving"><div class="section">
+      <h1>Checking In</h1>
       <div class="spinner"></div>
+      <form id="attendanceform">
+        {% csrf_token %}
+        <input type="hidden" name="member_pk">
+        <input type="hidden" name="event_pk">
+      </form>
     </div></div>
 
     <!-- ============== Welcome ============== -->
     <div class="screen" id="welcome"><div class="section">
-      <h1>Welcome!</h1>
+      <h2>Welcome <span class="first_name"></span>!</h2>
+      <p>
+        You're attending: <b><span class="event_name"></span></b>.
+      </p>
+      <p>
+        Your membership status is: <b><span class="status_name"></span></b>
+      </p>
+
+
     </div></div>
   </body>
 </html>
