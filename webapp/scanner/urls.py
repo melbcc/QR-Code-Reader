@@ -9,6 +9,8 @@ urlpatterns = [
     path(r'config/location', views.ConfigLocationView.as_view(), name='scanner-config-location'),
     path(r'config/events', views.ConfigEventsView.as_view(), name='scanner-config-events'),
     path(r'scan', views.ScannerView.as_view(), name='scanner-scan'),
+    path(r'att/select', views.AttendanceSelect.as_view(), name='attendance-select'),
+    path(r'att/<int:event_pk>', views.AttendanceList.as_view(), name='attendance-list'),
 ]
 
 # ----- REST API

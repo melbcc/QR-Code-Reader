@@ -4,7 +4,7 @@
     <link type="text/css" rel="stylesheet" href="/static/scanner/css/config.css">
     <style>
       li {
-        padding: 2vh;
+        padding: 1.5vh;
       }
     </style>
   </head>
@@ -21,6 +21,7 @@
             or
             <a href="{% url 'scanner-config-events' %}?clear_location=1&clear_events=1">Event</a>
           </li>
+          <li><a href="{% url 'attendance-select' %}">List attendees for an event</a></li>
           <li><a href="/admin">Browse the database</a></li>
           <li><a href="/api">Browse the REST API</a></li>
         </ul>

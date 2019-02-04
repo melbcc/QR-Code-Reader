@@ -8,7 +8,7 @@ from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
 from django.core.serializers.json import DjangoJSONEncoder
 
-from .models import Location, Event
+from .models import Location, Event, Attendance
 from .serializers import EventSerializer, LocationSerializer
 
 class RootView(generic.TemplateView):
@@ -134,5 +134,38 @@ class ScannerView(View):
                 # Jsonified Objects (for javascript)
                 'location_json': json.dumps(location_ser, cls=DjangoJSONEncoder),
                 'events_json': json.dumps(events_ser, cls=DjangoJSONEncoder),
+            },
+        )
+
+# ---------- Attendance List
+class AttendanceSelect(View):
+    template_name = 'attendance-select.html'
+
+    def get(self, request, *args, **kwargs):
+        event_pks = set(Attendance.objects.all().values_list('event', flat=True))
+        events = Event.objects.filter(pk__in=event_pks)
+
+        return render(
+            request,
+            self.template_name,
+            {
+                'events': events,
+            },
+        )
+
+
+class AttendanceList(View):
+    template_name = 'attendance-list.html'
+
+    def get(self, request, *args, **kwargs):
+        event_pk = int(kwargs['event_pk'])
+        event = Event.objects.filter(pk=event_pk).first()
+
+        return render(
+            request,
+            self.template_name,
+            {
+                'event': event,
+                'records': Attendance.objects.filter(event=event),
             },
         )

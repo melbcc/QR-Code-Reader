@@ -86,6 +86,12 @@ const resetPage = async () => {
     $('#scanform input[name=contact_id]').focus();
 }
 
+resetPage.in = (timeout_ms) => {
+    setTimeout(() => {
+        resetPage();
+    }, timeout_ms);
+}
+
 const submitScan = async () => {
     /* Run when submitting the QR-Code */
     // Get member
@@ -135,6 +141,7 @@ const submitEvent = async () => {
     var event_pk = event_id.match(/\d+$/)[0];
     var event_obj = await getEvent(event_pk);
     if (event_obj) { // just checking it exists
+        $('span.event_name').text(event_obj['title']);
         $('#attendanceform input[name=event_pk]').val(event_pk);
     }
 
@@ -170,4 +177,5 @@ const saveAttendance = (member_pk, event_pk) => {
 
     // Get
     jumpTo("welcome");
+    resetPage.in(3000); // 3 seconds
 }
