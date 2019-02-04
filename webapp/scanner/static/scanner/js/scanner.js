@@ -86,6 +86,12 @@ const resetPage = async () => {
     $('#scanform input[name=contact_id]').focus();
 }
 
+resetPage.in = (timeout_ms) => {
+    setTimeout(() => {
+        resetPage();
+    }, timeout_ms);
+}
+
 const submitScan = async () => {
     /* Run when submitting the QR-Code */
     // Get member
@@ -171,4 +177,5 @@ const saveAttendance = (member_pk, event_pk) => {
 
     // Get
     jumpTo("welcome");
+    resetPage.in(3000); // 3 seconds
 }
