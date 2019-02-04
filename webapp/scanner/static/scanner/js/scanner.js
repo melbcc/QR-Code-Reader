@@ -135,6 +135,7 @@ const submitEvent = async () => {
     var event_pk = event_id.match(/\d+$/)[0];
     var event_obj = await getEvent(event_pk);
     if (event_obj) { // just checking it exists
+        $('span.event_name').text(event_obj['title']);
         $('#attendanceform input[name=event_pk]').val(event_pk);
     }
 
