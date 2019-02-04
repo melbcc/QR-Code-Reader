@@ -142,11 +142,14 @@ class AttendanceSelect(View):
     template_name = 'attendance-select.html'
 
     def get(self, request, *args, **kwargs):
+        event_pks = set(Attendance.objects.all().values_list('event', flat=True))
+        events = Event.objects.filter(pk__in=event_pks)
+
         return render(
             request,
             self.template_name,
             {
-                'events': Event.objects.all(),  # TODO: narrow scope
+                'events': events,
             },
         )
 
