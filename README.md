@@ -23,7 +23,6 @@ I hope that is clearer as a project description.
 
 The php could be hosted on a Raspberry Pi web server as could the other components of the system.
 
-**The php script I am looking to develop is around items 2, 3 and 4. **
 
 Python could be used to handle 1 and 4. 
 
@@ -90,13 +89,8 @@ wget -O members-list.json https://www.melbpc.org.au ...
 ```
 to create a local copy.
 
-I was intending to use a python script to load the required fields and write them to a MariaDB file on the Rasp Pi from this but is made difficult (for me) because of the joined fields.
-
-See [`ReadFromJSON.py`](ReadFromJSON.py) 
-
-Another option to pursue is to use this query
-'https://www.melbpc.org.au/index.php/qrcheck/?contact_id=855'
-and python's Beautiful Soup and requests but to pull in from 3000 records could be very slow.  150 records took  a couple of minutes whereas the API route is very quick.
+PostgreSQL Cheatsheet
+https://gist.github.com/Kartones/dd3ff5ec5ea238d4c546
 
 EVENT DATABASE DESIGN
 1 table for events, should be built to sync with civi at a later date and have the same fields. 
