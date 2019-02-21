@@ -21,10 +21,8 @@ In broad terms the project was to
 
 I hope that is clearer as a project description.
 
-The php could be hosted on a Raspberry Pi web server as could the other components of the system.
+The application could be hosted on a Raspberry Pi web server.
 
-
-Python could be used to handle 1 and 4. 
 
 Item 1 seems best achieved as a rest api query from CiviCRM as it is quite quick.  A table join to get two additional fields adds to the complexity but we can pull the data into a JSON file and from there into a MariaDB on the Pi.  Maybe there is a more efficient, direct way of doing this.
 
@@ -108,5 +106,9 @@ User selects location then next, user is prompted to enter Sig name by selecting
 User is prompted to select meeting type or other.
 *Create event page - as we are not yet sure how planned events will work and if it will be feasible to download(at the moment not all events are in the civi database) 
 
+Extract attendances to text file with :
+```
+lynx --dump localhost:8000/att/1
+```
 
 
