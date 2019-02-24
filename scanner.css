@@ -1,0 +1,117 @@
+/* Hide Scrollbar */
+/* ref: https://stackoverflow.com/questions/16670931/#30680994 */
+html {
+    overflow: scroll;
+    overflow-x: hidden;
+}
+::-webkit-scrollbar {
+    width: 0px;  /* remove scrollbar space */
+    background: transparent;  /* optional: just make scrollbar invisible */
+}
+/* optional: show position indicator in red */
+::-webkit-scrollbar-thumb {
+    background: #FF0000;
+}
+
+
+html, body {
+    height: 100%;
+    margin: 0em;
+}
+
+.screen {
+    height: 100vh;
+    /*width: calc(100vw - 17px);*/
+    width: 100vw;
+    margin: 0;
+    padding: 0;
+    display: inline-block;
+
+}
+    .first_name {
+    color:#cc0066;
+    font-weight: bold;  
+    
+    }
+    
+    .status_name {
+    color:Lime;
+    font-size: 8vh;
+    font-weight: bold; 
+    
+    }    
+
+.section {
+    height: calc(100vh - 22vh);
+    /*width: calc(100vw - 22vh - 17px);*/
+    width: calc(100vw - 22vh);
+
+    /* border */
+    border: 0.8vh;
+    border-style: dashed;
+    border-radius: 8vh;
+    border-color: blue;
+
+    /* spacing */
+    margin: 5vh;
+    padding: 5vh;
+
+    /* Content */
+    font-size: 5vh;
+
+    /* background */
+    background: #eee;
+}
+
+.section h1 {
+    font-size: 10vh;
+    margin-top: 0;
+    text-align: center;
+}
+
+img.qrcode {
+    height: 30vh;
+    width: auto;
+}
+
+#recording img {
+    height: 50%;
+    width: auto;
+}
+
+.tile {
+    display: inline-block;
+    float: left;
+}
+
+.tile-large {
+    height: 50vh;
+    width: 30vw;
+}
+
+.tile-thin {
+    height: 50vh;
+    width: 20vw;
+}
+
+.tile-signinsml {
+}
+
+.tile h1,h2,h3,h4 {
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 2vh;
+}
+
+.button {
+    border: 2vh;
+    border-color: #00f;
+    border-radius: 2vh;
+    background: #55f;
+    padding: 1vh 2vh;
+    text-align: center;
+    font-weight: bold;
+    font-size: 10.7vh;
+    /* color: #000; */
+    color:#ff7f68;
+}
