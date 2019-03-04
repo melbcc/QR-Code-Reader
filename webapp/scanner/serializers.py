@@ -17,11 +17,22 @@ class MemberSerializer(serializers.Serializer):
     status = serializers.CharField()
     status_isok = serializers.BooleanField()
 
+    def get_object(self):
+    	queryset = self.get_queryset()  # Get the base queryset
+    	queryset = self.filter_queryset(queryset)
+    	filter = {}
+    	for field in self.lookup_fields:
+    	       if self.kwargs[field]:  # Ignore empty fields.
+    	          filter[field] = self.kwargs[field]
+    	return get_object_or_404(queryset, **filter)  # Lookup the object
+
 
 class MemberViewSet(viewsets.ModelViewSet):
     queryset = Member.objects.all()
     serializer_class = MemberSerializer
-    lookup_field = 'contact_id'
+#    lookup_field = 'contact_id'
+    lookup_fields = ('contact_id', 'membership_num')
+
 
 
 # ---------- Locations
@@ -73,3 +84,4 @@ class AttendanceSerializer(serializers.Serializer):
 class AttendanceViewSet(viewsets.ModelViewSet):
     queryset = Attendance.objects.all()
     serializer_class = AttendanceSerializer
+
