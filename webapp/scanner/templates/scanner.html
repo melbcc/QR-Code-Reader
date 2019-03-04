@@ -32,8 +32,22 @@
     <!-- ============== Scan ============== -->
     <div><a id="123"></a></div>
     <div class="screen" id="scan"><div class="section">
-      <h1>Sign In</h1>
-
+      <div style="display:inline-block; text-align:center;">
+        <div class="tile tile-large">
+          <h2 style="text-align:right">Sign In to Event :</h2>
+        </div>
+        <div class="tile tile-wide">
+          <!--<h2 style="text-align:right">Test :...................</h2> -->
+          <form class="form1" id="eventform1">
+            {% for event in events %}
+            <div class="radiocheck">
+              <input id="ev{{ event.pk }}" name="event" class="radio" type="radio" style="text-align:left"/>
+              <label for="ev{{ event.pk }}">{{ event.title }}</label>
+            </div>
+            {% endfor %}
+          </form>
+        </div>
+      </div>
       <div style="display:inline-block; text-align:center;">
         <div class="tile tile-large">
           <h2>Member</h2>
@@ -41,22 +55,25 @@
         </div>
         <div class="tile tile-thin">
           <span style="height:15vh; display:inline-block;">&nbsp;</span>
-          <h1>OR</h1>
+          <h2>OR</h2>
         </div>
         <div class="tile tile-large">
-          <h2>Guest</h2>
-          <div class="button" onclick="jumpTo('signin');">Sign in<br/>as Guest</div>
+          <div class="button" onclick="jumpTo('signin');">Sign in<br/>as Guest<br/><p6 style="color:green;">or using</p6><br/>Member Number</div>
         </div>
       </div>
-
-      <form id="scanform" onsubmit="submitScan(); return false;">
-        <input name="contact_id" type="text" size="35" />
-      </form>
+      <div style="display:inline-block; text-align:center;">
+        <div class="tile tile-signinsml">
+          <p1>Scan :</p1>
+          <form id="scanform" onsubmit="submitScan(); return false;">
+            <input name="contact_id" type="text" size="35" />
+          </form>
+        </div>
+      </div>
     </div></div>
 
     <!-- ============== Sign in as Guest ============== -->
     <div class="screen" id="signin"><div class="section">
-      <h1>Sign in as Guest</h1>
+      <h2>Sign in as Guest</h2>
       <form id="guestform">
         <p>
           Name: <input name="name" type="text" size="45">
@@ -66,13 +83,21 @@
         </p>
         <input type="submit" />
       </form>
+          <h4>OR</h4>
+      <h2>Sign in using Membership Number</h2>
+      <form id="membform">
+        <p>
+          Enter Membership Num : <input name="membership_num" type="text" size="35">
+        </p>
+        <input type="submit" />
+      </form>
     </div></div>
-
+<!--
     <ul>
       <li>Name: <span class="first_name"></span> <span class="last_name"></span></li>
       <li>Status: <span class="status_name"></span></li>
     </ul>
-
+-->
 
     <!-- ============== Event Selection ============== -->
     <div class="screen" id="events"><div class="section">
