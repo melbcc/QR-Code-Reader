@@ -16,7 +16,7 @@ const getMember = async (contact_id) => {
     //       otherwise return null
 
     // Send Query
-    const response = await fetch('/api/members/' + contact_id + '/');
+    const response = await fetch('/api/members_cid/' + contact_id + '/');
 
     // Return Member object or null
     var member_obj = null;
