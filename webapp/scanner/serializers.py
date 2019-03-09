@@ -17,11 +17,15 @@ class MemberSerializer(serializers.Serializer):
     status = serializers.CharField()
     status_isok = serializers.BooleanField()
 
-
-class MemberViewSet(viewsets.ModelViewSet):
+class MemberViewSetByCID(viewsets.ModelViewSet):
     queryset = Member.objects.all()
     serializer_class = MemberSerializer
     lookup_field = 'contact_id'
+
+class MemberViewSetByMemNo(viewsets.ModelViewSet):
+    queryset = Member.objects.all()
+    serializer_class = MemberSerializer
+    lookup_field = 'membership_num'
 
 
 # ---------- Locations
