@@ -1,11 +1,30 @@
 /* ========== Basic Navigation =========== */
-function jumpTo(h) {
+const defaultFormMap = {
+    "scan": '#scanform input[name=contact_id]',
+    "signin_guest": '#guestform input[name=first_name]',
+    "signin_memno": '#memnumform input[name=membership_num]'
+};
+
+const jumpTo = (h) => {
+    resetPage.cb_pending = false;
+
     // ref: https://stackoverflow.com/questions/13735912/#13736194
     var url = location.href;
     location.href = "#" + h;
     history.replaceState(null, null, url);
+
+    // Focus on input depending on page:
+    var focusElementCSS = defaultFormMap[h];
+    if (focusElementCSS !== undefined) {
+        $(focusElementCSS).focus();
+    }
 }
 
+jumpTo.in = (h, timeout_ms) => {
+    setTimeout(() => {
+        jumpTo(h);
+    }, timeout_ms);
+}
 
 /* ========== Local REST ========== */
 const getMember = async (contact_id) => {
@@ -60,6 +79,7 @@ const getLocationList = async () => {
 
 
 /* ========== Event Handlers ========== */
+/* ----- Reset ----- */
 const resetPage = async () => {
     // Body Text
     $('span.first_name').text('');
@@ -68,30 +88,41 @@ const resetPage = async () => {
     $('span.event_name').text('');
 
     /* Clear Form Data */
-    // Scan
-    $('#scanform input[name=contact_id]').val('');
-    // Guest
-    $('#guestform input[type=text]').val('');
     // Event Selection
     $('#eventform input[type=radio]').prop('checked', false);
+    // Scan
+    $('#scanform input[type=text]').val('');
+    // Guest
+    $('#guestform input[type=text]').val('');
+    // Membership Number
+    $('#memnumform input[type=text]').val('');
 
     // Attendance hidden form (in "saving" state)
     $('#attendanceform input[name=contact_id]').val('');
     $('#attendanceform input[name=event_pk]').val('');
 
     /* Move to top */
-    jumpTo("scan");
-
-    /* Focus Scan Input */
-    $('#scanform input[name=contact_id]').focus();
+    console.log(g_events);
+    if (g_events.length > 1) {
+        jumpTo("events"); // Select which event you're attending
+    } else {
+        jumpTo("scan"); // Only one event, just scan in
+    }
 }
 
 resetPage.in = (timeout_ms) => {
+    resetPage.cb_pending = true;
     setTimeout(() => {
-        resetPage();
+        if (resetPage.cb_pending) {
+            resetPage.cb_pending = false;
+            resetPage();
+        }
     }, timeout_ms);
 }
 
+resetPage.cb_pending = false; // callback pending (used to cancel reset)
+
+/* ----- Scan contact_id ----- */
 const submitScan = async () => {
     /* Run when submitting the QR-Code */
     // Get member
@@ -114,7 +145,12 @@ const submitScan = async () => {
     if (g_events.length > 1) {
         // Play sound
         $('#sound_scan')[0].play();
-        jumpTo("events");
+        if ($('#eventform input[name=event]:checked').length) {
+            // Event has already been selected
+            submitEvent();
+        } else {
+            jumpTo("events");
+        }
     } else {
         $('span.event_name').text(g_events[0]['title'])
         $('#attendanceform input[name=event_pk]').val(g_events[0]['pk']);
@@ -129,6 +165,7 @@ const submitScan = async () => {
     }
 }
 
+/* -----  ----- */
 const submitEvent = async () => {
     // Get Selected Event
     var event_id = $('#eventform input[name=event]:checked').prop('id');

@@ -111,7 +111,7 @@ img.qrcode {
     padding: 1vh 2vh;
     text-align: center;
     font-weight: bold;
-    font-size: 10.7vh;
-    /* color: #000; */
+    font-size: 10vh;
     color: #ff7f68;
+    margin: 2vh;
 }

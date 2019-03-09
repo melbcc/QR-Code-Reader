@@ -30,6 +30,32 @@
       <source src="/static/scanner/sound/error.mp3" type="audio/mpeg">
     </audio>
 
+
+    <!-- ============== Event Selection ============== -->
+    <div class="screen" id="events"><div class="section">
+      <h2>Hello <span class="first_name"></span></h2>
+      <h3>Which event are you attending?</h3>
+      <form class="form" id="eventform">
+        {% for event in events %}
+        <div class="radiocheck">
+          <input
+            id="ev{{ event.pk }}"
+            name="event"
+            class="radio"
+            type="radio"
+            onclick="jumpTo.in('scan', 300);"
+          />
+          <label for="ev{{ event.pk }}">{{ event.title }}</label>
+        </div>
+        {% endfor %}
+        <!--
+        <div class="tile tile-large">
+          <div class="button" onclick="submitEvent();">Check In</div>
+        </div>
+        -->
+      </form>
+    </div></div>
+
     <!-- ============== Scan ============== -->
     <div><a id="123"></a></div>
     <div class="screen" id="scan"><div class="section">
@@ -45,8 +71,8 @@
           <h1>OR</h1>
         </div>
         <div class="tile tile-large">
-          <h2>Guest</h2>
-          <div class="button" onclick="jumpTo('signin');">Sign in<br/>as Guest</div>
+          <div class="button" onclick="jumpTo('signin_guest');">Sign in<br/>as Guest</div>
+          <div class="button" onclick="jumpTo('signin_memno');">Member Number</div>
         </div>
       </div>
 
@@ -56,7 +82,7 @@
     </div></div>
 
     <!-- ============== Sign in as Guest ============== -->
-    <div class="screen" id="signin"><div class="section">
+    <div class="screen" id="signin_guest"><div class="section">
       <h1>Sign in as Guest</h1>
       <form id="guestform">
         <p>
@@ -70,28 +96,21 @@
       </form>
     </div></div>
 
+    <!-- ============== Sign in Member Number ============== -->
+    <div class="screen" id="signin_memno"><div class="section">
+      <h1>Enter Membership Number</h1>
+      <form id="memnumform">
+        <p>
+          Membership #: <input name="membership_num" type="text" size="20">
+        </p>
+        <input type="submit" />
+      </form>
+    </div></div>
+
     <ul>
       <li>Name: <span class="first_name"></span> <span class="last_name"></span></li>
       <li>Status: <span class="status_name"></span></li>
     </ul>
-
-
-    <!-- ============== Event Selection ============== -->
-    <div class="screen" id="events"><div class="section">
-      <h2>Hello <span class="first_name"></span></h2>
-      <h3>Which event are you attending?</h3>
-      <form class="form" id="eventform">
-        {% for event in events %}
-        <div class="radiocheck">
-          <input id="ev{{ event.pk }}" name="event" class="radio" type="radio"/>
-          <label for="ev{{ event.pk }}">{{ event.title }}</label>
-        </div>
-        {% endfor %}
-        <div class="tile tile-large">
-          <div class="button" onclick="submitEvent();">Check In</div>
-        </div>
-      </form>
-    </div></div>
 
     <!-- ============== Recording Attendance ============== -->
     <div class="screen" id="saving"><div class="section">
