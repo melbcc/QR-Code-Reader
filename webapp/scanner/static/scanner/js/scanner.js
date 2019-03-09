@@ -10,8 +10,7 @@ const jumpTo = (h) => {
 
     // ref: https://stackoverflow.com/questions/13735912/#13736194
     var url = location.href;
-    location.href = "#" + h;
-    history.replaceState(null, null, url);
+    window.location.replace('#' + h);
 
     // Focus on input depending on page:
     var focusElementCSS = defaultFormMap[h];
