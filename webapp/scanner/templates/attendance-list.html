@@ -22,7 +22,7 @@
       </a>
     </div>
 
-    <h3>{{ event.title }}:</h3>
+    <h3>{{ event.title }}: (<a href="{% url 'attendance-csv' event.pk %}">csv</a>)</h3>
     {% if records %}
     <table>
       <tr><th>Name</th><th>Time</th></tr>

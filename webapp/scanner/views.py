@@ -1,5 +1,6 @@
 import re
 import json
+import csv
 
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseBadRequest
@@ -169,3 +170,34 @@ class AttendanceList(View):
                 'records': Attendance.objects.filter(event=event),
             },
         )
+
+
+class AttendanceListCSV(View):
+    def get(self, request, *args, **kwargs):
+        # Get event
+        event_pk = int(kwargs['event_pk'])
+        event = Event.objects.filter(pk=event_pk).first()
+
+        # Set filename
+        filename = "{event_title}_({datestamp}).csv".format(
+            event_title=re.sub(r'[^0-9a-zA-Z]', '-', event.title),
+            datestamp=event.start_time.strftime("%Y-%m-%d_%H:%M:%S"),
+        )
+
+        # Create the HttpResponse object with the appropriate CSV header.
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="{filename}"'.format(
+            filename=filename,
+        )
+
+        # Create CSV
+        writer = csv.writer(response)
+        writer.writerow(['CHECKIN_TIME', 'MEMBER'])
+        for att in Attendance.objects.filter(event=event):
+            writer.writerow([
+                att.checkin_time.strftime("%Y-%m-%d %H:%M:%S"),
+                str(att.member),
+            ])
+
+        # Return HTTP response
+        return response
