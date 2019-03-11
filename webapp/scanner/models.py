@@ -52,7 +52,7 @@ class Location(models.Model):
 class Event(models.Model):
     remote_key = models.CharField(max_length=20, unique=True)
     title = models.CharField(max_length=200)
-    location = models.ForeignKey(Location, on_delete=models.CASCADE)
+    location = models.ForeignKey(Location, on_delete=models.CASCADE, null=True)
     start_time = models.DateTimeField('start time')
 
     def __str__(self):
