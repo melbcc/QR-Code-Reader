@@ -151,7 +151,9 @@ class Command(BaseCommand):
                 remote_key=event_dict['id'],
                 defaults={
                     'title': event_dict['title'],
-                    'start_time': event_dict['start_date'],
+                    'start_time': pytz.utc.localize(datetime.strptime(
+                        event_dict['start_date'], '%Y-%m-%d %H:%M:%S'
+                    )),
                     #'location': event_dict['loc_block_id'],
                 }
             )
