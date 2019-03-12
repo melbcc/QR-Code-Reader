@@ -4,9 +4,10 @@ import re
 import argparse
 from datetime import datetime
 import pytz
+import json
 
 from django.core.management.base import BaseCommand, CommandError
-from scanner.models import Member
+from scanner.models import Member, Event
 
 
 class Command(BaseCommand):
@@ -110,10 +111,53 @@ class Command(BaseCommand):
         )
 
     def import_events(self, *args, **kwargs):
-        self.stdout.write(self.style.NOTICE('Events'))
-        count = {'created': 0, 'updated': 0}
+        """
+        CiviCRM API URL sample::
 
-        # TODO
+            https://www.melbpc.org.au/wp-content/plugins/civicrm/civicrm/extern/rest.php?entity=Event&action=get&api_key=userkey&key=sitekey&json={"sequential":1,"return":"id,title,start_date,description,loc_block_id"}
+
+        Working URL::
+
+            https://www.melbpc.org.au/wp-content/plugins/civicrm/civicrm/extern/rest.php?entity=Event&action=get&api_key=userkey&key=sitekey&json=event_id&return=id,title,start_date,description,loc_block_id
+
+        """
+        self.stdout.write(self.style.NOTICE('Events'))
+        self.stdout.write('Fetching data from CiviCRM ...')
+        params = [
+            'entity=Event',
+            'action=get',
+            'api_key={}'.format(kwargs['api_key']),
+            'key={}'.format(kwargs['key']),
+            'json=event_id',
+            #'sequential=1',
+            'return={}'.format(','.join([
+                'id',
+                'title',
+                'start_date',
+                #'description',
+                'loc_block_id',
+            ])),
+            'options[limit]=0',
+        ]
+        request = requests.get(self.REST_URL_BASE + '?' + '&'.join(params))
+        raw_data = request.json()
+        self.stdout.write('   ' + self.style.SUCCESS('[ok]') + ' received data for {} events'.format(raw_data['count']))
+
+        # Just return iterator for each member dict
+        self.stdout.write('Writing to local database ...')
+        count = {'created': 0, 'updated': 0}
+        for event_dict in raw_data['values'].values():
+            (event, created) = Event.objects.update_or_create(
+                remote_key=event_dict['id'],
+                defaults={
+                    'title': event_dict['title'],
+                    'start_time': pytz.utc.localize(datetime.strptime(
+                        event_dict['start_date'], '%Y-%m-%d %H:%M:%S'
+                    )),
+                    #'location': event_dict['loc_block_id'],
+                }
+            )
+            count['created' if created else 'updated'] += 1
 
         self.stdout.write(
             '   ' + self.style.SUCCESS('[ok]') + ' ' +
