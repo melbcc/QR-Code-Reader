@@ -1,17 +1,31 @@
 from django.db import models
 from django.utils import timezone
 
+# ================================================
+#          CiviCRM Mirrored Models
+# ================================================
+# All models with a 'remote_key' parameter are intended to be a partial
+# mirror of the CiviCRM database.
+# The 'remote_key' links the unique database entries on the remote system with
+# the duplicate copied onto the RaspberryPi's local database.
 
-class Member(models.Model):
-    # Personal Data
+class Contact(models.Model):
+    remote_key = models.CharField(max_length=20)  # CiviCRM primary key
     first_name = models.CharField(max_length=200)
     last_name = models.CharField(max_length=200)
-    postal_code = models.CharField(max_length=20)
+    membership_num = models.CharField(max_length=20, blank=True, null=True)  # custom_8
 
-    # Membership & Status
-    contact_id = models.CharField(max_length=20)
-    membership_num = models.CharField(max_length=20)
+    def __str__(self):
+        return '{first_name} {last_name}'.format(
+            first_name=self.first_name,
+            last_name=self.last_name,
+        )
+
+
+class Membership(models.Model):
+    remote_key = models.CharField(max_length=20)  # CiviCRM primary key
     end_date = models.DateTimeField('membership end', null=True, blank=True)
+    contact = models.ForeignKey(Contact, on_delete=models.CASCADE)
 
     STATUS_ID_CHOICES = {
         2: "CURRENT",
@@ -34,25 +48,37 @@ class Member(models.Model):
     def status_isok(self):
         return (self.status_id <= 3)
 
+    @property
+    def membership_num(self):
+        return self.contact.membership_num
+
+    @property
+    def first_name(self):
+        return self.contact.first_name
+
+    @property
+    def last_name(self):
+        return self.contact.last_name
+
     def __str__(self):
-        return "{first_name} {last_name} [{membership_num}]".format(
-            first_name=self.first_name,
-            last_name=self.last_name,
+        return "{contact} [{membership_num}]".format(
+            contact=self.contact,
             membership_num=self.membership_num,
         )
 
 
 class Location(models.Model):
-    name = models.CharField(max_length=200, blank=True)
     remote_key = models.CharField(max_length=20)
+    name = models.CharField(max_length=200, blank=True)
 
     def __str__(self):
         return self.name
 
+
 class Event(models.Model):
     remote_key = models.CharField(max_length=20, unique=True)
     title = models.CharField(max_length=200)
-    location = models.ForeignKey(Location, on_delete=models.CASCADE, null=True)
+    location = models.ForeignKey(Location, on_delete=models.CASCADE, blank=True, null=True)
     start_time = models.DateTimeField('start time')
 
     def __str__(self):
@@ -70,7 +96,12 @@ class Event(models.Model):
         return self.start_time.timestamp()
 
 
+# ================================================
+#          Local Only Models
+# ================================================
+# as opposed to those above that are mirrored from CiviCRM
+
 class Attendance(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
-    member = models.ForeignKey(Member, on_delete=models.CASCADE)
+    member = models.ForeignKey(Membership, on_delete=models.CASCADE)
     checkin_time = models.DateTimeField('checkin time', null=True, blank=True)

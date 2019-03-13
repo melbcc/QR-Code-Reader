@@ -1,14 +1,14 @@
 from rest_framework import serializers, viewsets, generics
 from django.utils import timezone
 
-from .models import Member
+from .models import Membership
 from .models import Location
 from .models import Event
 from .models import Attendance
 
 
 # ---------- Members
-class MemberSerializer(serializers.Serializer):
+class MembershipSerializer(serializers.Serializer):
     pk = serializers.IntegerField()
     first_name = serializers.CharField()
     last_name = serializers.CharField()
@@ -17,15 +17,15 @@ class MemberSerializer(serializers.Serializer):
     status = serializers.CharField()
     status_isok = serializers.BooleanField()
 
-class MemberViewSetByCID(viewsets.ModelViewSet):
-    queryset = Member.objects.all()
-    serializer_class = MemberSerializer
-    lookup_field = 'contact_id'
+class MembershipViewSetByCID(viewsets.ModelViewSet):
+    queryset = Membership.objects.all()
+    serializer_class = MembershipSerializer
+    lookup_field = 'contact__remote_key'
 
-class MemberViewSetByMemNo(viewsets.ModelViewSet):
-    queryset = Member.objects.all()
-    serializer_class = MemberSerializer
-    lookup_field = 'membership_num'
+class MembershipViewSetByMemNo(viewsets.ModelViewSet):
+    queryset = Membership.objects.all()
+    serializer_class = MembershipSerializer
+    lookup_field = 'contact__membership_num'
 
 
 # ---------- Locations
@@ -64,7 +64,7 @@ class EventViewSet(viewsets.ModelViewSet):
 
 # ---------- Attendance
 class AttendanceSerializer(serializers.Serializer):
-    member = serializers.PrimaryKeyRelatedField(queryset=Member.objects.all())
+    member = serializers.PrimaryKeyRelatedField(queryset=Membership.objects.all())
     event = serializers.PrimaryKeyRelatedField(queryset=Event.objects.all())
     checkin_time = serializers.DateTimeField(read_only=True)
 

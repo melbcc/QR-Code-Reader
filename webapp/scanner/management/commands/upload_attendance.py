@@ -2,7 +2,7 @@ import os
 import requests
 
 from django.core.management.base import BaseCommand, CommandError
-from scanner.models import Member
+from scanner.models import Membership
 
 
 class Command(BaseCommand):

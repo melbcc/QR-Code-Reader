@@ -20,8 +20,6 @@ from django.conf.urls import url, include
 from django.contrib.auth.models import User
 from rest_framework import routers, serializers, viewsets
 
-from scanner.models import Member
-
 
 class MyDefaultRouter(routers.DefaultRouter):
     """
