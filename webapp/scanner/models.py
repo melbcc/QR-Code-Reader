@@ -103,5 +103,5 @@ class Event(models.Model):
 
 class Attendance(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
-    member = models.ForeignKey(Membership, on_delete=models.CASCADE)
+    contact = models.ForeignKey(Contact, on_delete=models.CASCADE)
     checkin_time = models.DateTimeField('checkin time', null=True, blank=True)

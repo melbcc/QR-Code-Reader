@@ -7,11 +7,14 @@ from .models import Contact, Membership, Location, Event, Attendance
 @admin.register(Contact)
 class ContactAdmin(admin.ModelAdmin):
     list_display = (
-        'remote_key', 'first_name', 'last_name', 'membership_num',
+        'first_name', 'last_name', 'contact_id', 'membership_num',
     )
     search_fields = (
         'first_name', 'last_name', 'remote_key', 'membership_num',
     )
+
+    def contact_id(self, obj):
+        return obj.remote_key
 
 
 @admin.register(Membership)
@@ -76,9 +79,9 @@ class EventAdmin(admin.ModelAdmin):
 
 @admin.register(Attendance)
 class AttendanceAdmin(admin.ModelAdmin):
-    list_display = ('event', 'member', 'checkin_time')
+    list_display = ('event', 'contact', 'checkin_time')
     search_fields = (
         'event__title',
-        'member__first_name', 'member__last_name',
-        'member__membership_num', 'member__contact__remote_key',
+        'contact__first_name', 'contact__last_name',
+        'contact__membership_num', 'contact__remote_key',
     )

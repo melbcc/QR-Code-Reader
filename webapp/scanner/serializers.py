@@ -13,7 +13,7 @@ class MembershipSerializer(serializers.Serializer):
     first_name = serializers.CharField()
     last_name = serializers.CharField()
     membership_num = serializers.CharField()
-    contact_id = serializers.CharField()
+    contact_id = serializers.CharField()  # nb: local database's pk for contact
     status = serializers.CharField()
     status_isok = serializers.BooleanField()
 
@@ -64,7 +64,7 @@ class EventViewSet(viewsets.ModelViewSet):
 
 # ---------- Attendance
 class AttendanceSerializer(serializers.Serializer):
-    member = serializers.PrimaryKeyRelatedField(queryset=Membership.objects.all())
+    contact = serializers.PrimaryKeyRelatedField(queryset=Contact.objects.all())
     event = serializers.PrimaryKeyRelatedField(queryset=Event.objects.all())
     checkin_time = serializers.DateTimeField(read_only=True)
 

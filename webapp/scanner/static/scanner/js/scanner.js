@@ -125,7 +125,7 @@ const resetPage = async () => {
     // Save error message
     $('span.error_msg').text('');
     // Attendance hidden form (in "saving" state)
-    $('#attendanceform input[name=member_pk]').val('');
+    $('#attendanceform input[name=contact_pk]').val('');
     $('#attendanceform input[name=event_pk]').val('');
 
     /* Move to top */
@@ -185,7 +185,7 @@ const continueWithMember = (member) => {
     $('span.last_name').text(member['last_name']);
     $('span.status_name').text(member['status']);
     // Set Member for attendance record
-    $('#attendanceform input[name=member_pk]').val(member['pk']);
+    $('#attendanceform input[name=contact_pk]').val(member['contact_id']);
 
     // Play Sound
     if (member['status_isok']) {
@@ -230,12 +230,17 @@ const submitMemberNumber = async () => {
     continueWithMember(member_obj);
 }
 
+/* ----- Guest ----- */
+const submitGuest = async () => {
+    // Create or Get
 
-const saveAttendance = (member_pk, event_pk) => {
+}
+
+const saveAttendance = (contact_pk, event_pk) => {
     // Submit Attendance to REST API
     attendance_obj = {
         "csrfmiddlewaretoken": $('#attendanceform input[name=csrfmiddlewaretoken]').val(),
-        "member": member_pk,
+        "contact": contact_pk,
         "event": event_pk
     }
     console.log(attendance_obj);
@@ -262,7 +267,7 @@ const saveAttendance = (member_pk, event_pk) => {
 
 saveAttendance.fromForm = () => {
     saveAttendance(
-        $('#attendanceform input[name=member_pk]').val(),
+        $('#attendanceform input[name=contact_pk]').val(),
         $('#attendanceform input[name=event_pk]').val()
     );
 }
