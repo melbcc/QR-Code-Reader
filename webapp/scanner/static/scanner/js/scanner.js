@@ -177,28 +177,18 @@ const submitEvent = async () => {
     jumpTo("scan");
 }
 
-/* ----- Scan contact_id ----- */
-const submitScan = async () => {
-    /* Run when submitting the QR-Code */
-    // Get member
-    var qrtext = $('#scanform input[name=contact_id]').val();
-    const member_obj = await getMember.byContactID(qrtext);
-
-    if (member_obj) {
-        // Inform user of status
-        $('span.first_name').text(member_obj['first_name']);
-        $('span.last_name').text(member_obj['last_name']);
-        $('span.status_name').text(member_obj['status']);
-        // Set Member for attendance record
-        $('#attendanceform input[name=member_pk]').val(member_obj['pk']);
-    } else {
-        resetPage();
-        // Do nothing; just reset the page
-        return;
-    }
+/* ----- Member identified ----- */
+const continueWithMember = (member) => {
+    // param: member = object as returned by getMember()
+    // Inform user of status
+    $('span.first_name').text(member['first_name']);
+    $('span.last_name').text(member['last_name']);
+    $('span.status_name').text(member['status']);
+    // Set Member for attendance record
+    $('#attendanceform input[name=member_pk]').val(member['pk']);
 
     // Play Sound
-    if (member_obj['status_isok']) {
+    if (member['status_isok']) {
         playSound('sound_scan');
     } else {
         playSound('sound_error');
@@ -209,7 +199,37 @@ const submitScan = async () => {
     saveAttendance.fromForm();
 }
 
+/* ----- Scan contact_id ----- */
+const submitScan = async () => {
+    /* Run when submitting the QR-Code */
+    // Get member
+    var qrtext = $('#scanform input[name=contact_id]').val();
+    const member_obj = await getMember.byContactID(qrtext);
+
+    if (!member_obj) {
+        resetPage();
+        // Do nothing; just reset the page
+        return;
+    }
+
+    continueWithMember(member_obj);
+}
+
 /* ----- Membership Number ----- */
+const submitMemberNumber = async () => {
+    // Get member (by their membership number)
+    var membership_num = $('#memnumform input[name=membership_num]').val();
+    const member_obj = await getMember.byMemberNum(membership_num);
+
+    if (!member_obj) {
+        resetPage();
+        // Do nothing; just reset the page
+        return;
+    }
+
+    continueWithMember(member_obj);
+}
+
 
 const saveAttendance = (member_pk, event_pk) => {
     // Submit Attendance to REST API
