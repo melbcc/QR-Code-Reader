@@ -6,7 +6,7 @@ from scanner.models import Membership
 
 
 class Command(BaseCommand):
-    help = "Import members from CiviCRM"
+    help = "Export recorded attendance to CiviCRM"
 
     REST_URL_BASE = 'https://www.melbpc.org.au/wp-content/plugins/civicrm/civicrm/extern/rest.php'
 
@@ -19,6 +19,13 @@ class Command(BaseCommand):
         group.add_argument(
             '--apikey', dest='api_key', default=os.environ.get('CIVICRM_APIKEY', None),
             help="key the second (default: environment variable CIVICRM_APIKEY)",
+        )
+
+        group = parser.add_argument_group('Export Options')
+        group.add_argument(
+            '--ignore-guests', dest='create_guests',
+            default=True, const=False, action='store_const',
+            help="if set, Contacts are not created; guest attendance is ignored",
         )
 
     def handle(self, *args, **options):
