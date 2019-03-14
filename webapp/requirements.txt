@@ -2,6 +2,9 @@
 Django
 django-extensions
 djangorestframework
+django-appconf
+django-phonenumber-field
+phonenumbers
 
 # Database
 pymysql

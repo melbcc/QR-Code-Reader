@@ -6,6 +6,7 @@ First start the [database service](../database)
 
 ```bash
 # Install required libraries
+python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 
 # Initialize Database

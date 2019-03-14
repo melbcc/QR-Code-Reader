@@ -1,31 +1,50 @@
 from rest_framework import serializers, viewsets, generics
 from django.utils import timezone
 
-from .models import Member
+from .models import Contact
+from .models import Membership
 from .models import Location
 from .models import Event
 from .models import Attendance
 
 
+# ---------- Contacts
+class ContactSerializer(serializers.Serializer):
+    pk = serializers.IntegerField(read_only=True)
+    first_name = serializers.CharField()
+    last_name = serializers.CharField()
+    email_address = serializers.CharField(required=False)
+    mobile_number = serializers.CharField(required=False)
+
+    def create(self, validated_data):
+        obj = Contact(**validated_data)
+        obj.save()
+        return obj
+
+class ContactViewSet(viewsets.ModelViewSet):
+    queryset = Contact.objects.all()
+    serializer_class = ContactSerializer
+
+
 # ---------- Members
-class MemberSerializer(serializers.Serializer):
+class MembershipSerializer(serializers.Serializer):
     pk = serializers.IntegerField()
     first_name = serializers.CharField()
     last_name = serializers.CharField()
     membership_num = serializers.CharField()
-    contact_id = serializers.CharField()
+    contact_id = serializers.CharField()  # nb: local database's pk for contact
     status = serializers.CharField()
     status_isok = serializers.BooleanField()
 
-class MemberViewSetByCID(viewsets.ModelViewSet):
-    queryset = Member.objects.all()
-    serializer_class = MemberSerializer
-    lookup_field = 'contact_id'
+class MembershipViewSetByCID(viewsets.ModelViewSet):
+    queryset = Membership.objects.all()
+    serializer_class = MembershipSerializer
+    lookup_field = 'contact__remote_key'
 
-class MemberViewSetByMemNo(viewsets.ModelViewSet):
-    queryset = Member.objects.all()
-    serializer_class = MemberSerializer
-    lookup_field = 'membership_num'
+class MembershipViewSetByMemNo(viewsets.ModelViewSet):
+    queryset = Membership.objects.all()
+    serializer_class = MembershipSerializer
+    lookup_field = 'contact__membership_num'
 
 
 # ---------- Locations
@@ -64,13 +83,24 @@ class EventViewSet(viewsets.ModelViewSet):
 
 # ---------- Attendance
 class AttendanceSerializer(serializers.Serializer):
-    member = serializers.PrimaryKeyRelatedField(queryset=Member.objects.all())
+    contact = serializers.PrimaryKeyRelatedField(queryset=Contact.objects.all())
     event = serializers.PrimaryKeyRelatedField(queryset=Event.objects.all())
     checkin_time = serializers.DateTimeField(read_only=True)
+    export_time = serializers.DateTimeField(read_only=True)
 
     def create(self, validated_data):
-        obj = Attendance(checkin_time=timezone.now(), **validated_data)
-        obj.save()
+        # Find pre-recorded attendance
+        obj = Attendance.objects.filter(
+            contact=validated_data['contact'],
+            event=validated_data['event'],
+        ).first()
+
+        if obj:  # Member has checked in multiple times
+            pass  # ignore
+        else:  # Create record of attendance
+            obj = Attendance(checkin_time=timezone.now(), **validated_data)
+            obj.save()
+
         return obj
 
 

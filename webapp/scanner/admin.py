@@ -1,18 +1,30 @@
 from django.contrib import admin
 from django.utils.html import format_html
 
-from .models import Member, Location, Event, Attendance
+from .models import Contact, Membership, Location, Event, Attendance
 
 
-# Register for Admin
-@admin.register(Member)
-class MemberAdmin(admin.ModelAdmin):
+@admin.register(Contact)
+class ContactAdmin(admin.ModelAdmin):
     list_display = (
-        'membership_num', 'contact_id',
-        'first_name', 'last_name', 'status_pill',
+        'first_name', 'last_name', 'contact_id', 'membership_num',
     )
     search_fields = (
-        'membership_num', 'contact_id', 'first_name', 'last_name',
+        'first_name', 'last_name', 'remote_key', 'membership_num',
+    )
+
+    def contact_id(self, obj):
+        return obj.remote_key
+
+
+@admin.register(Membership)
+class MembershipAdmin(admin.ModelAdmin):
+    list_display = (
+        'contact', 'membership_num', 'contact_id', 'status_pill',
+    )
+    search_fields = (
+        'contact__membership_num', 'contact__remote_key',
+        'contact__first_name', 'contact__last_name',
     )
 
     STATUS_PILL_STYLE = {
@@ -22,7 +34,7 @@ class MemberAdmin(admin.ModelAdmin):
         'DECEASED': ['background: #aaa', 'color: #fff', 'font-weight: bold'],
     }
     def status_pill(self, obj):
-        status_name = Member.STATUS_ID_CHOICES[obj.status_id]
+        status_name = Membership.STATUS_ID_CHOICES[obj.status_id]
         return format_html('<div style="{style}">{text}</div>'.format(
             style=';'.join([
                 'text-align: center',
@@ -33,6 +45,9 @@ class MemberAdmin(admin.ModelAdmin):
         ))
 
     status_pill.allow_tags = True
+
+    def contact_id(self, obj):
+        return obj.contact.remote_key
 
 
 @admin.register(Location)
@@ -64,9 +79,9 @@ class EventAdmin(admin.ModelAdmin):
 
 @admin.register(Attendance)
 class AttendanceAdmin(admin.ModelAdmin):
-    list_display = ('event', 'member', 'checkin_time')
+    list_display = ('event', 'contact', 'checkin_time', 'export_time')
     search_fields = (
         'event__title',
-        'member__first_name', 'member__last_name',
-        'member__membership_num', 'member__contact_id',
+        'contact__first_name', 'contact__last_name',
+        'contact__membership_num', 'contact__remote_key',
     )

@@ -7,7 +7,7 @@ import pytz
 import json
 
 from django.core.management.base import BaseCommand, CommandError
-from scanner.models import Member, Event
+from scanner.models import Membership, Event, Contact
 
 
 class Command(BaseCommand):
@@ -15,7 +15,8 @@ class Command(BaseCommand):
 
     REST_URL_BASE = 'https://www.melbpc.org.au/wp-content/plugins/civicrm/civicrm/extern/rest.php'
     VALID_ACTIONS = [
-        'members',
+        'contacts',
+        'memberships',
         'locations',
         'events',
     ]
@@ -48,9 +49,8 @@ class Command(BaseCommand):
             help="List of things to import: {!r}".format(self.VALID_ACTIONS),
         )
 
-    def import_members(self, *args, **kwargs):
-        """Method to download and iterate through member data"""
-        self.stdout.write(self.style.NOTICE('Members'))
+    def import_contacts(self, *args, **kwargs):
+        self.stdout.write(self.style.NOTICE('Contacts'))
         self.stdout.write('Fetching data from CiviCRM ...')
         params = [
             'entity=Contact',
@@ -58,56 +58,85 @@ class Command(BaseCommand):
             'api_key={}'.format(kwargs['api_key']),
             'key={}'.format(kwargs['key']),
             'json=contact_id',
-            'return=contact_id,last_name,first_name,postal_code,custom_8',
-            'api.Membership.get[custom_8,end_date,status_id.name]',
+            'return={}'.format(','.join([
+                'last_name',
+                'first_name',
+                #'postal_code',
+                'custom_8',  # membership_num
+            ])),
             'options[limit]=0',
         ]
         request = requests.get(self.REST_URL_BASE + '?' + '&'.join(params))
         raw_data = request.json()  # format: {'count': <int>, 'values': <members dict>, ... }
-        self.stdout.write('   ' + self.style.SUCCESS('[ok]') + ' received data for {} members'.format(raw_data['count']))
+        self.stdout.write('   ' + self.style.SUCCESS('[ok]') + ' received data for {} contacts'.format(raw_data['count']))
+
+        # Just return iterator for each member dict
+        self.stdout.write('Writing to local database ...')
+        count = {'created': 0, 'updated': 0}
+        for contact_dict in raw_data['values'].values():
+            (event, created) = Contact.objects.update_or_create(
+                remote_key=contact_dict['id'],
+                defaults={
+                    'first_name': contact_dict['first_name'],
+                    'last_name': contact_dict['last_name'],
+                    'membership_num': contact_dict.get('custom_8', None),
+                }
+            )
+            count['created' if created else 'updated'] += 1
+
+        self.stdout.write(
+            '   ' + self.style.SUCCESS('[ok]') + ' ' +
+            'Contacts imported (added {created}, updated {updated})'.format(**count)
+        )
+
+    def import_memberships(self, *args, **kwargs):
+        """Method to download and iterate through member data"""
+        self.stdout.write(self.style.NOTICE('Memberships'))
+        self.stdout.write('Fetching data from CiviCRM ...')
+        params = [
+            'entity=Membership',
+            'action=get',
+            'api_key={}'.format(kwargs['api_key']),
+            'key={}'.format(kwargs['key']),
+            'json=membership_id',
+            'return={}'.format(','.join([
+                'contact_id',
+                'end_date',
+                'status_id',
+            ])),
+            #'return=contact_id,last_name,first_name,postal_code,custom_8',
+            #'api.Membership.get[custom_8,end_date,status_id.name]',
+            'options[limit]=0',
+        ]
+        request = requests.get(self.REST_URL_BASE + '?' + '&'.join(params))
+        raw_data = request.json()  # format: {'count': <int>, 'values': <members dict>, ... }
+        self.stdout.write('   ' + self.style.SUCCESS('[ok]') + ' received data for {} memberships'.format(raw_data['count']))
 
         # Just return iterator for each member dict
         self.stdout.write('Writing to local database ...')
         count = {'created': 0, 'updated': 0}
         for member_dict in raw_data['values'].values():
-            # Nested fields
-            exp_date = None
-            status_id = None
-            contact_id = None
-            values = member_dict.get('api_Membership_get', {}).get('values', None)
-            if values:
-                # contact_id
-                contact_id = values[0].get('contact_id', None)
-                # exp_date
-                exp_date_str = values[0].get('end_date', None)
-                if exp_date_str:
-                    exp_date = pytz.utc.localize(datetime.strptime(
-                        exp_date_str, '%Y-%m-%d' #'%Y-%m-%d %H:%M:%S'
-                    ))
-                # status_id
-                status_id = values[0].get('status_id', None)
+            end_date = None
+            if 'end_date' in member_dict:
+                end_date = pytz.utc.localize(datetime.strptime(
+                    member_dict['end_date'], '%Y-%m-%d' #'%Y-%m-%d %H:%M:%S'
+                ))
+            contact = Contact.objects.filter(remote_key=member_dict['contact_id']).first()
 
-            # TODO: write to local database
-            if contact_id:
-                (member, created) = Member.objects.update_or_create(
-                    contact_id=contact_id,
+            if contact:
+                (member, created) = Membership.objects.update_or_create(
+                    remote_key=member_dict['id'],
                     defaults={
-                        # Personal Data
-                        'first_name': member_dict['first_name'],
-                        'last_name': member_dict['last_name'],
-                        'postal_code': member_dict['postal_code'],
-
-                        # Membership & Status
-                        'membership_num': member_dict['custom_8'],
-                        'end_date': exp_date,
-                        'status_id': status_id,
+                        'contact': contact,
+                        'end_date': end_date,
+                        'status_id': member_dict['status_id'],
                     }
                 )
                 count['created' if created else 'updated'] += 1
 
         self.stdout.write(
             '   ' + self.style.SUCCESS('[ok]') + ' ' +
-            'Members imported (added {created}, updated {updated})'.format(**count)
+            'Memberships imported (added {created}, updated {updated})'.format(**count)
         )
 
     def import_events(self, *args, **kwargs):
