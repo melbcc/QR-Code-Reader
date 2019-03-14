@@ -1,6 +1,8 @@
 from rest_framework import serializers, viewsets, generics
 from django.utils import timezone
 
+import re
+
 from .models import Contact
 from .models import Membership
 from .models import Location
@@ -15,6 +17,19 @@ class ContactSerializer(serializers.Serializer):
     last_name = serializers.CharField()
     email_address = serializers.CharField(required=False)
     mobile_number = serializers.CharField(required=False)
+
+    # copied from http://emailregex.com ... seems legit
+    EMAIL_REGEX = re.compile(r'^[a-z0-9_.+-]+@[a-z0-9-]+\.[a-z0-9-.]+$', re.IGNORECASE)
+
+    def validate_email_address(self, value):
+        if not isinstance(value, str):
+            raise serializers.ValidationError(
+                "invalid email address type: {!r} ({})".format(value, type(value))
+            )
+        value_clean = re.sub(r'\s', '', value)  # remove all white space
+        if not self.EMAIL_REGEX.search(value_clean):
+            raise serializers.ValidationError("invalid email address: {!r}".format(value))
+        return value_clean
 
     def create(self, validated_data):
         obj = Contact(**validated_data)
