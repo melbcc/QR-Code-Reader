@@ -1,7 +1,9 @@
 from django.db import models
 from django.utils import timezone
+from phonenumber_field.modelfields import PhoneNumberField
 
 from .conf import settings
+
 
 # ================================================
 #          CiviCRM Mirrored Models
@@ -20,7 +22,8 @@ class Contact(models.Model):
     # Guest Data
     #   If an instance of a Contact has no 'remote_key', then they're
     #   a guest; assumed to not already eixst as a contact.
-    email_address = models.CharField(max_length=200, null=True, blank=True)
+    email_address = models.EmailField(max_length=200, null=True, blank=True)
+    mobile_number = PhoneNumberField(blank=True)
 
     def __str__(self):
         return '{first_name} {last_name}'.format(

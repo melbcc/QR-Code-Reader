@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_extensions',
     'rest_framework',
+    'phonenumber_field',
 ]
 
 MIDDLEWARE = [
@@ -137,3 +138,7 @@ STATIC_URL = '/static/'
 
 # Session
 #SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
+
+# phonenumber_field
+PHONENUMBER_DB_FORMAT = 'E164'  # +614xxxxxxxx format
+PHONENUMBER_DEFAULT_REGION = 'AU'
