@@ -1,10 +1,15 @@
 from rest_framework import serializers, viewsets, generics
 from django.utils import timezone
 
+from .models import Contact
 from .models import Membership
 from .models import Location
 from .models import Event
 from .models import Attendance
+
+
+# ---------- Contacts
+# TODO: Create as guest
 
 
 # ---------- Members
@@ -67,10 +72,21 @@ class AttendanceSerializer(serializers.Serializer):
     contact = serializers.PrimaryKeyRelatedField(queryset=Contact.objects.all())
     event = serializers.PrimaryKeyRelatedField(queryset=Event.objects.all())
     checkin_time = serializers.DateTimeField(read_only=True)
+    export_time = serializers.DateTimeField(read_only=True)
 
     def create(self, validated_data):
-        obj = Attendance(checkin_time=timezone.now(), **validated_data)
-        obj.save()
+        # Find pre-recorded attendance
+        obj = Attendance.objects.filter(
+            contact=validated_data['contact'],
+            event=validated_data['event'],
+        ).first()
+
+        if obj:  # Member has checked in multiple times
+            pass  # ignore
+        else:  # Create record of attendance
+            obj = Attendance(checkin_time=timezone.now(), **validated_data)
+            obj.save()
+
         return obj
 
 

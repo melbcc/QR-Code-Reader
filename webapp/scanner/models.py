@@ -109,3 +109,4 @@ class Attendance(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     contact = models.ForeignKey(Contact, on_delete=models.CASCADE)
     checkin_time = models.DateTimeField('checkin time', null=True, blank=True)
+    export_time = models.DateTimeField('upload time', null=True, blank=True)
