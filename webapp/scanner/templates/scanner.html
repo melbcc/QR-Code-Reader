@@ -83,7 +83,8 @@
     <!-- ============== Sign in as Guest ============== -->
     <div class="screen" id="signin_guest"><div class="section">
       <h1>Sign in as Guest</h1>
-      <form id="guestform">
+      <form id="guestform" onsubmit="submitGuest(); return false;">
+        {% csrf_token %}
         <p>
           Name: First <input name="first_name" type="text" size="20">
           Last <input name="last_name" type="text" size="20">
@@ -91,6 +92,11 @@
         <p>
           Email Address: <input name="email" type="text" size="45">
         </p>
+        <!--
+        <p>
+          Mobile Phone: <input name="mobile" type="text" size="45">
+        </p>
+        -->
         <input type="submit" />
       </form>
     </div></div>

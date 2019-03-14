@@ -9,7 +9,21 @@ from .models import Attendance
 
 
 # ---------- Contacts
-# TODO: Create as guest
+class ContactSerializer(serializers.Serializer):
+    pk = serializers.IntegerField(read_only=True)
+    first_name = serializers.CharField()
+    last_name = serializers.CharField()
+    email_address = serializers.CharField(required=False)
+    mobile_number = serializers.CharField(required=False)
+
+    def create(self, validated_data):
+        obj = Contact(**validated_data)
+        obj.save()
+        return obj
+
+class ContactViewSet(viewsets.ModelViewSet):
+    queryset = Contact.objects.all()
+    serializer_class = ContactSerializer
 
 
 # ---------- Members

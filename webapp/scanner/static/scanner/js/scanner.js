@@ -232,10 +232,50 @@ const submitMemberNumber = async () => {
 
 /* ----- Guest ----- */
 const submitGuest = async () => {
-    // Create or Get
+    // Guest Data
+    contact_data = {
+        "csrfmiddlewaretoken": $('#guestform input[name=csrfmiddlewaretoken]').val(),
+        "first_name": $('#guestform input[name=first_name]').val(),
+        "last_name": $('#guestform input[name=last_name]').val(),
+        "email_address": $('#guestform input[name=email]').val(),
+        //"mobile_number": $('#guestform input[name=mobile]').val(),
+    }
+    console.log(contact_data);
+
+    jumpTo("saving");
+
+    // Create Contact
+    var response = $.post(
+        "/api/contact/",
+        contact_data,
+        (data) => {
+            console.log(data);
+        }
+    ).then(
+        (value) => { // success
+            console.log(value);
+            // Set guest values
+            $('span.first_name').text(value['first_name']);
+            $('span.last_name').text(value['last_name']);
+            $('span.status_name').text('GUEST');
+
+            // Remember contact id for attendance
+            $('#attendanceform input[name=contact_pk]').val(value['pk'])
+
+            // Save
+            saveAttendance.fromForm();
+        },
+        (reason) => { // failure
+            $('span.error_msg').text(reason.responseText);
+            console.error(reason);
+            playSound('sound_error');
+            resetPage.in(3000); // 3 seconds
+        }
+    );
 
 }
 
+/* ----- Record Attendance ----- */
 const saveAttendance = (contact_pk, event_pk) => {
     // Submit Attendance to REST API
     attendance_obj = {
