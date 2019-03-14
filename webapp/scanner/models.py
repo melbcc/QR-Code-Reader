@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 
+from .conf import settings
 # ================================================
 #          CiviCRM Mirrored Models
 # ================================================
@@ -88,8 +89,11 @@ class Event(models.Model):
     def is_upcoming(self):
         """True if event is a plausible candidate for a scanner"""
         delta = self.start_time - timezone.now()
-        delta_hours = delta.total_seconds() / (60 * 60)
-        return (-6 <= delta_hours <= 12)
+        return (  # check range
+            -settings.SCANNER_EVENT_UPCOMING_BEFORE
+            <= delta.total_seconds() <=
+            settings.SCANNER_EVENT_UPCOMING_AFTER
+        )
 
     @property
     def start_time_epoch(self):

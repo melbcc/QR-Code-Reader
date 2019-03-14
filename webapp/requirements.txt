@@ -2,6 +2,7 @@
 Django
 django-extensions
 djangorestframework
+django-appconf
 
 # Database
 pymysql
