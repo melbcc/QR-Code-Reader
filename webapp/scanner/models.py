@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 
 from .conf import settings
+
 # ================================================
 #          CiviCRM Mirrored Models
 # ================================================
@@ -11,10 +12,15 @@ from .conf import settings
 # the duplicate copied onto the RaspberryPi's local database.
 
 class Contact(models.Model):
-    remote_key = models.CharField(max_length=20)  # CiviCRM primary key
+    remote_key = models.CharField(max_length=20, null=True, blank=True)  # CiviCRM primary key
     first_name = models.CharField(max_length=200)
     last_name = models.CharField(max_length=200)
     membership_num = models.CharField(max_length=20, blank=True, null=True)  # custom_8
+
+    # Guest Data
+    #   If an instance of a Contact has no 'remote_key', then they're
+    #   a guest; assumed to not already eixst as a contact.
+    email_address = models.CharField(max_length=200, null=True, blank=True)
 
     def __str__(self):
         return '{first_name} {last_name}'.format(
