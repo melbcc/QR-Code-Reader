@@ -1,3 +1,13 @@
+/* ========== Setup =========== */
+const setupScannerPage = () => {
+    // Bind Events
+    $('.reset-button').click(() => { resetPage(); });
+    $('.error-dialog').click(() => { errorReset(); });
+
+    // Start with Reset
+    resetPage();
+};
+
 /* ========== Basic Navigation =========== */
 const defaultFormMap = {
     "scan": '#scanform input[name=contact_id]',
@@ -129,9 +139,12 @@ const resetPage = async () => {
     $('#attendanceform input[name=event_pk]').val('');
 
     /* Move to top */
-    jumpTo("events");
     if (g_events.length == 1) {
+        // only 1 event, automatically select it & submit
+        $('#eventform input[type=radio]').prop('checked', true);
         submitEvent();
+    } else {
+        jumpTo("events"); // user to select event
     }
 }
 
@@ -207,12 +220,11 @@ const submitScan = async () => {
     const member_obj = await getMember.byContactID(qrtext);
 
     if (!member_obj) {
-        resetPage();
-        // Do nothing; just reset the page
-        return;
+        $('#scanform input[type=text]').val(''); // clear form so new scan can follow it
+        errorSet("Member with contact_id '" + qrtext + "' could not be found", "Unknown");
+    } else {
+        continueWithMember(member_obj);
     }
-
-    continueWithMember(member_obj);
 }
 
 /* ----- Membership Number ----- */
@@ -222,12 +234,12 @@ const submitMemberNumber = async () => {
     const member_obj = await getMember.byMemberNum(membership_num);
 
     if (!member_obj) {
-        resetPage();
-        // Do nothing; just reset the page
-        return;
+        errorSet(
+            "Member with number '" + membership_num + "' could not be found", "Not Found"
+        );
+    } else {
+        continueWithMember(member_obj);
     }
-
-    continueWithMember(member_obj);
 }
 
 /* ----- Guest ----- */
@@ -266,10 +278,9 @@ const submitGuest = async () => {
             saveAttendance.fromForm();
         },
         (reason) => { // failure
-            $('span.error_msg').text(reason.responseText);
             console.error(reason);
-            playSound('sound_error');
-            resetPage.in(3000); // 3 seconds
+            jumpTo("signin_guest");
+            errorSet(reason.responseText);
         }
     );
 
@@ -297,10 +308,8 @@ const saveAttendance = (contact_pk, event_pk) => {
             resetPage.in(3000); // 3 seconds
         },
         (reason) => { // failure
-            $('span.error_msg').text(reason.responseText);
             console.error(reason);
-            playSound('sound_error');
-            resetPage.in(3000); // 3 seconds
+            errorSet(reason.responseText);
         }
     );
 }
@@ -310,4 +319,38 @@ saveAttendance.fromForm = () => {
         $('#attendanceform input[name=contact_pk]').val(),
         $('#attendanceform input[name=event_pk]').val()
     );
+}
+
+/* ----- Error Handling ----- */
+var err_lastActiveElement = undefined;
+
+const errorReset = () => {
+    // Re-focus element (if applicable)
+    if (err_lastActiveElement) {
+        err_lastActiveElement.focus();
+    }
+    err_lastActiveElement = undefined;
+
+    $('.error-dialog').hide();
+}
+
+const errorSet = (message, title) => {
+    // Title
+    if (title === undefined) {
+        title = 'Error';
+    }
+    $('.error-dialog .error-title').text(title);
+
+    // Message
+    $('.error-dialog .error-message').text(message);
+
+    // Remove focus from active elemnt (if applicable)
+    err_lastActiveElement = document.activeElement;
+    if (err_lastActiveElement) {
+        err_lastActiveElement.blur();
+    }
+
+    // Play Sound & Display
+    playSound('sound_error');
+    $('.error-dialog').show();
 }
