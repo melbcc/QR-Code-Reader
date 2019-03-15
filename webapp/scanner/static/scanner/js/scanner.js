@@ -1,8 +1,18 @@
+var err_lastActiveElement = undefined;
+
 /* ========== Setup =========== */
 const setupScannerPage = () => {
     // Bind Events
-    $('.reset-button').click(() => { resetPage(); });
-    $('.error-dialog').click(() => { errorReset(); });
+    $('.reset-button').click(() => {
+        resetPage();
+    });
+    $('.error-dialog').click(() => {
+        /* If an event triggers both resetPage(), and errorReset(),
+         * there's little guarentee for which will be called first (I think).
+         * To ensure resetPage() is called first, a small delay is set
+         */
+        errorReset.in(50);
+    });
 
     // Start with Reset
     resetPage();
@@ -116,6 +126,8 @@ const getLocationList = async () => {
 /* ========== Event Handlers ========== */
 /* ----- Reset ----- */
 const resetPage = async () => {
+    err_lastActiveElement = undefined;
+
     // Body Text
     $('span.first_name').text('');
     $('span.last_name').text('');
@@ -322,8 +334,6 @@ saveAttendance.fromForm = () => {
 }
 
 /* ----- Error Handling ----- */
-var err_lastActiveElement = undefined;
-
 const errorReset = () => {
     // Re-focus element (if applicable)
     if (err_lastActiveElement) {
@@ -333,6 +343,13 @@ const errorReset = () => {
 
     $('.error-dialog').hide();
 }
+
+errorReset.in = (timeout_ms) => {
+    setTimeout(() => {
+        errorReset();
+    }, timeout_ms);
+}
+
 
 const errorSet = (message, title) => {
     // Title
