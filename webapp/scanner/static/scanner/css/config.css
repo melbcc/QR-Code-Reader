@@ -1,8 +1,29 @@
 body {
+  font-family: sans-serif;
   font-size: 5vh;
   padding: 5vh;
 }
 
 h1,h2,h3,h4 {
   margin-top: 0;
+}
+
+.button {
+    cursor: pointer;
+    background: #55f;
+
+    /* border */
+    border: 2vh;
+    border-color: #00f;
+    border-radius: 2vh;
+
+    /* spacing */
+    padding: 1vh 3vh;
+    margin: 2vh;
+
+    /* text */
+    text-align: center;
+    font-weight: bold;
+    font-size: 8vh;
+    color: white;
 }
