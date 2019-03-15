@@ -138,9 +138,12 @@ const resetPage = async () => {
     $('#attendanceform input[name=event_pk]').val('');
 
     /* Move to top */
-    jumpTo("events");
     if (g_events.length == 1) {
+        // only 1 event, automatically select it & submit
+        $('#eventform input[type=radio]').prop('checked', true);
         submitEvent();
+    } else {
+        jumpTo("events"); // user to select event
     }
 }
 
