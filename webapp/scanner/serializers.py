@@ -61,6 +61,10 @@ class MembershipViewSetByMemNo(viewsets.ModelViewSet):
     serializer_class = MembershipSerializer
     lookup_field = 'contact__membership_num'
 
+    def get_object(self, *args, **kwargs):
+        self.kwargs[self.lookup_field] = self.kwargs[self.lookup_field].lstrip('0')
+        return super(MembershipViewSetByMemNo, self).get_object(*args, **kwargs)
+
 
 # ---------- Locations
 class LocationSerializer(serializers.HyperlinkedModelSerializer):
