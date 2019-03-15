@@ -96,7 +96,7 @@
           Mobile Phone: <input name="mobile" type="text" size="45">
         </p>
         -->
-        <input type="submit" />
+        <input type="submit" class="button" />
       </form>
     </div></div>
 
@@ -107,7 +107,7 @@
         <p>
           Membership #: <input name="membership_num" type="text" size="20">
         </p>
-        <input type="submit" />
+        <input type="submit" class="button" />
       </form>
     </div></div>
 
@@ -139,17 +139,28 @@
       <p>
         Your membership status is: <b><span class="status_name"></span></b>
       </p>
-
-
     </div></div>
 
     <!-- ============== Pemrmenant Overlays ============== -->
     <!-- Reset Button -->
-    <div class="reset-button">
-      <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 1000 1000" enable-background="new 0 0 1000 1000" xml:space="preserve">
-        <g><path d="M153.5,153.5C64.9,242.1,10,364.5,10,500c0,270.6,219.4,490,490,490c270.6,0,490-219.4,490-490c0-128.1-49.6-244.1-129.9-331.3l-99.8,99.8c55.1,61.7,89.6,142.3,89.6,231.5c0,192.9-157,349.9-349.9,349.9c-193,0-350-157-350-349.9c0-96.5,39.3-184,102.6-247.4l177.3,177.3V157.1V15.5V10H10L153.5,153.5L153.5,153.5z"/></g>
-      </svg>
-    </div>
+    <div class="button error-button reset-button square fixed-topright"><span>&#x21bb;</span></div>
+
+    <!-- Error Dialog -->
+    <div class="error-dialog"><div class="screen" id="welcome">
+      <div class="section">
+        <h1 class="error-title">Error</h1>
+        <div class="error-message">
+          ERROR TEXT
+        </div>
+        <div class="error-buttons">
+          <p>
+            <span class="button error-button">Close &times;</span>
+            OR
+            <span class="button error-button reset-button">Reset &#x21bb;</span>
+          </p>
+        </div>
+      </div>
+    </div></div>
 
   </body>
 </html>

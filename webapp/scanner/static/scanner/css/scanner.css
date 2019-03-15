@@ -15,6 +15,7 @@ html {
 
 
 html, body {
+    font-family: sans-serif;
     height: 100%;
     margin: 0em;
 }
@@ -99,30 +100,74 @@ img.qrcode {
 }
 
 .button {
+    cursor: pointer;
+    background: #55f;
+
+    /* border */
     border: 2vh;
     border-color: #00f;
     border-radius: 2vh;
-    background: #55f;
-    padding: 1vh 2vh;
+
+    /* spacing */
+    padding: 1vh 3vh;
+    margin: 2vh;
+
+    /* text */
     text-align: center;
     font-weight: bold;
     font-size: 10vh;
-    color: #ff7f68;
-    margin: 2vh;
+    color: white;
 }
 
-.reset-button {
-    border-radius: 2vh;
-    background: #55f;
-    padding: 3vh;
+.error-dialog {
+    display: none; /* hidden by default */
+    position: fixed;
+    top: 0px;
+    background: rgba(0, 0, 0, 0.75);
+}
 
+.error-dialog .section {
+    /* border */
+    border: 2vh;
+    border-style: solid;
+    border-radius: 8vh;
+    border-color: red;
+
+    /* background */
+    background: rgba(0, 0, 0, 0.75);
+    color: white;
+
+    /* margin */
+    padding: 5vh;
+
+    /* font */
+    font-family: monospace; /* makes it look more computery */
+}
+
+.error-dialog .error-buttons {
+    position: absolute;
+    bottom: 5vh;
+    text-align: center;
+    width: 85%;  /* 100% goes off the page */
+}
+
+.error-button {
+    padding: 3vh 5vh;
+    margin: 0vh;
+
+    /* font */
+    font-size: 10vh;
+}
+
+.button.square {
+    /* size */
+    height: 10vh;
+    width: 10vh;
+    padding: 3vh;
+}
+
+.button.fixed-topright {
     position: fixed;
     top: 3vh;
     right: 3vh;
-    height: 10vh;
-    width: 10vh;
-}
-
-.reset-button path {
-    fill: white;
 }
