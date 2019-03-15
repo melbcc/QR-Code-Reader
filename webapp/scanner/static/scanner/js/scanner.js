@@ -207,12 +207,11 @@ const submitScan = async () => {
     const member_obj = await getMember.byContactID(qrtext);
 
     if (!member_obj) {
+        playSound('sound_error');
         resetPage();
-        // Do nothing; just reset the page
-        return;
+    } else {
+        continueWithMember(member_obj);
     }
-
-    continueWithMember(member_obj);
 }
 
 /* ----- Membership Number ----- */
@@ -222,12 +221,11 @@ const submitMemberNumber = async () => {
     const member_obj = await getMember.byMemberNum(membership_num);
 
     if (!member_obj) {
+        playSound('sound_error');
         resetPage();
-        // Do nothing; just reset the page
-        return;
+    } else {
+        continueWithMember(member_obj);
     }
-
-    continueWithMember(member_obj);
 }
 
 /* ----- Guest ----- */
