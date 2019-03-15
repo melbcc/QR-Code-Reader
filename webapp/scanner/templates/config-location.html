@@ -1,11 +1,13 @@
+{% load staticfiles %}
 <!DOCTYPE html>
 <html>
   <head>
+    <link rel="shortcut icon" type="image/png" href="{% static 'scanner/img/favicon.ico' %}"/>
     <!-- CSS -->
-    <link type="text/css" rel="stylesheet" href="/static/scanner/css/config.css">
-    <link type="text/css" rel="stylesheet" href="/static/scanner/css/checkboxes.css">
+    <link type="text/css" rel="stylesheet" href="{% static 'scanner/css/config.css' %}">
+    <link type="text/css" rel="stylesheet" href="{% static 'scanner/css/checkboxes.css' %}">
     <!-- JavaScript -->
-    <script src="/static/scanner/js/jquery.min.js"></script>
+    <script src="{% static 'scanner/js/jquery.min.js' %}"></script>
   </head>
   <body>
     <div class="button home-btn fixed-topright">

@@ -1,33 +1,34 @@
-{% load static %}
+{% load staticfiles %}
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <link type="text/css" rel="stylesheet" href="/static/scanner/css/scanner.css"></link>
-    <link type="text/css" rel="stylesheet" href="/static/scanner/css/spinner.css"></link>
-    <link type="text/css" rel="stylesheet" href="/static/scanner/css/checkboxes.css">
-    <script src="/static/scanner/js/jquery.min.js"></script>
+    <link rel="shortcut icon" type="image/png" href="{% static 'scanner/img/favicon.ico' %}"/>
+    <link type="text/css" rel="stylesheet" href="{% static 'scanner/css/scanner.css' %}"></link>
+    <link type="text/css" rel="stylesheet" href="{% static 'scanner/css/spinner.css' %}"></link>
+    <link type="text/css" rel="stylesheet" href="{% static 'scanner/css/checkboxes.css' %}">
+    <script src="{% static 'scanner/js/jquery.min.js' %}"></script>
     <!-- TODO: on-screen keyboard
     one potential lib: https://github.com/Mottie/Keyboard
                        https://github.com/hodgef/simple-keyboard
-    <script src="/static/js/some-kb-lib.js"></script>
-    <link rel="stylesheet" href="/static/style/keyboard-basic.min.css" type="text/css"></link>
+    <script src="{% static 'js/some-kb-lib.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'style/keyboard-basic.min.css' %}" type="text/css"></link>
     -->
     <script>
       var g_location = {{ location_json|safe }};
       var g_events = {{ events_json|safe }};
     </script>
-    <script src="/static/scanner/js/scanner.js"></script>
+    <script src="{% static 'scanner/js/scanner.js' %}"></script>
   </head>
   <body onload="setupScannerPage();">
     <!-- Sounds -->
     <audio id="sound_scan">
-      <source src="/static/scanner/sound/beep.mp3" type="audio/mpeg">
+      <source src="{% static 'scanner/sound/beep.mp3' %}" type="audio/mpeg">
       ERROR: Your browser does not support the audio element.
     </audio>
     <audio id="sound_error">
-      <source src="/static/scanner/sound/error.mp3" type="audio/mpeg">
+      <source src="{% static 'scanner/sound/error.mp3' %}" type="audio/mpeg">
     </audio>
 
     <!-- ============== Event Selection ============== -->
@@ -62,7 +63,7 @@
       <div style="display:inline-block; text-align:center;">
         <div class="tile tile-large">
           <h2>Scan</h2>
-          <img class="qrcode" src="/static/scanner/img/qrcode-sample.svg">
+          <img class="qrcode" src="{% static 'scanner/img/qrcode-sample.svg' %}">
         </div>
         <div class="tile tile-thin">
           <span style="height:15vh; display:inline-block;">&nbsp;</span>

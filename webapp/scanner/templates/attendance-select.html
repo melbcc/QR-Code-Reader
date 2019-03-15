@@ -1,9 +1,11 @@
+{% load staticfiles %}
 <!DOCTYPE html>
 <html>
   <head>
+    <link rel="shortcut icon" type="image/png" href="{% static 'scanner/img/favicon.ico' %}"/>
     <!-- Style -->
-    <link type="text/css" rel="stylesheet" href="/static/scanner/css/config.css">
-    <link type="text/css" rel="stylesheet" href="/static/scanner/css/checkboxes.css">
+    <link type="text/css" rel="stylesheet" href="{% static 'scanner/css/config.css' %}">
+    <link type="text/css" rel="stylesheet" href="{% static 'scanner/css/checkboxes.css' %}">
     <!-- JavaScript -->
   </head>
   <body>
