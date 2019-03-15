@@ -1,11 +1,15 @@
 body {
-  font-family: sans-serif;
-  font-size: 5vh;
-  padding: 5vh;
+    font-family: sans-serif;
+    font-size: 5vh;
+    padding: 5vh;
 }
 
 h1,h2,h3,h4 {
-  margin-top: 0;
+    margin-top: 0;
+}
+
+li {
+    padding: 1.5vh;
 }
 
 .button {
@@ -22,8 +26,38 @@ h1,h2,h3,h4 {
     margin: 2vh;
 
     /* text */
+    text-decoration: none;
     text-align: center;
     font-weight: bold;
     font-size: 8vh;
     color: white;
+}
+
+.home-btn a:visited {
+    color: white;
+    text-decoration: none;
+}
+
+.home-btn a {
+    padding: 5vh 5vh;
+    text-decoration: none;
+}
+
+.home-btn.fixed-topright {
+    position: fixed;
+    top: 3vh;
+    right: 3vh;
+    padding: 3vh 5vh;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: 1px solid black;
+}
+
+td {
+    padding: 0em 1em;
 }
