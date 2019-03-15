@@ -131,7 +131,8 @@ const resetPage = async () => {
     // Body Text
     $('span.first_name').text('');
     $('span.last_name').text('');
-    $('span.status_name').text('');
+    $('span.status_name span').text('');
+    $('span.status_name span').attr("class", ""); // clear classes
     $('span.event_name').text('');
 
     /* Clear Form Data */
@@ -208,7 +209,8 @@ const continueWithMember = (member) => {
     // Inform user of status
     $('span.first_name').text(member['first_name']);
     $('span.last_name').text(member['last_name']);
-    $('span.status_name').text(member['status']);
+    $('span.status_name span').text(member['status']);
+    $('span.status_name span').addClass(member['status']);
     // Set Member for attendance record
     $('#attendanceform input[name=contact_pk]').val(member['contact_id']);
 
@@ -281,7 +283,8 @@ const submitGuest = async () => {
             // Set guest values
             $('span.first_name').text(value['first_name']);
             $('span.last_name').text(value['last_name']);
-            $('span.status_name').text('GUEST');
+            $('span.status_name span').text('GUEST');
+            $('span.status_name span').addClass('GUEST');
 
             // Remember contact id for attendance
             $('#attendanceform input[name=contact_pk]').val(value['pk'])

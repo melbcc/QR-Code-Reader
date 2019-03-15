@@ -40,6 +40,19 @@ html, body {
     font-weight: bold;
 }
 
+.status_name span.CURRENT {
+    color: lime;
+}
+
+.status_name span.GRACE {
+    color: orange;
+}
+
+.status_name span.EXPIRED {
+    color: red;
+}
+
+
 .section {
     height: calc(100vh - 22vh);
     /*width: calc(100vw - 22vh - 17px);*/
