@@ -192,12 +192,20 @@ class AttendanceListCSV(View):
 
         # Create CSV
         writer = csv.writer(response)
-        writer.writerow(['CHECKIN_TIME', 'MEMBER', 'MEMBERSHIP_NUM'])
+        writer.writerow(['CHECKIN_TIME', 'MEMBER', 'MEMBERSHIP_NUM', 'IS_GUEST', 'GUEST_EMAIL'])
         for att in Attendance.objects.filter(event=event):
+            membership_num = ''
+            is_guest = 'No'
+            if att.contact.membership_num:
+                membership_num = att.contact.membership_num
+            else:
+                is_guest = 'Yes'
             writer.writerow([
                 att.checkin_time.strftime("%Y-%m-%d %H:%M:%S"),
                 str(att.contact),
-                str(att.contact.membership_num),
+                membership_num,
+                is_guest,
+                att.contact.email_address,
             ])
 
         # Return HTTP response
