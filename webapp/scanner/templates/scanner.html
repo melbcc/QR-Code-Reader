@@ -20,7 +20,7 @@
     </script>
     <script src="/static/scanner/js/scanner.js"></script>
   </head>
-  <body onload="resetPage();">
+  <body onload="setupScannerPage();">
     <!-- Sounds -->
     <audio id="sound_scan">
       <source src="/static/scanner/sound/beep.mp3" type="audio/mpeg">
@@ -29,7 +29,6 @@
     <audio id="sound_error">
       <source src="/static/scanner/sound/error.mp3" type="audio/mpeg">
     </audio>
-
 
     <!-- ============== Event Selection ============== -->
     <div class="screen" id="events"><div class="section">
@@ -103,7 +102,7 @@
 
     <!-- ============== Sign in Member Number ============== -->
     <div class="screen" id="signin_memno"><div class="section">
-      <h1>Enter Membership Number</h1>
+      <h1>Membership Number</h1>
       <form id="memnumform" onsubmit="submitMemberNumber(); return false;">
         <p>
           Membership #: <input name="membership_num" type="text" size="20">
@@ -143,5 +142,14 @@
 
 
     </div></div>
+
+    <!-- ============== Pemrmenant Overlays ============== -->
+    <!-- Reset Button -->
+    <div class="reset-button">
+      <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 1000 1000" enable-background="new 0 0 1000 1000" xml:space="preserve">
+        <g><path d="M153.5,153.5C64.9,242.1,10,364.5,10,500c0,270.6,219.4,490,490,490c270.6,0,490-219.4,490-490c0-128.1-49.6-244.1-129.9-331.3l-99.8,99.8c55.1,61.7,89.6,142.3,89.6,231.5c0,192.9-157,349.9-349.9,349.9c-193,0-350-157-350-349.9c0-96.5,39.3-184,102.6-247.4l177.3,177.3V157.1V15.5V10H10L153.5,153.5L153.5,153.5z"/></g>
+      </svg>
+    </div>
+
   </body>
 </html>

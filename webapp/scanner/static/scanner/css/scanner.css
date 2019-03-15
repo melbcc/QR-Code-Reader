@@ -28,18 +28,16 @@ html, body {
     display: inline-block;
 
 }
-    .first_name {
+
+.first_name {
     color:#cc0066;
     font-weight: bold;
+}
 
-    }
-
-    .status_name {
-    color:Lime;
+.status_name {
     font-size: 8vh;
     font-weight: bold;
-
-    }
+}
 
 .section {
     height: calc(100vh - 22vh);
@@ -94,9 +92,6 @@ img.qrcode {
     width: 20vw;
 }
 
-.tile-signinsml {
-}
-
 .tile h1,h2,h3,h4 {
     text-align: center;
     margin-top: 0;
@@ -114,4 +109,20 @@ img.qrcode {
     font-size: 10vh;
     color: #ff7f68;
     margin: 2vh;
+}
+
+.reset-button {
+    border-radius: 2vh;
+    background: #55f;
+    padding: 3vh;
+
+    position: fixed;
+    top: 3vh;
+    right: 3vh;
+    height: 10vh;
+    width: 10vh;
+}
+
+.reset-button path {
+    fill: white;
 }

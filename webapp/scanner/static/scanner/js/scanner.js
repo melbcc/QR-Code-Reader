@@ -1,3 +1,12 @@
+/* ========== Setup =========== */
+const setupScannerPage = () => {
+    // Bind Events
+    $('.reset-button').click(() => { resetPage(); })
+
+    // Start with Reset
+    resetPage();
+};
+
 /* ========== Basic Navigation =========== */
 const defaultFormMap = {
     "scan": '#scanform input[name=contact_id]',
