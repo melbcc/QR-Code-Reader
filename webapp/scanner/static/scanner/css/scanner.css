@@ -184,3 +184,9 @@ img.qrcode {
     top: 3vh;
     right: 3vh;
 }
+
+form.touch input {
+    font-weight: bold;
+    font-size: 5vh;
+    margin-bottom: 1vh;
+}
