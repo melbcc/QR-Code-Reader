@@ -1,5 +1,59 @@
 var err_lastActiveElement = undefined;
-var keyboard;
+
+/* ========== Keyboard, Numpad & Callbacks =========== */
+// Guest Keyboard
+var keyboard_guest;
+var selectedInput_guest;
+var shortShift_guest = false;
+
+function onChange_guest(input) {
+    document.querySelector(selectedInput_guest || ".input").value = input;
+}
+
+function onKeyPress_guest(button) {
+    // Shift & Caps
+    if (button === "{shift}") {
+        shortShift_guest = !shortShift_guest;
+        handleShift_guest();
+    } else if (button === "{lock}") {
+        handleShift_guest();
+    } else if (shortShift_guest) {
+        shortShift_guest = false;
+        handleShift_guest();
+    }
+
+    // Submit
+    if (button === "{enter}") {
+        $('#guestform').submit();
+    }
+}
+
+function handleShift_guest() {
+    let currentLayout = keyboard_guest.options.layoutName;
+    let shiftToggle = currentLayout === "default" ? "shift" : "default";
+
+    keyboard_guest.setOptions({
+        layoutName: shiftToggle
+    });
+}
+
+function onInputFocus_guest(event) {
+    selectedInput_guest = `#${event.target.id}`;
+
+    keyboard_guest.setOptions({
+        inputName: event.target.id
+    });
+}
+
+function onInputChange_guest(event) {
+  keyboard_guest.setInput(event.target.value, event.target.id);
+}
+
+// Membership Number Numpad
+var memNumberNumpad;
+
+
+
 
 /* ========== Setup =========== */
 const setupScannerPage = () => {
@@ -18,41 +72,33 @@ const setupScannerPage = () => {
     // Keyboard
     let Keyboard = window.SimpleKeyboard.default;
 
-    keyboard = new Keyboard({
-        onChange: input => onChange(input),
-        onKeyPress: button => onKeyPress(button)
+    keyboard_guest = new Keyboard({
+        onChange: input => onChange_guest(input),
+        onKeyPress: button => onKeyPress_guest(button),
+        buttonTheme: [
+            {
+              class: "hg-submit",
+              buttons: "{enter}",
+            },
+        ],
     });
+
+    document.querySelectorAll("#guestform input").forEach(input => {
+        input.addEventListener("focus", onInputFocus_guest);
+        // Optional: Use if you want to track input changes
+        // made without simple-keyboard
+        input.addEventListener("input", onInputChange_guest);
+    });
+
     document.querySelector(".kb-input").addEventListener("input", event => {
-        keyboard.setInput(event.target.value);
+        keyboard_guest.setInput(event.target.value);
     });
-    console.log(keyboard);
+    console.log(keyboard_guest);
 
     // Start with Reset
     resetPage();
 };
 
-function onChange(input) {
-    document.querySelector(".kb-input").value = input;
-    console.log("Input changed", input);
-}
-
-function onKeyPress(button) {
-    console.log("Button pressed", button);
-
-    /**
-     * If you want to handle the shift and caps lock buttons
-     */
-    if (button === "{shift}" || button === "{lock}") handleShift();
-}
-
-function handleShift() {
-    let currentLayout = keyboard.options.layoutName;
-    let shiftToggle = currentLayout === "default" ? "shift" : "default";
-
-    keyboard.setOptions({
-      layoutName: shiftToggle
-    });
-}
 
 /* ========== Basic Navigation =========== */
 const defaultFormMap = {
@@ -178,6 +224,9 @@ const resetPage = async () => {
     $('#scanform input[type=text]').val('');
     // Guest
     $('#guestform input[type=text]').val('');
+    document.querySelectorAll("#guestform input").forEach(input => {
+        keyboard_guest.setInput(input.value, input.id);
+    });
     // Membership Number
     $('#memnumform input[type=text]').val('');
 

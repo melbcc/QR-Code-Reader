@@ -81,29 +81,27 @@
       </div>
 
       <form id="scanform" onsubmit="submitScan(); return false;">
-        <input name="contact_id" type="text" size="35" />
+        <input name="contact_id" type="text" size="30" />
       </form>
     </div></div>
 
     <!-- ============== Sign in as Guest ============== -->
     <div class="screen" id="signin_guest"><div class="section">
-      <h1>Sign in as Guest</h1>
       <form id="guestform" class="touch" onsubmit="submitGuest(); return false;">
         {% csrf_token %}
-        <p>
-          <input name="first_name" type="text" size="20" placeholder="First">
-          <input name="last_name" type="text" size="20" placeholder="Last">
+        <div>
+          <input id="guest_first_name" name="first_name" type="text" size="20" placeholder="First Name">
+          <input id="guest_last_name" name="last_name" type="text" size="20" placeholder="Last Name">
           <br/>
-          <input name="email" type="text" size="42" placeholder="Email Address">
-        </p>
-        <!--
-        <p>
-          Mobile Phone: <input name="mobile" type="text" size="45">
-        </p>
-        -->
-        <input type="submit" class="button" />
+          <input id="guest_email" name="email" type="text" size="42" placeholder="Email Address">
+          <!--
+          <br/>
+          <input name="mobile" type="text" size="20" placeholder="Phone">
+          -->
+        </div>
+        <!-- <input type="submit" class="button" /> -->
       </form>
-      <input class="kb-input" placeholder="Keyboard Input" />
+      <input class="kb-input" placeholder="Keyboard Input" style="display:none" />
       <div class="simple-keyboard"></div>
     </div></div>
 
