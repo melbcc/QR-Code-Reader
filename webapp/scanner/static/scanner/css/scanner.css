@@ -54,20 +54,18 @@ html, body {
 
 
 .section {
-    height: calc(100vh - 22vh);
-    /*width: calc(100vw - 22vh - 17px);*/ /* with scroll bar */
-    width: calc(100vw - 22vh);
+    /* spacing */
+    margin: 5vh;
+    padding: 5vh;
+    /* 100% - (margin + padding + border) */
+    height: calc(100vh - 20vh);
+    width: calc(100vw - 20vh); /* -17px if scroll bar */
 
     /* border */
-    /*border: 0.8vh;*/
     border: 0vh;
     border-style: dashed;
     border-radius: 8vh;
     border-color: blue;
-
-    /* spacing */
-    margin: 5vh;
-    padding: 5vh;
 
     /* Content */
     font-size: 5vh;

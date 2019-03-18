@@ -50,9 +50,18 @@ function onInputChange_guest(event) {
 }
 
 // Membership Number Numpad
-var memNumberNumpad;
+var keyboard_memnum;
 
+function onChange_memnum(input) {
+    document.querySelector("#memnumform input[name='membership_num']").value = input;
+}
 
+function onKeyPress_memnum(button) {
+  // Submit
+  if (button === "{enter}") {
+      $('#memnumform').submit();
+  }
+}
 
 
 /* ========== Setup =========== */
@@ -69,10 +78,10 @@ const setupScannerPage = () => {
         errorReset.in(50);
     });
 
-    // Keyboard
+    // Keyboard - Guest
     let Keyboard = window.SimpleKeyboard.default;
 
-    keyboard_guest = new Keyboard({
+    keyboard_guest = new Keyboard("#signin_guest .simple-keyboard", {
         onChange: input => onChange_guest(input),
         onKeyPress: button => onKeyPress_guest(button),
         buttonTheme: [
@@ -90,10 +99,29 @@ const setupScannerPage = () => {
         input.addEventListener("input", onInputChange_guest);
     });
 
-    document.querySelector(".kb-input").addEventListener("input", event => {
+    document.querySelector("#guestform input").addEventListener("input", event => {
         keyboard_guest.setInput(event.target.value);
     });
     console.log(keyboard_guest);
+
+    // Keyboard - Numpad
+    keyboard_memnum = new Keyboard("#signin_memno .simple-keyboard", {
+        onChange: input => onChange_memnum(input),
+        onKeyPress: button => onKeyPress_memnum(button),
+        layout: {
+            default: ["1 2 3", "4 5 6", "7 8 9", "{bksp} 0 {enter}"],
+        },
+        buttonTheme: [
+            {
+              class: "hg-submit",
+              buttons: "{enter}",
+            },
+        ],
+    });
+    document.querySelector("#memnumform input[name='membership_num']").addEventListener("input", event => {
+        keyboard_memnum.setInput(event.target.value);
+    });
+    console.log(keyboard_memnum);
 
     // Start with Reset
     resetPage();
@@ -229,6 +257,7 @@ const resetPage = async () => {
     });
     // Membership Number
     $('#memnumform input[type=text]').val('');
+    keyboard_memnum.setInput('');
 
     // Save error message
     $('span.error_msg').text('');
