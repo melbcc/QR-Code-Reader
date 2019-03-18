@@ -40,20 +40,32 @@ html, body {
     font-weight: bold;
 }
 
+.status_name span.CURRENT {
+    color: lime;
+}
+
+.status_name span.GRACE {
+    color: orange;
+}
+
+.status_name span.EXPIRED {
+    color: red;
+}
+
+
 .section {
-    height: calc(100vh - 22vh);
-    /*width: calc(100vw - 22vh - 17px);*/
-    width: calc(100vw - 22vh);
-
-    /* border */
-    border: 0.8vh;
-    border-style: dashed;
-    border-radius: 8vh;
-    border-color: blue;
-
     /* spacing */
     margin: 5vh;
     padding: 5vh;
+    /* 100% - (margin + padding + border) */
+    height: calc(100vh - 20vh);
+    width: calc(100vw - 20vh); /* -17px if scroll bar */
+
+    /* border */
+    border: 0vh;
+    border-style: dashed;
+    border-radius: 8vh;
+    border-color: blue;
 
     /* Content */
     font-size: 5vh;
@@ -170,4 +182,16 @@ img.qrcode {
     position: fixed;
     top: 3vh;
     right: 3vh;
+}
+
+form.touch input {
+    font-weight: bold;
+    font-size: 5vh;
+    margin-bottom: 4vh;
+}
+
+/* Keyboard */
+.simple-keyboard.hg-layout-default .hg-button.hg-submit {
+    background: #55f;
+    color: white;
 }

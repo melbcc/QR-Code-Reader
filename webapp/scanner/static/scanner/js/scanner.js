@@ -1,12 +1,130 @@
+var err_lastActiveElement = undefined;
+
+/* ========== Keyboard, Numpad & Callbacks =========== */
+// Guest Keyboard
+var keyboard_guest;
+var selectedInput_guest;
+var shortShift_guest = false;
+
+function onChange_guest(input) {
+    document.querySelector(selectedInput_guest || ".input").value = input;
+}
+
+function onKeyPress_guest(button) {
+    // Shift & Caps
+    if (button === "{shift}") {
+        shortShift_guest = !shortShift_guest;
+        handleShift_guest();
+    } else if (button === "{lock}") {
+        handleShift_guest();
+    } else if (shortShift_guest) {
+        shortShift_guest = false;
+        handleShift_guest();
+    }
+
+    // Submit
+    if (button === "{enter}") {
+        $('#guestform').submit();
+    }
+}
+
+function handleShift_guest() {
+    let currentLayout = keyboard_guest.options.layoutName;
+    let shiftToggle = currentLayout === "default" ? "shift" : "default";
+
+    keyboard_guest.setOptions({
+        layoutName: shiftToggle
+    });
+}
+
+function onInputFocus_guest(event) {
+    selectedInput_guest = `#${event.target.id}`;
+
+    keyboard_guest.setOptions({
+        inputName: event.target.id
+    });
+}
+
+function onInputChange_guest(event) {
+  keyboard_guest.setInput(event.target.value, event.target.id);
+}
+
+// Membership Number Numpad
+var keyboard_memnum;
+
+function onChange_memnum(input) {
+    document.querySelector("#memnumform input[name='membership_num']").value = input;
+}
+
+function onKeyPress_memnum(button) {
+  // Submit
+  if (button === "{enter}") {
+      $('#memnumform').submit();
+  }
+}
+
+
 /* ========== Setup =========== */
 const setupScannerPage = () => {
     // Bind Events
-    $('.reset-button').click(() => { resetPage(); });
-    $('.error-dialog').click(() => { errorReset(); });
+    $('.reset-button').click(() => {
+        resetPage();
+    });
+    $('.error-dialog').click(() => {
+        /* If an event triggers both resetPage(), and errorReset(),
+         * there's little guarentee for which will be called first (I think).
+         * To ensure resetPage() is called first, a small delay is set
+         */
+        errorReset.in(50);
+    });
+
+    // Keyboard - Guest
+    let Keyboard = window.SimpleKeyboard.default;
+
+    keyboard_guest = new Keyboard("#signin_guest .simple-keyboard", {
+        onChange: input => onChange_guest(input),
+        onKeyPress: button => onKeyPress_guest(button),
+        buttonTheme: [
+            {
+              class: "hg-submit",
+              buttons: "{enter}",
+            },
+        ],
+    });
+
+    document.querySelectorAll("#guestform input").forEach(input => {
+        input.addEventListener("focus", onInputFocus_guest);
+        // Optional: Use if you want to track input changes
+        // made without simple-keyboard
+        input.addEventListener("input", onInputChange_guest);
+    });
+
+    document.querySelector("#guestform input").addEventListener("input", event => {
+        keyboard_guest.setInput(event.target.value);
+    });
+
+    // Keyboard - Numpad
+    keyboard_memnum = new Keyboard("#signin_memno .simple-keyboard", {
+        onChange: input => onChange_memnum(input),
+        onKeyPress: button => onKeyPress_memnum(button),
+        layout: {
+            default: ["1 2 3", "4 5 6", "7 8 9", "{bksp} 0 {enter}"],
+        },
+        buttonTheme: [
+            {
+              class: "hg-submit",
+              buttons: "{enter}",
+            },
+        ],
+    });
+    document.querySelector("#memnumform input[name='membership_num']").addEventListener("input", event => {
+        keyboard_memnum.setInput(event.target.value);
+    });
 
     // Start with Reset
     resetPage();
 };
+
 
 /* ========== Basic Navigation =========== */
 const defaultFormMap = {
@@ -116,10 +234,13 @@ const getLocationList = async () => {
 /* ========== Event Handlers ========== */
 /* ----- Reset ----- */
 const resetPage = async () => {
+    err_lastActiveElement = undefined;
+
     // Body Text
     $('span.first_name').text('');
     $('span.last_name').text('');
-    $('span.status_name').text('');
+    $('span.status_name span').text('');
+    $('span.status_name span').attr("class", ""); // clear classes
     $('span.event_name').text('');
 
     /* Clear Form Data */
@@ -129,8 +250,12 @@ const resetPage = async () => {
     $('#scanform input[type=text]').val('');
     // Guest
     $('#guestform input[type=text]').val('');
+    document.querySelectorAll("#guestform input").forEach(input => {
+        keyboard_guest.setInput(input.value, input.id);
+    });
     // Membership Number
     $('#memnumform input[type=text]').val('');
+    keyboard_memnum.setInput('');
 
     // Save error message
     $('span.error_msg').text('');
@@ -196,7 +321,8 @@ const continueWithMember = (member) => {
     // Inform user of status
     $('span.first_name').text(member['first_name']);
     $('span.last_name').text(member['last_name']);
-    $('span.status_name').text(member['status']);
+    $('span.status_name span').text(member['status']);
+    $('span.status_name span').addClass(member['status']);
     // Set Member for attendance record
     $('#attendanceform input[name=contact_pk]').val(member['contact_id']);
 
@@ -269,7 +395,8 @@ const submitGuest = async () => {
             // Set guest values
             $('span.first_name').text(value['first_name']);
             $('span.last_name').text(value['last_name']);
-            $('span.status_name').text('GUEST');
+            $('span.status_name span').text('GUEST');
+            $('span.status_name span').addClass('GUEST');
 
             // Remember contact id for attendance
             $('#attendanceform input[name=contact_pk]').val(value['pk'])
@@ -322,8 +449,6 @@ saveAttendance.fromForm = () => {
 }
 
 /* ----- Error Handling ----- */
-var err_lastActiveElement = undefined;
-
 const errorReset = () => {
     // Re-focus element (if applicable)
     if (err_lastActiveElement) {
@@ -333,6 +458,13 @@ const errorReset = () => {
 
     $('.error-dialog').hide();
 }
+
+errorReset.in = (timeout_ms) => {
+    setTimeout(() => {
+        errorReset();
+    }, timeout_ms);
+}
+
 
 const errorSet = (message, title) => {
     // Title

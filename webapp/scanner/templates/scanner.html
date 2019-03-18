@@ -1,33 +1,39 @@
-{% load static %}
+{% load staticfiles %}
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <link type="text/css" rel="stylesheet" href="/static/scanner/css/scanner.css"></link>
-    <link type="text/css" rel="stylesheet" href="/static/scanner/css/spinner.css"></link>
-    <link type="text/css" rel="stylesheet" href="/static/scanner/css/checkboxes.css">
-    <script src="/static/scanner/js/jquery.min.js"></script>
-    <!-- TODO: on-screen keyboard
-    one potential lib: https://github.com/Mottie/Keyboard
-                       https://github.com/hodgef/simple-keyboard
-    <script src="/static/js/some-kb-lib.js"></script>
-    <link rel="stylesheet" href="/static/style/keyboard-basic.min.css" type="text/css"></link>
-    -->
+    <link rel="shortcut icon" type="image/png" href="{% static 'scanner/img/favicon.ico' %}"/>
+
+    <!-- styles -->
+    <link type="text/css" rel="stylesheet" href="{% static 'scanner/css/scanner.css' %}"></link>
+    <link type="text/css" rel="stylesheet" href="{% static 'scanner/css/spinner.css' %}"></link>
+    <link type="text/css" rel="stylesheet" href="{% static 'scanner/css/checkboxes.css' %}">
+
+    <!-- jquery -->
+    <script src="{% static 'scanner/js/jquery.min.js' %}"></script>
+
+    <!-- onscreen keyboard -->
+    <script src="{% static 'scanner/simple-keyboard/index.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'scanner/simple-keyboard/css/index.css' %}">
+
+    <!-- application code -->
     <script>
+      /* globally defined variables (rendered from django objects) */
       var g_location = {{ location_json|safe }};
       var g_events = {{ events_json|safe }};
     </script>
-    <script src="/static/scanner/js/scanner.js"></script>
+    <script src="{% static 'scanner/js/scanner.js' %}"></script>
   </head>
   <body onload="setupScannerPage();">
     <!-- Sounds -->
     <audio id="sound_scan">
-      <source src="/static/scanner/sound/beep.mp3" type="audio/mpeg">
+      <source src="{% static 'scanner/sound/beep.mp3' %}" type="audio/mpeg">
       ERROR: Your browser does not support the audio element.
     </audio>
     <audio id="sound_error">
-      <source src="/static/scanner/sound/error.mp3" type="audio/mpeg">
+      <source src="{% static 'scanner/sound/error.mp3' %}" type="audio/mpeg">
     </audio>
 
     <!-- ============== Event Selection ============== -->
@@ -62,52 +68,50 @@
       <div style="display:inline-block; text-align:center;">
         <div class="tile tile-large">
           <h2>Scan</h2>
-          <img class="qrcode" src="/static/scanner/img/qrcode-sample.svg">
+          <img class="qrcode" src="{% static 'scanner/img/qrcode-sample.svg' %}">
         </div>
         <div class="tile tile-thin">
           <span style="height:15vh; display:inline-block;">&nbsp;</span>
           <h1>OR</h1>
         </div>
         <div class="tile tile-large">
-          <div class="button" onclick="jumpTo('signin_guest');">Sign in<br/>as Guest</div>
+          <div class="button" onclick="jumpTo('signin_guest');">Guest</div>
           <div class="button" onclick="jumpTo('signin_memno');">Member Number</div>
         </div>
       </div>
 
       <form id="scanform" onsubmit="submitScan(); return false;">
-        <input name="contact_id" type="text" size="35" />
+        <input name="contact_id" type="text" size="30" />
       </form>
     </div></div>
 
     <!-- ============== Sign in as Guest ============== -->
     <div class="screen" id="signin_guest"><div class="section">
-      <h1>Sign in as Guest</h1>
-      <form id="guestform" onsubmit="submitGuest(); return false;">
+      <form id="guestform" class="touch" onsubmit="submitGuest(); return false;">
         {% csrf_token %}
-        <p>
-          Name: First <input name="first_name" type="text" size="20">
-          Last <input name="last_name" type="text" size="20">
-        </p>
-        <p>
-          Email Address: <input name="email" type="text" size="45">
-        </p>
-        <!--
-        <p>
-          Mobile Phone: <input name="mobile" type="text" size="45">
-        </p>
-        -->
-        <input type="submit" class="button" />
+        <div>
+          <input id="guest_first_name" name="first_name" type="text" size="20" placeholder="First Name">
+          <input id="guest_last_name" name="last_name" type="text" size="20" placeholder="Last Name">
+          <br/>
+          <input id="guest_email" name="email" type="text" size="42" placeholder="Email Address">
+          <!--
+          <br/>
+          <input name="mobile" type="text" size="20" placeholder="Phone">
+          -->
+        </div>
+        <!-- <input type="submit" class="button" /> -->
       </form>
+      <div class="simple-keyboard"></div>
     </div></div>
 
     <!-- ============== Sign in Member Number ============== -->
     <div class="screen" id="signin_memno"><div class="section">
       <h1>Membership Number</h1>
-      <form id="memnumform" onsubmit="submitMemberNumber(); return false;">
+      <form id="memnumform" class="touch" onsubmit="submitMemberNumber(); return false;">
         <p>
-          Membership #: <input name="membership_num" type="text" size="20">
+          <input name="membership_num" type="text" size="20" placeholder="Membership Number">
         </p>
-        <input type="submit" class="button" />
+        <div class="simple-keyboard"></div>
       </form>
     </div></div>
 
@@ -132,12 +136,12 @@
 
     <!-- ============== Welcome ============== -->
     <div class="screen" id="welcome"><div class="section">
-      <h2>Welcome <span class="first_name"></span>!</h2>
+      <h1>Welcome <span class="first_name"></span>!</h1>
       <p>
         You're attending: <b><span class="event_name"></span></b>.
       </p>
       <p>
-        Your membership status is: <b><span class="status_name"></span></b>
+        Your membership status is: <b><span class="status_name"><span></span></span></b>
       </p>
     </div></div>
 

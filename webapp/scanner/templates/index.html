@@ -1,27 +1,23 @@
+{% load staticfiles %}
 <!DOCTYPE html>
 <html>
   <head>
-    <link type="text/css" rel="stylesheet" href="/static/scanner/css/config.css">
-    <style>
-      li {
-        padding: 1.5vh;
-      }
-    </style>
+    <link rel="shortcut icon" type="image/png" href="{% static 'scanner/img/favicon.ico' %}"/>
+    <link type="text/css" rel="stylesheet" href="{% static 'scanner/css/config.css' %}">
   </head>
   <body>
       <h1>MelbPC QR-Code Scanner</h1>
       <p>
-          This is the sign-in terminal for <a href="https://www.melbpc.org.au/">MelbPC</a> events.
+        This is the sign-in terminal for <a href="https://www.melbpc.org.au/">MelbPC</a> events.
       </p>
       <p>
         <h3>What to do from here:</h3>
+        <a href="{% url 'scanner-config-events' %}?clear_location=1&clear_events=1" class="button">Configure Event</a>
+        <!--
+        <a href="{% url 'scanner-config-location' %}?clear_location=1&clear_events=1" class="button">Location &gt; Event</a>
+        -->
+        <a href="{% url 'attendance-select' %}" class="button">List Attendees</a>
         <ul>
-          <li>Configure:
-            <a href="{% url 'scanner-config-location' %}?clear_location=1&clear_events=1">Location &gt; Event</a>
-            or
-            <a href="{% url 'scanner-config-events' %}?clear_location=1&clear_events=1">Event</a>
-          </li>
-          <li><a href="{% url 'attendance-select' %}">List attendees for an event</a></li>
           <li><a href="/admin">Browse the database</a></li>
           <li><a href="/api">Browse the REST API</a></li>
         </ul>

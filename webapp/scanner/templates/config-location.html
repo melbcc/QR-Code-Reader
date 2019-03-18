@@ -1,30 +1,17 @@
+{% load staticfiles %}
 <!DOCTYPE html>
 <html>
   <head>
+    <link rel="shortcut icon" type="image/png" href="{% static 'scanner/img/favicon.ico' %}"/>
     <!-- CSS -->
-    <link type="text/css" rel="stylesheet" href="/static/scanner/css/config.css">
-    <link type="text/css" rel="stylesheet" href="/static/scanner/css/checkboxes.css">
-    <style>
-      .home-btn {
-        float: right;
-      }
-      .home-btn img {
-        width: 10vh;
-        height: auto;
-      }
-    </style>
+    <link type="text/css" rel="stylesheet" href="{% static 'scanner/css/config.css' %}">
+    <link type="text/css" rel="stylesheet" href="{% static 'scanner/css/checkboxes.css' %}">
     <!-- JavaScript -->
-    <script src="/static/scanner/js/jquery.min.js"></script>
+    <script src="{% static 'scanner/js/jquery.min.js' %}"></script>
   </head>
   <body>
-    <!-- TODO:
-      - selection sets cookie value
-    -->
-
-    <div class="home-btn">
-      <a href="{% url 'index' %}">
-        <img src="/static/scanner/img/home.svg">
-      </a>
+    <div class="button home-btn fixed-topright">
+      <a href="{% url 'index' %}">&#x1F519;</a>
     </div>
 
     <h1>Select Location</h1>
