@@ -80,20 +80,20 @@
         </div>
       </div>
 
-      <form id="scanform" onsubmit="submitScan(); return false;">
-        <input name="contact_id" type="text" size="30" />
+      <form id="scanform" onsubmit="submitScan(); return false;" autocomplete="off">
+        <input name="contact_id" type="text" size="30" autocomplete="off" />
       </form>
     </div></div>
 
     <!-- ============== Sign in as Guest ============== -->
     <div class="screen" id="signin_guest"><div class="section">
-      <form id="guestform" class="touch" onsubmit="submitGuest(); return false;">
+      <form id="guestform" class="touch" onsubmit="submitGuest(); return false;" autocomplete="off">
         {% csrf_token %}
         <div>
-          <input id="guest_first_name" name="first_name" type="text" size="20" placeholder="First Name">
-          <input id="guest_last_name" name="last_name" type="text" size="20" placeholder="Last Name">
+          <input id="guest_first_name" name="first_name" type="text" size="20" placeholder="First Name" autocomplete="off">
+          <input id="guest_last_name" name="last_name" type="text" size="20" placeholder="Last Name" autocomplete="off">
           <br/>
-          <input id="guest_email" name="email" type="text" size="42" placeholder="Email Address">
+          <input id="guest_email" name="email" type="text" size="42" placeholder="Email Address" autocomplete="off">
           <!--
           <br/>
           <input name="mobile" type="text" size="20" placeholder="Phone">
@@ -107,9 +107,9 @@
     <!-- ============== Sign in Member Number ============== -->
     <div class="screen" id="signin_memno"><div class="section">
       <h1>Membership Number</h1>
-      <form id="memnumform" class="touch" onsubmit="submitMemberNumber(); return false;">
+      <form id="memnumform" class="touch" onsubmit="submitMemberNumber(); return false;" autocomplete="off">
         <p>
-          <input name="membership_num" type="text" size="20" placeholder="Membership Number">
+          <input name="membership_num" type="text" size="20" placeholder="Membership Number" autocomplete="off">
         </p>
         <div class="simple-keyboard"></div>
       </form>

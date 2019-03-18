@@ -39,8 +39,9 @@ li {
 }
 
 .home-btn a {
-    padding: 5vh 5vh;
+    color: white;
     text-decoration: none;
+    padding: 5vh 5vh;
 }
 
 .home-btn.fixed-topright {
