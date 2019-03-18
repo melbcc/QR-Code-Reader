@@ -102,7 +102,6 @@ const setupScannerPage = () => {
     document.querySelector("#guestform input").addEventListener("input", event => {
         keyboard_guest.setInput(event.target.value);
     });
-    console.log(keyboard_guest);
 
     // Keyboard - Numpad
     keyboard_memnum = new Keyboard("#signin_memno .simple-keyboard", {
@@ -121,7 +120,6 @@ const setupScannerPage = () => {
     document.querySelector("#memnumform input[name='membership_num']").addEventListener("input", event => {
         keyboard_memnum.setInput(event.target.value);
     });
-    console.log(keyboard_memnum);
 
     // Start with Reset
     resetPage();
