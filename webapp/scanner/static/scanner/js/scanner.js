@@ -46,7 +46,7 @@ function onInputFocus_guest(event) {
 }
 
 function onInputChange_guest(event) {
-  keyboard_guest.setInput(event.target.value, event.target.id);
+    keyboard_guest.setInput(event.target.value, event.target.id);
 }
 
 // Membership Number Numpad
@@ -57,10 +57,10 @@ function onChange_memnum(input) {
 }
 
 function onKeyPress_memnum(button) {
-  // Submit
-  if (button === "{enter}") {
-      $('#memnumform').submit();
-  }
+    // Submit
+    if (button === "{enter}") {
+        $('#memnumform').submit();
+    }
 }
 
 
