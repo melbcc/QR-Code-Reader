@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+    <head>
+        <script>
+            const APPLICATION_URI = 'http://localhost:8000';
+            const POLLING_PERIOD = 1000; // msec
+
+            // Polling Loop
+            const pollRemote = function() {
+                // Poll Application URI
+                fetch(APPLICATION_URI, {mode: 'no-cors'}).then(response => {
+                    console.log(response);
+                    if (response !== undefined) {
+                        continueToApplication();
+                    }
+                });
+
+                // Run regularly
+                setTimeout(() => { pollRemote(); }, POLLING_PERIOD);
+            };
+            pollRemote();
+
+            // Continue
+            const continueToApplication = function () {
+                console.log('continue to:', APPLICATION_URI);
+                window.location.replace(APPLICATION_URI);
+            }
+        </script>
+    </head>
+    <body>
+        <h1>Loading ...</h1>
+    </body>
+</html>
