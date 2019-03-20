@@ -1,0 +1,20 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="shortcut icon" type="image/png" href="{% static 'scanner/img/favicon.ico' %}"/>
+    <!-- Style -->
+    <link type="text/css" rel="stylesheet" href="{% static 'scanner/css/config.css' %}">
+  </head>
+  <body>
+    <div class="button home-btn fixed-topright">
+      <a href="{% url 'index' %}">&#x1F519;</a>
+    </div>
+
+    <h1>Power Down?</h1>
+    <p>
+      <a href="{% url 'index' %}" class="button">Cancel</a>
+      <a href="{% url 'power-off' %}" class="button button-red">Shutdown</a>
+    </p>
+  </body>
+</html>
