@@ -210,3 +210,17 @@ class AttendanceListCSV(View):
 
         # Return HTTP response
         return response
+
+
+# ---------- Power Off
+class PowerOffConfirmationView(generic.TemplateView):
+    template_name = "poweroff-confirm.html"
+
+
+class PowerOffView(View):
+    template_name = "poweroff-execute.html"
+
+    def get(self, request, *args, **kwargs):
+        import subprocess
+        proc = subprocess.call("/sbin/poweroff", shell=True)
+        return render(request, self.template_name)

@@ -154,6 +154,19 @@ jumpTo.withTimeout = (h, timeout_ms) => {
 }
 
 
+/* ========== Cheat Codes ========== */
+const runCommand = (cmd) => {
+    console.log("Running Command:", cmd);
+    switch (cmd.toUpperCase()) {
+        case 'HOME': // Navigate to root path
+            window.location.href = '/';
+            break;
+        default:
+            break;
+    }
+}
+
+
 /* ========== Multimedia =========== */
 const playSound = (element_id) => {
     $('#' + element_id)[0].play();
@@ -341,8 +354,17 @@ const continueWithMember = (member) => {
 /* ----- Scan contact_id ----- */
 const submitScan = async () => {
     /* Run when submitting the QR-Code */
-    // Get member
+    // Scan Text
     var qrtext = $('#scanform input[name=contact_id]').val();
+
+    // Run Command (?)
+    cmdResult = /\{CMD\}\{(.*)\}/.exec(qrtext);
+    if (cmdResult) {
+        runCommand(cmdResult[1]);
+        return false;
+    }
+
+    // Get Member
     const member_obj = await getMember.byContactID(qrtext);
 
     if (!member_obj) {
