@@ -13,7 +13,7 @@
       <a href="{% url 'index' %}">&#x1F519;</a>
     </div>
 
-    <h1>Select Event:</h2>
+    <h1>Select Event:</h1>
     <ul>
       {% for event in events %}
       <li><a href="{% url 'attendance-list' event.pk %}">{{ event.title }}</a></li>
