@@ -13,6 +13,19 @@ Download and install _Rasbian_ onto the hardware:
 The remainder of this installation will assume you're using the standard
 `pi` user.
 
+
+## Clone this Repository
+
+On the raspberry pi:
+
+```
+cd ~
+git clone git@github.com:carryonrewardless/QR-Code-Reader.git
+```
+
+This will clone the repository to `/home/pi/QR-Code-Reader` and set
+the branch to `master` (default).
+
 ## Apps, Libs, and Configure
 
 From the project root directory:
@@ -84,7 +97,10 @@ This will enable the `pi` user to turn off the raspberry pi by command.
 
 ## CRON
 
-**TODO:** setup cron job for:
+Edit the `pi` user's crontab with `crontab -e` (more detailed instructions
+can be found [here](https://www.raspberrypi.org/documentation/linux/usage/cron.md)
 
-* `./manage.py import_civicrm` (every 24hrs)
-* `./manage.py export_attendance` (every 5min)
+```
+0 0 * * *  cd /home/pi/QR-Code-Reader/webapp && python manage.py import_civicrm
+*/5 * * * *  cd /home/pi/QR-Code-Reader/webapp && python manage.py export_attendance
+```
