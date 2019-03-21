@@ -1,6 +1,17 @@
 # MelbPC QR-Code Scanner Setup
 
+This page has a complete yet consice list of instructions to setup a new
+scanner from with new hardware.
+
 ## Operating System - Raspbian
+
+Download and install _Rasbian_ onto the hardware:
+
+* Download _Raspbian Stretch Lite_ from the [download page](https://www.raspberrypi.org/downloads/raspbian/)
+* Install onto Raspberry Pi - [Installation guide](https://www.raspberrypi.org/documentation/installation/installing-images/README.md)
+
+The remainder of this installation will assume you're using the standard
+`pi` user.
 
 ## Apps, Libs, and Configure
 
@@ -10,8 +21,26 @@ From the project root directory:
 sudo apt update
 sudo apt install docker-ce-cli
 sudo apt install python3 python3-pip
-python3 -m pip install --upgrade pip
-python3 -m pip install -r webapp/requirements.txt
+```
+
+Set `python3` as default
+
+* assumption: `/usr/bin/python` is a symlink
+* assumption: `python3 --version` == `Python 3.5.2`
+
+(adjust accordingly)
+
+```
+cd /usr/bin
+sudo rm python
+sudo ln -s python3.5 python
+```
+
+Install python libraries
+
+```
+python -m pip install --upgrade pip
+python -m pip install -r webapp/requirements.txt
 ```
 
 **Configure Django**
@@ -23,7 +52,7 @@ cd webapp
 ./manage.py migrate
 
 # Create Admin User (in Django)
-echo "from django.contrib.auth.models import User; User.objects.create_superuser('admin', 'admin@nowhere.com', 'admin')" | python3 manage.py shell
+echo "from django.contrib.auth.models import User; User.objects.create_superuser('admin', 'admin@nowhere.com', 'admin')" | python manage.py shell
 ```
 
 **Window-Manager Settings**
