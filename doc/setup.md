@@ -36,7 +36,7 @@ sudo apt install docker-ce-cli
 sudo apt install python3 python3-pip
 ```
 
-Set `python3` as default
+**Set `python3` as default**
 
 * assumption: `/usr/bin/python` is a symlink
 * assumption: `python3 --version` == `Python 3.5.2`
@@ -49,7 +49,7 @@ sudo rm python
 sudo ln -s python3.5 python
 ```
 
-Install python libraries
+**Install python libraries**
 
 ```
 python -m pip install --upgrade pip
@@ -98,7 +98,7 @@ This will enable the `pi` user to turn off the raspberry pi by command.
 ## CRON
 
 Edit the `pi` user's crontab with `crontab -e` (more detailed instructions
-can be found [here](https://www.raspberrypi.org/documentation/linux/usage/cron.md)
+can be found [here](https://www.raspberrypi.org/documentation/linux/usage/cron.md))
 
 ```
 0 0 * * *  cd /home/pi/QR-Code-Reader/webapp && python manage.py import_civicrm
