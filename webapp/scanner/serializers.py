@@ -52,15 +52,9 @@ class MembershipSerializer(serializers.Serializer):
     status = serializers.CharField()
     status_isok = serializers.BooleanField()
 
-class MembershipViewSetByCID(viewsets.ModelViewSet):
-    queryset = Membership.objects.all()
-    serializer_class = MembershipSerializer
-    lookup_field = 'contact__remote_key'
-
-class MembershipViewSetByMemNo(viewsets.ModelViewSet):
+class MembershipViewSet(viewsets.ModelViewSet):
     queryset = Membership.objects.filter(type__allow_event_entry=True)
     serializer_class = MembershipSerializer
-    lookup_field = 'contact__membership_num'
 
     def get_object(self, *args, **kwargs):
         obj = self.queryset.filter(
@@ -71,6 +65,12 @@ class MembershipViewSetByMemNo(viewsets.ModelViewSet):
             raise NotFound("No valid Membership was found")
 
         return obj
+    
+class MembershipViewSetByCID(MembershipViewSet):
+    lookup_field = 'contact__remote_key'
+
+class MembershipViewSetByMemNo(MembershipViewSet):
+    lookup_field = 'contact__membership_num'
 
 
 # ---------- Locations
