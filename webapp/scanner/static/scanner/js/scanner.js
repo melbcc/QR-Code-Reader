@@ -335,7 +335,7 @@ const continueWithMember = (member) => {
     $('span.first_name').text(member['first_name']);
     $('span.last_name').text(member['last_name']);
     $('span.status_name span').text(member['status']);
-    $('span.status_name span').addClass(member['status']);
+    $('span.status_name span').addClass(member['status'].toUpperCase());
     // Set Member for attendance record
     $('#attendanceform input[name=contact_pk]').val(member['contact_id']);
 
