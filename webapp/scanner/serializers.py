@@ -1,4 +1,5 @@
 from rest_framework import serializers, viewsets, generics
+from rest_framework.exceptions import NotFound
 from django.utils import timezone
 
 import re
@@ -62,8 +63,14 @@ class MembershipViewSetByMemNo(viewsets.ModelViewSet):
     lookup_field = 'contact__membership_num'
 
     def get_object(self, *args, **kwargs):
-        self.kwargs[self.lookup_field] = self.kwargs[self.lookup_field].lstrip('0')
-        return super(MembershipViewSetByMemNo, self).get_object(*args, **kwargs)
+        obj = self.queryset.filter(
+            **{self.lookup_field: self.kwargs[self.lookup_field].lstrip('0')}
+        ).order_by('-end_date').first()
+
+        if not obj:
+            raise NotFound("No valid Membership was found")
+
+        return obj
 
 
 # ---------- Locations
