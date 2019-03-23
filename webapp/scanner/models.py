@@ -22,6 +22,16 @@ class MembershipType(models.Model):
         return self.name
 
 
+class MembershipStatus(models.Model):
+    remote_key = models.CharField(max_length=20, null=True, blank=True)  # CiviCRM primary key
+    name = models.CharField(max_length=200)
+    label = models.CharField(max_length=200)
+    is_active = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.name
+
+
 class Contact(models.Model):
     remote_key = models.CharField(max_length=20, null=True, blank=True)  # CiviCRM primary key
     first_name = models.CharField(max_length=200)

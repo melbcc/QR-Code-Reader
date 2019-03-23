@@ -1,13 +1,20 @@
 from django.contrib import admin
 from django.utils.html import format_html
 
-from .models import MembershipType, Contact, Membership, Location, Event, Attendance
+from .models import MembershipType, MembershipStatus
+from .models import Contact, Membership, Location, Event, Attendance
 
 
 @admin.register(MembershipType)
 class MembershipTypeAdmin(admin.ModelAdmin):
     list_display = ('name', 'allow_event_entry')
     search_fields = ('name',)
+
+
+@admin.register(MembershipStatus)
+class MembershipStatusAdmin(admin.ModelAdmin):
+    list_display = ('name', 'label', 'is_active')
+    search_fields = ('name', 'label')
 
 
 @admin.register(Contact)

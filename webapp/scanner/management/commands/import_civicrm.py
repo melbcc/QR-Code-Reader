@@ -7,7 +7,7 @@ import pytz
 import json
 
 from django.core.management.base import BaseCommand, CommandError
-from scanner.models import MembershipType, Membership, Event, Contact
+from scanner.models import MembershipType, MembershipStatus, Membership, Event, Contact
 
 
 class Command(BaseCommand):
@@ -16,6 +16,7 @@ class Command(BaseCommand):
     REST_URL_BASE = 'https://www.melbpc.org.au/wp-content/plugins/civicrm/civicrm/extern/rest.php'
     VALID_ACTIONS = [
         'membership_types',
+        'membership_status',
         'contacts',
         'memberships',
         'locations',
@@ -84,6 +85,45 @@ class Command(BaseCommand):
         self.stdout.write(
             '   ' + self.style.SUCCESS('[ok]') + ' ' +
             'MembershipTypes imported (added {created}, updated {updated})'.format(**count)
+        )
+
+    def import_membership_status(self, *args, **kwargs):
+        self.stdout.write(self.style.NOTICE('MembershipStatus'))
+        self.stdout.write('Fetching data from CiviCRM ...')
+        params = [
+            'entity=MembershipStatus',
+            'action=get',
+            'api_key={}'.format(kwargs['api_key']),
+            'key={}'.format(kwargs['key']),
+            'json=1',
+            'return={}'.format(','.join([
+                'id',
+                'name',
+                'label',
+                'is_active',
+            ])),
+            'options[limit]=0',
+        ]
+        request = requests.get(self.REST_URL_BASE + '?' + '&'.join(params))
+        raw_data = request.json()  # format: {'count': <int>, 'values': <membership_type dict>, ... }
+        self.stdout.write('   ' + self.style.SUCCESS('[ok]') + ' received data for {} membership status'.format(raw_data['count']))
+
+        self.stdout.write('Writing to local database ...')
+        count = {'created': 0, 'updated': 0}
+        for membership_status_dict in raw_data['values'].values():
+            (event, created) = MembershipStatus.objects.update_or_create(
+                remote_key=membership_status_dict['id'],
+                defaults={
+                    'name': membership_status_dict['name'],
+                    'label': membership_status_dict['label'],
+                    'is_active': membership_status_dict['is_active'],
+                }
+            )
+            count['created' if created else 'updated'] += 1
+
+        self.stdout.write(
+            '   ' + self.style.SUCCESS('[ok]') + ' ' +
+            'MembershipStatus imported (added {created}, updated {updated})'.format(**count)
         )
 
     def import_contacts(self, *args, **kwargs):
