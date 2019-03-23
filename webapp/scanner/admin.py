@@ -1,7 +1,20 @@
 from django.contrib import admin
 from django.utils.html import format_html
 
+from .models import MembershipType, MembershipStatus
 from .models import Contact, Membership, Location, Event, Attendance
+
+
+@admin.register(MembershipType)
+class MembershipTypeAdmin(admin.ModelAdmin):
+    list_display = ('name', 'allow_event_entry')
+    search_fields = ('name',)
+
+
+@admin.register(MembershipStatus)
+class MembershipStatusAdmin(admin.ModelAdmin):
+    list_display = ('name', 'label', 'is_active')
+    search_fields = ('name', 'label')
 
 
 @admin.register(Contact)
@@ -20,7 +33,7 @@ class ContactAdmin(admin.ModelAdmin):
 @admin.register(Membership)
 class MembershipAdmin(admin.ModelAdmin):
     list_display = (
-        'contact', 'membership_num', 'contact_id', 'status_pill',
+        'contact', 'membership_num', 'contact_id', 'type', 'status_pill',
     )
     search_fields = (
         'contact__membership_num', 'contact__remote_key',
@@ -34,14 +47,13 @@ class MembershipAdmin(admin.ModelAdmin):
         'DECEASED': ['background: #aaa', 'color: #fff', 'font-weight: bold'],
     }
     def status_pill(self, obj):
-        status_name = Membership.STATUS_ID_CHOICES[obj.status_id]
         return format_html('<div style="{style}">{text}</div>'.format(
             style=';'.join([
                 'text-align: center',
-                'border-radius: 0.4em',
+                'border-radius: 0.5em',
                 'width: 8em',
-            ] + self.STATUS_PILL_STYLE.get(status_name, [])),
-            text=status_name,
+            ] + self.STATUS_PILL_STYLE.get(getattr(obj.status, 'name', '').upper(), [])),
+            text=obj.status,
         ))
 
     status_pill.allow_tags = True
