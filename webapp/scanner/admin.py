@@ -1,7 +1,13 @@
 from django.contrib import admin
 from django.utils.html import format_html
 
-from .models import Contact, Membership, Location, Event, Attendance
+from .models import MembershipType, Contact, Membership, Location, Event, Attendance
+
+
+@admin.register(MembershipType)
+class MembershipTypeAdmin(admin.ModelAdmin):
+    list_display = ('name', 'allow_event_entry')
+    search_fields = ('name',)
 
 
 @admin.register(Contact)
@@ -20,7 +26,7 @@ class ContactAdmin(admin.ModelAdmin):
 @admin.register(Membership)
 class MembershipAdmin(admin.ModelAdmin):
     list_display = (
-        'contact', 'membership_num', 'contact_id', 'status_pill',
+        'contact', 'membership_num', 'contact_id', 'membership_type', 'status_pill',
     )
     search_fields = (
         'contact__membership_num', 'contact__remote_key',
