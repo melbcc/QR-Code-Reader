@@ -55,29 +55,12 @@ class Membership(models.Model):
     remote_key = models.CharField(max_length=20)  # CiviCRM primary key
     end_date = models.DateTimeField('membership end', null=True, blank=True)
     contact = models.ForeignKey(Contact, on_delete=models.CASCADE)
-
-    STATUS_ID_CHOICES = {
-        2: "CURRENT",
-        3: "GRACE",
-        4: "EXPIRED",
-        5: "__blank5__",
-        6: "__blank6__",
-        7: "DECEASED",
-    }
-    status_id = models.IntegerField(
-        choices=sorted(STATUS_ID_CHOICES.items(), key=lambda x: x[0]),
-        null=True, blank=True,
-    )
-
-    membership_type = models.ForeignKey(MembershipType, on_delete=models.CASCADE, null=True, blank=True)
-
-    @property
-    def status(self):
-        return self.STATUS_ID_CHOICES[self.status_id]
+    status = models.ForeignKey(MembershipStatus, on_delete=models.CASCADE, null=True, blank=True)
+    type = models.ForeignKey(MembershipType, on_delete=models.CASCADE, null=True, blank=True)
 
     @property
     def status_isok(self):
-        return (self.status_id <= 3)
+        return (self.status.name in ('Grace', 'Current'))
 
     @property
     def membership_num(self):

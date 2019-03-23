@@ -200,16 +200,17 @@ class Command(BaseCommand):
                     member_dict['end_date'], '%Y-%m-%d' #'%Y-%m-%d %H:%M:%S'
                 ))
             contact = Contact.objects.filter(remote_key=member_dict['contact_id']).first()
-            membership_type = MembershipType.objects.filter(remote_key=member_dict['membership_type_id']).first()
+            membership_type = MembershipType.objects.get(remote_key=member_dict['membership_type_id'])
+            membership_status = MembershipStatus.objects.get(remote_key=member_dict['status_id'])
 
-            if contact and membership_type:
+            if all((contact, membership_type, membership_status)):
                 (member, created) = Membership.objects.update_or_create(
                     remote_key=member_dict['id'],
                     defaults={
                         'contact': contact,
                         'end_date': end_date,
-                        'status_id': member_dict['status_id'],
-                        'membership_type': membership_type,
+                        'status': membership_status,
+                        'type': membership_type,
                     }
                 )
                 count['created' if created else 'updated'] += 1

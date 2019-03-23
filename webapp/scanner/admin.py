@@ -33,7 +33,7 @@ class ContactAdmin(admin.ModelAdmin):
 @admin.register(Membership)
 class MembershipAdmin(admin.ModelAdmin):
     list_display = (
-        'contact', 'membership_num', 'contact_id', 'membership_type', 'status_pill',
+        'contact', 'membership_num', 'contact_id', 'type', 'status_pill',
     )
     search_fields = (
         'contact__membership_num', 'contact__remote_key',
@@ -47,14 +47,13 @@ class MembershipAdmin(admin.ModelAdmin):
         'DECEASED': ['background: #aaa', 'color: #fff', 'font-weight: bold'],
     }
     def status_pill(self, obj):
-        status_name = Membership.STATUS_ID_CHOICES[obj.status_id]
         return format_html('<div style="{style}">{text}</div>'.format(
             style=';'.join([
                 'text-align: center',
-                'border-radius: 0.4em',
+                'border-radius: 0.5em',
                 'width: 8em',
-            ] + self.STATUS_PILL_STYLE.get(status_name, [])),
-            text=status_name,
+            ] + self.STATUS_PILL_STYLE.get(getattr(obj.status, 'name', '').upper(), [])),
+            text=obj.status,
         ))
 
     status_pill.allow_tags = True
