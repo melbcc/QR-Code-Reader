@@ -50,6 +50,15 @@ class Membership(models.Model):
         null=True, blank=True,
     )
 
+    #MEMBERSHIP_TYPE_ID_CHOICES = {
+    #    1: 'VAL',
+    #}
+    membership_type_id = models.IntegerField(
+        #choices=sorted(STATUS_ID_CHOICES.items(), key=lambda x: x[0]),
+        null=True, blank=True,
+    )
+
+
     @property
     def status(self):
         return self.STATUS_ID_CHOICES[self.status_id]

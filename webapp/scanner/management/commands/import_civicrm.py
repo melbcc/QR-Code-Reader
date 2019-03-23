@@ -103,6 +103,7 @@ class Command(BaseCommand):
                 'contact_id',
                 'end_date',
                 'status_id',
+                'membership_type_id',
             ])),
             #'return=contact_id,last_name,first_name,postal_code,custom_8',
             #'api.Membership.get[custom_8,end_date,status_id.name]',
@@ -123,13 +124,21 @@ class Command(BaseCommand):
                 ))
             contact = Contact.objects.filter(remote_key=member_dict['contact_id']).first()
 
-            if contact:
+            # is membership type relevant?
+            #   TODO: pull in MembershipType table, types 1 & 5
+            #         are "Individual" and "Honorary" respectively.
+            membership_relevant = False
+            if member_dict['membership_type_id'] in ('1', '5'):
+                membership_relevant = True
+
+            if contact and membership_relevant:
                 (member, created) = Membership.objects.update_or_create(
                     remote_key=member_dict['id'],
                     defaults={
                         'contact': contact,
                         'end_date': end_date,
                         'status_id': member_dict['status_id'],
+                        'membership_type_id': member_dict['membership_type_id'],
                     }
                 )
                 count['created' if created else 'updated'] += 1
