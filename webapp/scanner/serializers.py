@@ -57,7 +57,7 @@ class MembershipViewSetByCID(viewsets.ModelViewSet):
     lookup_field = 'contact__remote_key'
 
 class MembershipViewSetByMemNo(viewsets.ModelViewSet):
-    queryset = Membership.objects.all()
+    queryset = Membership.objects.filter(type__allow_event_entry=True)
     serializer_class = MembershipSerializer
     lookup_field = 'contact__membership_num'
 
