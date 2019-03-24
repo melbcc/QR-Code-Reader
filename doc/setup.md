@@ -34,6 +34,7 @@ From the project root directory:
 sudo apt update
 sudo apt install docker-ce-cli
 sudo apt install python3 python3-pip
+sudo apt install chromium-browser
 ```
 
 **Set `python3` as default**
@@ -74,16 +75,32 @@ echo "from django.contrib.auth.models import User; User.objects.create_superuser
 
 ## `/etc/rc.local`
 
-**TODO:** add lines to run... are we sure these can't be services?
+Add the following to the `/etc/rc.local` file:
 
-* `cd database ; ./run.sh`
-* `cd webapp ; ./manage.py runserver`
+```
+sudo -iu pi /usr/bin/screen -dmS runDB bash -c /home/pi/dbstart.sh
+sudo -iu pi /usr/bin/screen -dmS runApp bash -c /home/pi/appStart.sh
+```
+
+**TODO:** what is `dbstart.sh` and `appStart.sh`
+
+**Need to Debug?**
+
+To read the log output of those services, you can "attach" to a screen session
+by re-attaching to a screen session:
+
+```
+screen -r runDB
+screen -r runApp
+```
 
 ## `~/.config/lxsession/LXDE-pi/autostart`
 
-**TODO:** add lines to start:
+Add the following to the `~/.config/lxsession/LXDE-pi/autostart` file:
 
-* `chromium-browser --app=http://localhost:8000`
+```
+@chromium-browser --start-fullscreen -a file:///home/pi/QR-Code-Reader/startup.html
+```
 
 ## `/etc/sudoers`
 
