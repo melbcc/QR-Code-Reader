@@ -134,4 +134,4 @@ be used by the individual hosting the event.
 
 ### `{CMD}{HOME}`
 
-~[CMD HOME](HOME.png)
+![CMD HOME](HOME.png)
