@@ -121,3 +121,17 @@ can be found [here](https://www.raspberrypi.org/documentation/linux/usage/cron.m
 0 0 * * *  cd /home/pi/QR-Code-Reader/webapp && python manage.py import_civicrm
 */5 * * * *  cd /home/pi/QR-Code-Reader/webapp && python manage.py export_attendance
 ```
+
+## Scanner Command(s)
+
+When the scanner is set up, there is no touch-friendly way to navigate
+away from the membership scanning cycle.
+
+Instead, you can scan a "command" QR-code, such as those below.
+
+It's recommended you print these and keep near the scanner so they may
+be used by the individual hosting the event.
+
+### `{CMD}{HOME}`
+
+~[CMD HOME](HOME.png)
