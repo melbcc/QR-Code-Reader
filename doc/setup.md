@@ -7,7 +7,7 @@ scanner from with new hardware.
 
 Download and install _Rasbian_ onto the hardware:
 
-* Download _Raspbian Stretch Lite_ from the [download page](https://www.raspberrypi.org/downloads/raspbian/)
+* Download `Raspbian Stretch with desktop` from the [download page](https://www.raspberrypi.org/downloads/raspbian/)
 * Install onto Raspberry Pi - [Installation guide](https://www.raspberrypi.org/documentation/installation/installing-images/README.md)
 
 The remainder of this installation will assume you're using the standard
