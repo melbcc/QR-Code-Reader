@@ -86,8 +86,8 @@ sudo -iu pi /usr/bin/screen -dmS runApp bash -c /home/pi/appStart.sh
 
 **Need to Debug?**
 
-To read the log output of those services, you can "attach" to a screen session
-by re-attaching to a screen session:
+To read the log output of those services, you can "attach" to a `screen`
+session with:
 
 ```
 screen -r runDB
