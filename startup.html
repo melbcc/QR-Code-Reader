@@ -26,8 +26,28 @@
                 window.location.replace(APPLICATION_URI);
             }
         </script>
+        <style>
+            html, body {
+                height: 100%;
+                margin: 0;
+                padding: 0;
+                width: 100%;
+            }
+
+            body {
+                display: table;
+            }
+
+            .loading-text {
+                text-align: center;
+                display: table-cell;
+                vertical-align: middle;
+            }
+        </style>
     </head>
     <body>
-        <h1>Loading ...</h1>
+        <div class="loading-text">
+            <h1>Loading ...</h1>
+        </div>
     </body>
 </html>
