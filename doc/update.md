@@ -21,7 +21,7 @@ git pull origin master
 
 ```
 cd webapp
-python -m pip install
+python -m pip install -r requirements.txt
 ./manage.py migrate
 ```
 
