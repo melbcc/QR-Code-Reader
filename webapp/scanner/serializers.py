@@ -1,4 +1,5 @@
 from rest_framework import serializers, viewsets, generics
+from rest_framework.exceptions import NotFound
 from django.utils import timezone
 
 import re
@@ -51,19 +52,25 @@ class MembershipSerializer(serializers.Serializer):
     status = serializers.CharField()
     status_isok = serializers.BooleanField()
 
-class MembershipViewSetByCID(viewsets.ModelViewSet):
-    queryset = Membership.objects.all()
+class MembershipViewSet(viewsets.ModelViewSet):
+    queryset = Membership.objects.filter(type__allow_event_entry=True)
     serializer_class = MembershipSerializer
-    lookup_field = 'contact__remote_key'
-
-class MembershipViewSetByMemNo(viewsets.ModelViewSet):
-    queryset = Membership.objects.all()
-    serializer_class = MembershipSerializer
-    lookup_field = 'contact__membership_num'
 
     def get_object(self, *args, **kwargs):
-        self.kwargs[self.lookup_field] = self.kwargs[self.lookup_field].lstrip('0')
-        return super(MembershipViewSetByMemNo, self).get_object(*args, **kwargs)
+        obj = self.queryset.filter(
+            **{self.lookup_field: self.kwargs[self.lookup_field].lstrip('0')}
+        ).order_by('-end_date').first()
+
+        if not obj:
+            raise NotFound("No valid Membership was found")
+
+        return obj
+    
+class MembershipViewSetByCID(MembershipViewSet):
+    lookup_field = 'contact__remote_key'
+
+class MembershipViewSetByMemNo(MembershipViewSet):
+    lookup_field = 'contact__membership_num'
 
 
 # ---------- Locations
