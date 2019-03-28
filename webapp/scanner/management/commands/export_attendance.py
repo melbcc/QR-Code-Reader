@@ -1,5 +1,6 @@
 import os
 import requests
+import json
 
 from django.core.management.base import BaseCommand, CommandError
 from django.utils import timezone
@@ -12,16 +13,27 @@ class Command(BaseCommand):
     help = "Export recorded attendance to CiviCRM"
 
     REST_URL_BASE = 'https://www.melbpc.org.au/wp-content/plugins/civicrm/civicrm/extern/rest.php'
+    DEFAULT_KEYFILE = '{HOME}/civicrm-keys.json'
 
     def add_arguments(self, parser):
+
+        def env_formatted_str(value):
+            return value.format(**os.environ)
+
         group = parser.add_argument_group('CiviCRM Options')
         group.add_argument(
-            '--key', dest='key', default=os.environ.get('CIVICRM_KEY', None),
-            help="key the first (default: environment variable CIVICRM_KEY)",
+            '--site-key', dest='site_key',
+            help="CiviCRM site key (default from keyfile)",
         )
         group.add_argument(
-            '--apikey', dest='api_key', default=os.environ.get('CIVICRM_APIKEY', None),
-            help="key the second (default: environment variable CIVICRM_APIKEY)",
+            '--user-key', dest='user_key',
+            help="CiviCRM user key (default from keyfile)",
+        )
+        default_keyfile = env_formatted_str(self.DEFAULT_KEYFILE)
+        group.add_argument(
+            '--keyfile', dest='keyfile',
+            default=default_keyfile, type=env_formatted_str,
+            help="CiviCRM key json file (default: {!r})".format(default_keyfile),
         )
 
         group = parser.add_argument_group('Export Options')
@@ -40,6 +52,11 @@ class Command(BaseCommand):
             default=True, const=False, action='store_const',
             help="if set, tool continues after each failure (instead of exiting)",
         )
+
+    def get_keys(self, filename):
+        if not os.path.exists(filename):
+            return {}
+        return json.load(open(filename, 'r'))
 
     def create(self, table_name, **kwargs):
         # Generate Payload
@@ -91,12 +108,15 @@ class Command(BaseCommand):
             json={"event_id":65,"contact_id":3147}
         """
 
-        self.api_key = kwargs['api_key']
-        self.key = kwargs['key']
         self.failfast = kwargs['failfast']
 
-        # ----- Verify Argument(s)
-        if None in (kwargs['key'], kwargs['api_key']):
+        # ----- Get Keys
+        key_data = self.get_keys(kwargs['keyfile'])
+        self.api_key = kwargs.get('user_key', None) or key_data.get('user_key', None)
+        self.key = kwargs.get('site_key', None) or key_data.get('site_key', None)
+
+        # Validate
+        if None in (self.api_key, self.key):
             raise CommandError("Authentication keys not set")
 
         # ----- Create Guest Contacts

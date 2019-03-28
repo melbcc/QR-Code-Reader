@@ -34,22 +34,34 @@ Load sample data from fixtures with
 
 ## Import from CiviCRM
 
-**Add keys**
+All `get` and `create` REST API actions sent to CiviCRM need to be
+authenticated. This protects the data from being read or changed from an
+anonymous source.
 
-Create a file in this directory: `api_keys.sh`
+**Create `~/civicrm-keys.json`**
 
 ```bash
-#!/usr/bin/env bash
-export CIVICRM_KEY=acbd18db4cc2f85cedef654fccc4a4d8
-export CIVICRM_APIKEY=fdba98970961edb2
+touch ~/civicrm-keys.json
+chmod 644 ~/civicrm-keys.json
+```
+
+Edit the contents of `~/civicrm-keys.json` to be:
+
+```json
+{
+    "site_key": "acbd18db4cc2f85cedef654fccc4a4d8",
+    "user_key": "fdba98970961edb2"
+}
 ```
 
 Note: the above keys are made up, so replace them with actual keys
 
 **Run Script**
 
+If everything is setup and authenticated correctly, the following
+script should run and download all relevant CiviCRM data.
+
 ```bash
-source api_keys.sh
 ./manage.py import_civicrm
 ```
 
