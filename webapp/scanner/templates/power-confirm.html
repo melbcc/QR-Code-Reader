@@ -11,10 +11,15 @@
       <a href="{% url 'index' %}">&#x1F519;</a>
     </div>
 
-    <h1>Power Down?</h1>
+    <h1>Power Options</h1>
+    <p>
+      <a href="{% url 'power-off' %}" class="button button-red">Shutdown</a>
+    </p>
+    <p>
+      <a href="{% url 'power-restart' %}" class="button button-red">Reboot</a>
+    </p>
     <p>
       <a href="{% url 'index' %}" class="button">Cancel</a>
-      <a href="{% url 'power-off' %}" class="button button-red">Shutdown</a>
     </p>
   </body>
 </html>
