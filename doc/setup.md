@@ -13,6 +13,24 @@ Download and install _Rasbian_ onto the hardware:
 The remainder of this installation will assume you're using the standard
 `pi` user.
 
+**Option: use `dd` from Linux**
+
+If you're using a Linux pc to:
+
+```
+image_name=2018-11-13-raspbian-stretch.img
+device=/dev/sdX
+dd bs=4M if=${image_name} of=${device} conv=fsync
+```
+
+**Booting Raspberry Pi**
+
+When booting for the first time, follow the on-screen prompts to configure:
+
+* Locale
+* `pi` user password (remember it)
+* WiFi
+* (and more?)
 
 ## Clone this Repository
 
@@ -20,7 +38,7 @@ On the raspberry pi:
 
 ```
 cd ~
-git clone git@github.com:carryonrewardless/QR-Code-Reader.git
+git clone https://github.com/carryonrewardless/QR-Code-Reader.git
 ```
 
 This will clone the repository to `/home/pi/QR-Code-Reader` and set
@@ -28,14 +46,44 @@ the branch to `master` (default).
 
 ## Apps, Libs, and Configure
 
+**Enable `SSH`**\
+(follow [this link](https://www.raspberrypi.org/documentation/remote-access/ssh/) and read the "Enable SSH" section)
+
 From the project root directory:
 
 ```
+# Update all currently installed software
 sudo apt update
-sudo apt install docker-ce-cli
+sudo apt upgrade
+
+# Screen
+sudo apt install screen
+
+# Docker
+curl -fsSL get.docker.com -o get-docker.sh && sh get-docker.sh
+sudo groupadd docker
+sudo gpasswd -a pi docker
+
+# Python 3.x
 sudo apt install python3 python3-pip
+
+# PosgreSQL Database Client
+sudo apt install libpq-dev postgresql postgresql-contrib
+
+# Browser
 sudo apt install chromium-browser
 ```
+
+**Reboot & Test Docker**
+
+Reboot the Raspberry Pi, then:
+
+```
+docker run hello-world
+```
+
+You should see a `Hello from Docker!` message mixed in with almost a screen
+of text; positive messages will indicate it's working ;).
 
 **Set `python3` as default**
 
@@ -53,14 +101,30 @@ sudo ln -s python3.5 python
 **Install python libraries**
 
 ```
-python -m pip install --upgrade pip
-python -m pip install -r webapp/requirements.txt
+cd ~/QR-Code-Reader
+sudo python -m pip install --upgrade pip
+sudo python -m pip install -r webapp/requirements.txt
 ```
 
-**Configure Django**
+**Window-Manager Settings**
+
+* Turn off screensaver (perhaps dim backlight instead?)
+
+
+## Initialize Local Database
+
+**Start Database service (manually)**
+
+In a terminal run:
 
 ```
-cd webapp
+~/QR-Code-Reader/database/run.sh
+```
+
+In another terminal run:
+
+```
+cd ~/QR-Code-Reader/webapp
 
 # Initialize Database
 ./manage.py migrate
@@ -69,51 +133,76 @@ cd webapp
 echo "from django.contrib.auth.models import User; User.objects.create_superuser('admin', 'admin@nowhere.com', 'admin')" | python manage.py shell
 ```
 
-**Window-Manager Settings**
+**Add CiviCRM Keys**
 
-* Turn off screensaver (perhaps dim backlight instead?)
+Follow instructions in [webapp](webapp/README.md) to create the `api_keys.sh`
+file in the `~/QR-Code-Reader/webapp/api_keys.sh` folder
+
+```
+cd ~/QR-Code-Reader/webapp
+source api_keys.sh
+python manage.py import_civicrm
+```
+
 
 ## `/etc/rc.local`
 
 Add the following to the `/etc/rc.local` file:
 
 ```
-sudo -iu pi /usr/bin/screen -dmS runDB bash -c /home/pi/QR-Code-Reader/database/run.sh
-sudo -iu pi /usr/bin/screen -dmS runApp bash -c /home/pi/QR-Code-Reader/webapp/runserver.sh
+sudo -iu pi /usr/bin/screen -dmS database bash -c /home/pi/QR-Code-Reader/database/run.sh
+sudo -iu pi /usr/bin/screen -dmS webapp bash -c /home/pi/QR-Code-Reader/webapp/runserver.sh
 
 # Wait for postgres database to spin up
 sleep 10s
 
 # Import updates to CiviCRM
 pushd /home/pi/QR-Code-Reader/webapp
+source api_keys.sh
 python manage.py import_civicrm
 popd
 ```
+
+**Reboot**
+
+Reboot the Raspberry Pi, that should start the above services
 
 **Need to Debug?**
 
 To read the log output of those services, you can "attach" to a `screen`
 session with:
 
+for `screen_name` = `database` or `webapp`
+
 ```
-screen -r runDB
-screen -r runApp
+screen -r $screen_name
+# press Ctrl+A, D to detatch from screen session
 ```
 
 ## `~/.config/lxsession/LXDE-pi/autostart`
 
-Add the following to the `~/.config/lxsession/LXDE-pi/autostart` file:
+```
+mkdir -p ~/.config/lxsession/LXDE-pi
+```
+
+Create a `~/.config/lxsession/LXDE-pi/autostart` file with the contents:
 
 ```
+@lxpanel --profile LXDE-pi
+@pcmanfm --desktop --profile LXDE-pi
 @chromium-browser --start-fullscreen -a file:///home/pi/QR-Code-Reader/startup.html
 ```
 
 ## `/etc/sudoers`
 
+```
+sudo visudo
+```
+
 Add to `/etc/sudoers`
 
 ```
-pi ALL= /sbin/poweroff
+pi ALL=(ALL) NOPASSWD:/sbin/poweroff
 ```
 
 This will enable the `pi` user to turn off the raspberry pi by command.
