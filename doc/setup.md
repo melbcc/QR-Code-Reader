@@ -78,8 +78,8 @@ echo "from django.contrib.auth.models import User; User.objects.create_superuser
 Add the following to the `/etc/rc.local` file:
 
 ```
-sudo -iu pi /usr/bin/screen -dmS runDB bash -c /home/pi/dbstart.sh
-sudo -iu pi /usr/bin/screen -dmS runApp bash -c /home/pi/appStart.sh
+sudo -iu pi /usr/bin/screen -dmS runDB bash -c /home/pi/QR-Code-Reader/database/run.sh
+sudo -iu pi /usr/bin/screen -dmS runApp bash -c /home/pi/QR-Code-Reader/webapp/runserver.sh
 
 # Wait for postgres database to spin up
 sleep 10s
@@ -89,8 +89,6 @@ pushd /home/pi/QR-Code-Reader/webapp
 python manage.py import_civicrm
 popd
 ```
-
-**TODO:** what is `dbstart.sh` and `appStart.sh`
 
 **Need to Debug?**
 
