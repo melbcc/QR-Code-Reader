@@ -12,8 +12,9 @@ urlpatterns = [
     path(r'att', views.AttendanceSelect.as_view(), name='attendance-select'),
     path(r'att/<int:event_pk>', views.AttendanceList.as_view(), name='attendance-list'),
     path(r'att/<int:event_pk>/csv', views.AttendanceListCSV.as_view(), name='attendance-csv'),
-    path(r'power/confirm', views.PowerOffConfirmationView.as_view(), name='power-confirm'),
+    path(r'power/confirm', views.PowerConfirmationView.as_view(), name='power-confirm'),
     path(r'power/off', views.PowerOffView.as_view(), name='power-off'),
+    path(r'power/restart', views.PowerRestartView.as_view(), name='power-restart'),
 ]
 
 # ----- REST API

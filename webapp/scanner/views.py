@@ -213,14 +213,24 @@ class AttendanceListCSV(View):
 
 
 # ---------- Power Off
-class PowerOffConfirmationView(generic.TemplateView):
-    template_name = "poweroff-confirm.html"
+class PowerConfirmationView(generic.TemplateView):
+    template_name = "power-confirm.html"
 
 
-class PowerOffView(View):
-    template_name = "poweroff-execute.html"
+class _PowerView(View):
+    template_name = "power-execute.html"
 
     def get(self, request, *args, **kwargs):
         import subprocess
-        proc = subprocess.call("sudo /sbin/poweroff", shell=True)
-        return render(request, self.template_name)
+        proc = subprocess.call(self.CMD, shell=True)
+        return render(request, self.template_name, {
+            'message': self.MESSAGE,
+        })
+
+class PowerOffView(_PowerView):
+    MESSAGE = "Powering Down"
+    CMD = "sudo /sbin/poweroff"
+
+class PowerRestartView(_PowerView):
+    MESSAGE = "Restarting"
+    CMD = "sudo /sbin/reboot"
