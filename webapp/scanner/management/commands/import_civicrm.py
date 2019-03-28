@@ -14,6 +14,7 @@ class Command(BaseCommand):
     help = "Import members from CiviCRM"
 
     REST_URL_BASE = 'https://www.melbpc.org.au/wp-content/plugins/civicrm/civicrm/extern/rest.php'
+    DEFAULT_KEYFILE = '{HOME}/civicrm-keys.json'
     VALID_ACTIONS = [
         'membership_types',
         'membership_status',
@@ -35,14 +36,23 @@ class Command(BaseCommand):
 
             return actions
 
+        def env_formatted_str(value):
+            return value.format(**os.environ)
+
         group = parser.add_argument_group('CiviCRM Options')
         group.add_argument(
-            '--key', dest='key', default=os.environ.get('CIVICRM_KEY', None),
-            help="key the first (default: environment variable CIVICRM_KEY)",
+            '--site-key', dest='site_key',
+            help="CiviCRM site key (default from keyfile)",
         )
         group.add_argument(
-            '--apikey', dest='api_key', default=os.environ.get('CIVICRM_APIKEY', None),
-            help="key the second (default: environment variable CIVICRM_APIKEY)",
+            '--user-key', dest='user_key',
+            help="CiviCRM user key (default from keyfile)",
+        )
+        default_keyfile = env_formatted_str(self.DEFAULT_KEYFILE)
+        group.add_argument(
+            '--keyfile', dest='keyfile',
+            default=default_keyfile, type=env_formatted_str,
+            help="CiviCRM key json file (default: {!r})".format(default_keyfile),
         )
 
         group = parser.add_argument_group('Actions')
@@ -51,14 +61,19 @@ class Command(BaseCommand):
             help="List of things to import: {!r}".format(self.VALID_ACTIONS),
         )
 
+    def get_keys(self, filename):
+        if not os.path.exists(filename):
+            return {}
+        return json.load(open(filename, 'r'))
+
     def import_membership_types(self, *args, **kwargs):
         self.stdout.write(self.style.NOTICE('MembershipTypes'))
         self.stdout.write('Fetching data from CiviCRM ...')
         params = [
             'entity=MembershipType',
             'action=get',
-            'api_key={}'.format(kwargs['api_key']),
-            'key={}'.format(kwargs['key']),
+            'api_key={}'.format(self.api_key),
+            'key={}'.format(self.key),
             'json=1',
             'return={}'.format(','.join([
                 'id',
@@ -93,8 +108,8 @@ class Command(BaseCommand):
         params = [
             'entity=MembershipStatus',
             'action=get',
-            'api_key={}'.format(kwargs['api_key']),
-            'key={}'.format(kwargs['key']),
+            'api_key={}'.format(self.api_key),
+            'key={}'.format(self.key),
             'json=1',
             'return={}'.format(','.join([
                 'id',
@@ -132,8 +147,8 @@ class Command(BaseCommand):
         params = [
             'entity=Contact',
             'action=get',
-            'api_key={}'.format(kwargs['api_key']),
-            'key={}'.format(kwargs['key']),
+            'api_key={}'.format(self.api_key),
+            'key={}'.format(self.key),
             'json=contact_id',
             'return={}'.format(','.join([
                 'last_name',
@@ -173,8 +188,8 @@ class Command(BaseCommand):
         params = [
             'entity=Membership',
             'action=get',
-            'api_key={}'.format(kwargs['api_key']),
-            'key={}'.format(kwargs['key']),
+            'api_key={}'.format(self.api_key),
+            'key={}'.format(self.key),
             'json=membership_id',
             'return={}'.format(','.join([
                 'contact_id',
@@ -236,8 +251,8 @@ class Command(BaseCommand):
         params = [
             'entity=Event',
             'action=get',
-            'api_key={}'.format(kwargs['api_key']),
-            'key={}'.format(kwargs['key']),
+            'api_key={}'.format(self.api_key),
+            'key={}'.format(self.key),
             'json=event_id',
             #'sequential=1',
             'return={}'.format(','.join([
@@ -285,14 +300,19 @@ class Command(BaseCommand):
             'Locations imported (added {created}, updated {updated})'.format(**count)
         )
 
-    def handle(self, *args, **options):
-        # ----- Verify Argument(s)
-        if None in (options['key'], options['api_key']):
+    def handle(self, *args, **kwargs):
+        # ----- Get Keys
+        key_data = self.get_keys(kwargs['keyfile'])
+        self.api_key = kwargs.get('user_key', None) or key_data.get('user_key', None)
+        self.key = kwargs.get('site_key', None) or key_data.get('site_key', None)
+
+        # Validate
+        if None in (self.api_key, self.key):
             raise CommandError("Authentication keys not set")
 
         # ----- Actions
         # Run all self.import_<action>() functions identified
         # by input parameters (or all if a white-list was not given)
         for action in self.VALID_ACTIONS:
-            if (action in options['actions']) or (not options['actions']):
-                getattr(self, 'import_' + action)(*args, **options)
+            if (action in kwargs['actions']) or (not kwargs['actions']):
+                getattr(self, 'import_' + action)(*args, **kwargs)

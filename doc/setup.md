@@ -135,12 +135,11 @@ echo "from django.contrib.auth.models import User; User.objects.create_superuser
 
 **Add CiviCRM Keys**
 
-Follow instructions in [webapp](webapp/README.md) to create the `api_keys.sh`
-file in the `~/QR-Code-Reader/webapp/api_keys.sh` folder
+Follow instructions in [webapp](webapp/README.md) to create a
+`~/civicrm-keys.json` file.
 
 ```
 cd ~/QR-Code-Reader/webapp
-source api_keys.sh
 python manage.py import_civicrm
 ```
 
@@ -158,7 +157,6 @@ sleep 10s
 
 # Import updates to CiviCRM
 pushd /home/pi/QR-Code-Reader/webapp
-source api_keys.sh
 python manage.py import_civicrm
 popd
 ```
