@@ -222,5 +222,5 @@ class PowerOffView(View):
 
     def get(self, request, *args, **kwargs):
         import subprocess
-        proc = subprocess.call("/sbin/poweroff", shell=True)
+        proc = subprocess.call("sudo /sbin/poweroff", shell=True)
         return render(request, self.template_name)
