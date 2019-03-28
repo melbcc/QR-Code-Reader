@@ -16,7 +16,7 @@ class ContactSerializer(serializers.Serializer):
     pk = serializers.IntegerField(read_only=True)
     first_name = serializers.CharField()
     last_name = serializers.CharField()
-    email_address = serializers.CharField(required=False)
+    email_address = serializers.CharField()
     mobile_number = serializers.CharField(required=False)
 
     # copied from http://emailregex.com ... seems legit
