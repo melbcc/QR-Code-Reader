@@ -144,6 +144,9 @@ img.qrcode {
     border-style: solid;
     border-radius: 8vh;
     border-color: red;
+    /* 100% - (margin + padding + border) */
+    height: calc(100vh - 20vh - 4vh);
+    width: calc(100vw - 20vh - 4vh); /* -17px if scroll bar */
 
     /* background */
     background: rgba(0, 0, 0, 0.75);
@@ -158,7 +161,7 @@ img.qrcode {
 
 .error-dialog .error-buttons {
     position: absolute;
-    bottom: 5vh;
+    bottom: 8vh;
     text-align: center;
     width: 85%;  /* 100% goes off the page */
 }
