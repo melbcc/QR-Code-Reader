@@ -147,7 +147,7 @@ python manage.py import_civicrm
 
 ## `/etc/rc.local`
 
-Add the following to the `/etc/rc.local` file:
+Add the following to the `/etc/rc.local` file, before the `exit 0` line:
 
 ```
 sudo -iu pi /usr/bin/screen -dmS database bash -c /home/pi/QR-Code-Reader/database/run.sh
@@ -166,6 +166,9 @@ popd
 **Reboot**
 
 Reboot the Raspberry Pi, that should start the above services
+
+To verify this, you can run `screen -list`. That should show 2 sessions running,
+called `database` and `webapp`.
 
 **Need to Debug?**
 
@@ -202,10 +205,12 @@ sudo visudo
 Add to `/etc/sudoers`
 
 ```
-pi ALL=(ALL) NOPASSWD:/sbin/poweroff
+pi ALL=(ALL) NOPASSWD: /sbin/poweroff
+pi ALL=(ALL) NOPASSWD: /sbin/reboot
 ```
 
-This will enable the `pi` user to turn off the raspberry pi by command.
+This will enable the `pi` user to turn off, and reboot the raspberry
+pi by command-line without the need to enter a password.
 
 ## CRON
 
