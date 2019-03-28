@@ -198,3 +198,7 @@ form.touch input {
     background: #55f;
     color: white;
 }
+
+.hg-button {
+    min-height: 10vh;
+}
