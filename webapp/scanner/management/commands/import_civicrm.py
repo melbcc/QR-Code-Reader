@@ -28,6 +28,12 @@ class Command(BaseCommand):
         def t_env_formatted_str(value):
             return value.format(**os.environ)
 
+        parser.add_argument(
+            '--showdata', dest='showdata',
+            default=False, const=True, action='store_const',
+            help="Prints downloaded data.",
+        )
+
         group = parser.add_argument_group('CiviCRM Options')
         group.add_argument(
             '--site-key', dest='site_key',
@@ -81,14 +87,16 @@ class Command(BaseCommand):
         # Extract Data
         request_json = request.json()
         if request_json['is_error']:
-            raise ValueError("response error  message: {!r}".format(request_json.get('error_message', None)))
+            raise ValueError("response error message: {!r}".format(request_json.get('error_message', None)))
 
-        self.stdout.write('   ' + self.style.SUCCESS('[ok]') + ' received data for {} memberships'.format(request_json['count']))
+        self.stdout.write('   ' + self.style.SUCCESS('[ok]') + ' received data for {} objects'.format(request_json['count']))
 
         # Import Loop
         self.stdout.write('Writing to local database ...')
         count = {'created': 0, 'updated': 0}
         for (remote_id, data) in request_json['values'].items():
+            if self.showdata:
+                self.stdout.write('{!r}'.format(data))
             try:
                 (event, created) = cls.objects.update_or_create(
                     remote_key=remote_id,
@@ -111,6 +119,8 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **kwargs):
+        self.showdata = kwargs['showdata']
+
         # ----- Get Keys
         key_data = self.get_keys(kwargs['keyfile'])
         self.api_key = kwargs.get('user_key', None) or key_data.get('user_key', None)

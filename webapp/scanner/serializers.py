@@ -3,6 +3,9 @@ from rest_framework.exceptions import NotFound
 from django.utils import timezone
 
 import re
+import pytz
+
+from .conf import settings
 
 from .models import Contact
 from .models import Membership
@@ -65,7 +68,7 @@ class MembershipViewSet(viewsets.ModelViewSet):
             raise NotFound("No valid Membership was found")
 
         return obj
-    
+
 class MembershipViewSetByCID(MembershipViewSet):
     lookup_field = 'contact__remote_key'
 
@@ -99,7 +102,7 @@ class EventSerializer(serializers.Serializer):
     #email = serializers.EmailField()
     #content = serializers.CharField(max_length=200)
     #created = serializers.DateTimeField()
-    is_upcoming = serializers.BooleanField()
+    is_active = serializers.BooleanField()
     start_time_epoch = serializers.IntegerField()
 
 class EventViewSet(viewsets.ModelViewSet):
@@ -115,16 +118,17 @@ class AttendanceSerializer(serializers.Serializer):
     export_time = serializers.DateTimeField(read_only=True)
 
     def create(self, validated_data):
-        # Find pre-recorded attendance
-        obj = Attendance.objects.filter(
-            contact=validated_data['contact'],
-            event=validated_data['event'],
-        ).first()
+        event = validated_data['event']
+        contact = validated_data['contact']
 
-        if obj:  # Member has checked in multiple times
-            pass  # ignore
-        else:  # Create record of attendance
-            obj = Attendance(checkin_time=timezone.now(), **validated_data)
+        # Find pre-recorded attendance
+        obj = Attendance.objects.filter(contact=contact, event=event).first()
+
+        if (obj is None) or event.is_long:
+            obj = Attendance(  # Create record of attendance
+                checkin_time=pytz.timezone(settings.TIME_ZONE).normalize(timezone.now()),
+                **validated_data,
+            )
             obj.save()
 
         return obj
