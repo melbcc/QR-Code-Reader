@@ -177,6 +177,7 @@ class Command(BaseCommand):
             participant = self.create('Participant',
                 contact_id=contact.remote_key,
                 event_id=event.remote_key,
+                register_date=attendance.checkin_time,
             )
             if participant:
                 attendance.export_time = timezone.now()
