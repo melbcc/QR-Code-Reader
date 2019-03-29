@@ -97,7 +97,7 @@ class Membership(models.Model):
     import_order = 30
     remote_fieldmap = {  # <remote_field>: (<local_field>, <method>),
         'contact_id': ('contact', lambda v: Contact.objects.filter(remote_key=v).first()),
-        'end_date': ('end_date', lambda v: pytz.utc.localize(datetime.strptime(v, '%Y-%m-%d')) if v else v),
+        'end_date': ('end_date', lambda v: pytz.timezone(settings.TIME_ZONE).localize(datetime.strptime(v, '%Y-%m-%d')) if v else v),
         'membership_type_id': ('type', lambda v: MembershipType.objects.get(remote_key=v)),
         'status_id': ('status', lambda v: MembershipStatus.objects.get(remote_key=v)),
     }
@@ -145,8 +145,8 @@ class Event(models.Model):
     import_order = 40
     remote_fieldmap = {  # <remote_field>: (<local_field>, <method>),
         'title': ('title', lambda v: v),
-        'start_date': ('start_time', lambda v: pytz.utc.localize(datetime.strptime(v, '%Y-%m-%d %H:%M:%S'))),
-        'end_date': ('end_time', lambda v: pytz.utc.localize(datetime.strptime(v, '%Y-%m-%d %H:%M:%S')) if v else v),
+        'start_date': ('start_time', lambda v: pytz.timezone(settings.TIME_ZONE).localize(datetime.strptime(v, '%Y-%m-%d %H:%M:%S'))),
+        'end_date': ('end_time', lambda v: pytz.timezone(settings.TIME_ZONE).localize(datetime.strptime(v, '%Y-%m-%d %H:%M:%S')) if v else v),
     }
 
     def __str__(self):

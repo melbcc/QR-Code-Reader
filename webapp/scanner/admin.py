@@ -88,7 +88,6 @@ class EventAdmin(admin.ModelAdmin):
         ))
 
 
-
 @admin.register(Attendance)
 class AttendanceAdmin(admin.ModelAdmin):
     list_display = ('event', 'contact', 'checkin_time', 'export_time')
