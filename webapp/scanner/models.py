@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import pytz
 
 from django.db import models
@@ -140,7 +140,7 @@ class Event(models.Model):
     title = models.CharField(max_length=200)
     location = models.ForeignKey(Location, on_delete=models.CASCADE, blank=True, null=True)
     start_time = models.DateTimeField('start time')
-    end_time = models.DateTimeField('end time', null=True)
+    end_time = models.DateTimeField('end time', null=True, blank=True)
 
     import_order = 40
     remote_fieldmap = {  # <remote_field>: (<local_field>, <method>),
@@ -153,14 +153,26 @@ class Event(models.Model):
         return self.title
 
     @property
-    def is_upcoming(self):
+    def is_active(self):
         """True if event is a plausible candidate for a scanner"""
-        delta = self.start_time - timezone.now()
-        return (  # check range
-            -settings.SCANNER_EVENT_UPCOMING_BEFORE
-            <= delta.total_seconds() <=
-            settings.SCANNER_EVENT_UPCOMING_AFTER
+        # Threshold times surrounding event
+        active_start = self.start_time - timedelta(seconds=settings.SCANNER_EVENT_ACTIVE_BEFORE)
+        active_end = self.start_time + timedelta(
+            seconds=settings.SCANNER_EVENT_ACTIVE_DEFAULT_DURATION + settings.SCANNER_EVENT_ACTIVE_AFTER
         )
+        if self.end_time:
+            active_end = self.end_time + timedelta(seconds=settings.SCANNER_EVENT_ACTIVE_AFTER)
+
+        # Is the current time within bounds of the event
+        now = pytz.timezone(settings.TIME_ZONE).normalize(timezone.now())
+        return (active_start <= now <= active_end)
+
+    @property
+    def is_long(self):
+        if self.end_time:
+            delta = timedelta(seconds=settings.SCANNER_EVENT_LONG_DURATION)
+            return ((self.end_time - self.start_time) >= delta)
+        return False
 
     @property
     def start_time_epoch(self):

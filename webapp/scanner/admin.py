@@ -70,11 +70,11 @@ class LocationAdmin(admin.ModelAdmin):
 
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
-    list_display = ('remote_key', 'start_time', 'end_time', 'title', 'is_upcoming_pill')
+    list_display = ('remote_key', 'start_time', 'end_time', 'title', 'is_active_pill')
     search_fields = ('title', 'location__name')
 
-    def is_upcoming_pill(self, obj):
-        is_upcoming = obj.is_upcoming
+    def is_active_pill(self, obj):
+        is_active = obj.is_active
         return format_html('<div style="{style}">{text}</div>'.format(
             style=';'.join([
                 'text-align: center',
@@ -82,9 +82,9 @@ class EventAdmin(admin.ModelAdmin):
                 'width: 8em',
                 'font-weight: bold',
                 'color: #fff',
-                'background: {}'.format('green' if is_upcoming else 'red'),
+                'background: {}'.format('green' if is_active else 'red'),
             ]),
-            text="{!r}".format(is_upcoming),
+            text="{!r}".format(is_active),
         ))
 
 

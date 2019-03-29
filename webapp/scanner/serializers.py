@@ -65,7 +65,7 @@ class MembershipViewSet(viewsets.ModelViewSet):
             raise NotFound("No valid Membership was found")
 
         return obj
-    
+
 class MembershipViewSetByCID(MembershipViewSet):
     lookup_field = 'contact__remote_key'
 
@@ -99,7 +99,7 @@ class EventSerializer(serializers.Serializer):
     #email = serializers.EmailField()
     #content = serializers.CharField(max_length=200)
     #created = serializers.DateTimeField()
-    is_upcoming = serializers.BooleanField()
+    is_active = serializers.BooleanField()
     start_time_epoch = serializers.IntegerField()
 
 class EventViewSet(viewsets.ModelViewSet):

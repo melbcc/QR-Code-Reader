@@ -65,7 +65,7 @@ def get_events(request, only_upcoming=True):
 
     # FIXME: filter queryset filter, this is a slow way to do this.
     if only_upcoming:
-        events = [e for e in events if e.is_upcoming]
+        events = [e for e in events if e.is_active]
 
     return events
 
@@ -94,7 +94,7 @@ class ConfigEventsView(View):
         events = Event.objects.all()
         if location is not None:
             events = events.filter(location=location)
-        events = [e for e in events if e.is_upcoming]
+        events = [e for e in events if e.is_active]
 
         # Render & Return
         return render(
