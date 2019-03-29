@@ -81,9 +81,9 @@ class Command(BaseCommand):
         # Extract Data
         request_json = request.json()
         if request_json['is_error']:
-            raise ValueError("response error  message: {!r}".format(request_json.get('error_message', None)))
+            raise ValueError("response error message: {!r}".format(request_json.get('error_message', None)))
 
-        self.stdout.write('   ' + self.style.SUCCESS('[ok]') + ' received data for {} memberships'.format(request_json['count']))
+        self.stdout.write('   ' + self.style.SUCCESS('[ok]') + ' received data for {} objects'.format(request_json['count']))
 
         # Import Loop
         self.stdout.write('Writing to local database ...')

@@ -70,7 +70,7 @@ class LocationAdmin(admin.ModelAdmin):
 
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
-    list_display = ('remote_key', 'start_time', 'title', 'location', 'is_upcoming_pill')
+    list_display = ('remote_key', 'start_time', 'end_time', 'title', 'is_upcoming_pill')
     search_fields = ('title', 'location__name')
 
     def is_upcoming_pill(self, obj):

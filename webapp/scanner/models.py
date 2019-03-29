@@ -140,11 +140,13 @@ class Event(models.Model):
     title = models.CharField(max_length=200)
     location = models.ForeignKey(Location, on_delete=models.CASCADE, blank=True, null=True)
     start_time = models.DateTimeField('start time')
+    end_time = models.DateTimeField('end time', null=True)
 
     import_order = 40
     remote_fieldmap = {  # <remote_field>: (<local_field>, <method>),
         'title': ('title', lambda v: v),
         'start_date': ('start_time', lambda v: pytz.utc.localize(datetime.strptime(v, '%Y-%m-%d %H:%M:%S'))),
+        'end_date': ('end_time', lambda v: pytz.utc.localize(datetime.strptime(v, '%Y-%m-%d %H:%M:%S')) if v else v),
     }
 
     def __str__(self):
