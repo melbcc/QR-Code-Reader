@@ -14,7 +14,7 @@ import os
 from distutils.version import LooseVersion
 
 
-VERSION = LooseVersion('0.3')
+VERSION = LooseVersion('0.3.dev1')
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
