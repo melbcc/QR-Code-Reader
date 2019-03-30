@@ -18,6 +18,9 @@ html, body {
     font-family: sans-serif;
     height: 100%;
     margin: 0em;
+
+    /* Stop scrolling by dragging */
+    touch-action: none;
 }
 
 .screen {
