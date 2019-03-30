@@ -11,9 +11,16 @@ from django.core.serializers.json import DjangoJSONEncoder
 
 from .models import Location, Event, Attendance
 from .serializers import EventSerializer, LocationSerializer
+from .conf import settings
+
 
 class RootView(generic.TemplateView):
     template_name = 'index.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['version'] = settings.VERSION
+        return context
 
 
 # ---------- Session Management
