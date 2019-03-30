@@ -142,7 +142,7 @@ class Event(models.Model):
     start_time = models.DateTimeField('start time')
     end_time = models.DateTimeField('end time', null=True, blank=True)
 
-    import_order = 40
+    import_order = 5
     remote_fieldmap = {  # <remote_field>: (<local_field>, <method>),
         'title': ('title', lambda v: v),
         'start_date': ('start_time', lambda v: pytz.timezone(settings.TIME_ZONE).localize(datetime.strptime(v, '%Y-%m-%d %H:%M:%S'))),
