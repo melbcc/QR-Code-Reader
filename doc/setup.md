@@ -149,6 +149,15 @@ python manage.py import_civicrm
 Add the following to the `/etc/rc.local` file, before the `exit 0` line:
 
 ```
+#!/bin/sh
+
+# Print the IP address
+_IP=$(hostname -I) || true
+if [ "$_IP" ]; then
+  printf "My IP address is %s\n" "$_IP"
+fi
+
+# Start Services
 sudo -iu pi /usr/bin/screen -dmS database bash -c /home/pi/QR-Code-Reader/database/run.sh
 sudo -iu pi /usr/bin/screen -dmS webapp bash -c /home/pi/QR-Code-Reader/webapp/runserver.sh
 
@@ -156,9 +165,12 @@ sudo -iu pi /usr/bin/screen -dmS webapp bash -c /home/pi/QR-Code-Reader/webapp/r
 sleep 10s
 
 # Import updates to CiviCRM
-pushd /home/pi/QR-Code-Reader/webapp
-python manage.py import_civicrm
-popd
+orig_dir=${PWD}
+cd /home/pi/QR-Code-Reader/webapp
+python manage.py import_civicrm --keyfile /home/pi/civicrm-keys.json
+cd $orig_dir
+
+exit 0
 ```
 
 **Reboot**
