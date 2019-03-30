@@ -12,8 +12,8 @@ need the following hardware:
 * [Raspberry Pi](https://www.raspberrypi.org/)
 * QR-Code Scanner - simply acts as a USB keyboard
 * Touch Screen - HDMI interface to Raspberry Pi
-* Keyboard (USB) [optional]
-* Mouse (USB) [optional]
+* Keyboard (USB) [for setup]
+* Mouse (USB) [for setup]
 
 However, to just test things out, all you'll need is a computer
 running Linux (preferably debian based, to directly match `apt` commands).
