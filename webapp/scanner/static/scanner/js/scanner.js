@@ -78,6 +78,18 @@ const setupScannerPage = () => {
         errorReset.in(50);
     });
 
+    // Aggressively focus the 'contact_id' field.
+    $('#scan').mousemove((event) => {
+        //console.log(event);
+        $('#scanform input[name=contact_id]').focus();
+    });
+    $('#scan').click((event) => {
+        //console.log(event);
+        if (!event.target.classList.contains("button")) {
+            $('#scanform input[name=contact_id]').focus();
+        }
+    });
+
     // Keyboard - Guest
     let Keyboard = window.SimpleKeyboard.default;
 
