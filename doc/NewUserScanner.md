@@ -1,13 +1,13 @@
 ## Setting up a new User in CiviCRM 
 
-This is required for each scanner device being put into service. Each scanner needs to have it own dedeicated User in CiviCRM so that a User api_key is created for the device to access CiviCRM records.
+This is required for each scanner device being put into service. Each scanner needs to have it own dedicated User in CiviCRM so that a secure User api_key is created for the device to access CiviCRM records.
 
 
 # Instructions for adding new user.
 
 Login to melbpc.org.au as user with (admin rights??) 
-Mouse over Melbourne PC User Group and select Dashboard.
-Mouse over Users in the LH menu and select Add New
+Mouse over 'Melbourne PC User Group' and select 'Dashboard'.
+Mouse over 'Users' in the LH menu and select Add New
 Enter a Username in format scanner.<location>
 Enter an email address.
 Enter a First Name like scanner.X
