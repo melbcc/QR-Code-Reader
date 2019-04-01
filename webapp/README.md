@@ -42,7 +42,7 @@ anonymous source.
 
 Each scanner should have a different user to access the CiviCRM database.\
 [Follow these instructions](../doc/NewUserScanner.md) to do so, and
-remember the user's API key.
+remember that you'll need the user's API key for the next step(s).
 
 In the event one of the scanners is stolen, that user account can be can
 be cancelled without effecting any of the other scanners at other locations.
