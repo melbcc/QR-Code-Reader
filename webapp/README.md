@@ -41,7 +41,7 @@ anonymous source.
 **Create `service.xxx` user**
 
 Each scanner should have a different user to access the CiviCRM database.\
-(Follow these instructions)[../doc/NewUserScanner.md] to do so, and
+[Follow these instructions](../doc/NewUserScanner.md) to do so, and
 remember the user's API key.
 
 In the event one of the scanners is stolen, that user account can be can
