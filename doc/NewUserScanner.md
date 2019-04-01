@@ -54,3 +54,5 @@ Take a copy to paste elsewhere.
 
 ### This API Key will need to be pasted into the file api_keys.json as the User Key.
 ### The Site Key for the location will also need to be pasted in to this same file as the Site Key.
+
+This site_key is only found in a configuration file on the server so can only be obtained through authorised IT technicians.
