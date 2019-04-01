@@ -135,7 +135,7 @@ echo "from django.contrib.auth.models import User; User.objects.create_superuser
 
 **Add CiviCRM Keys**
 
-Follow instructions in [webapp](webapp/README.md) to create a
+Follow instructions in [webapp](../webapp/README.md) to create a
 `~/civicrm-keys.json` file.
 
 ```
