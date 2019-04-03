@@ -33,6 +33,10 @@ class Command(BaseCommand):
             default=False, const=True, action='store_const',
             help="Prints downloaded data.",
         )
+        parser.add_argument(
+            '--strict', default=False, const=True, action='store_const',
+            help="if set, the first failure will stop the script",
+        )
 
         group = parser.add_argument_group('CiviCRM Options')
         group.add_argument(
@@ -110,6 +114,13 @@ class Command(BaseCommand):
 
             except IntegrityError:
                 pass  # don't store model, just ignore it
+            except Exception as e:
+                if self.strict:
+                    raise
+                self.stdout.write(
+                    self.style.ERROR('[{}]'.format(e.__class__.__name__)) +
+                    ' {!r}'.format(e.args)
+                )
 
         self.stdout.write(
             '   ' + self.style.SUCCESS('[ok]') + ' ' +
@@ -126,6 +137,7 @@ class Command(BaseCommand):
         key_data = self.get_keys(kwargs['keyfile'])
         self.api_key = kwargs.get('user_key', None) or key_data.get('user_key', None)
         self.key = kwargs.get('site_key', None) or key_data.get('site_key', None)
+        self.strict = kwargs['strict']
 
         # Validate
         if None in (self.api_key, self.key):
@@ -135,5 +147,13 @@ class Command(BaseCommand):
         # note: this design ensure models are always imported in the correct
         #       order (where possible)
         for model in sorted(scanner.models.civicrm_tables.values(), key=lambda x: x.import_order):
-            if (model in kwargs['models']) or (not kwargs['models']):
-                self.import_model(model)
+            try:
+                if (model in kwargs['models']) or (not kwargs['models']):
+                    self.import_model(model)
+            except Exception as e:
+                if self.strict:
+                    raise
+                self.stdout.write(
+                    self.style.ERROR('[{}]'.format(e.__class__.__name__)) +
+                    ' {!r}'.format(e.args)
+                )
