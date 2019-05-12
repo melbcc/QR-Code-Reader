@@ -171,6 +171,8 @@ class Command(BaseCommand):
             export_time=None,
         ).prefetch_related('contact', 'event')
 
+        participant_status = ParticipantStatusType.objects.get(name='Attended')
+
         for attendance in attendance_queryset:
             (contact, event) = (attendance.contact, attendance.event)
             self.stdout.write('    {!r} : {!r}'.format(contact, event))
@@ -178,6 +180,7 @@ class Command(BaseCommand):
                 contact_id=contact.remote_key,
                 event_id=event.remote_key,
                 register_date=attendance.checkin_time,
+                participant_status_id=participant_status.remote_key,
             )
             if participant:
                 attendance.export_time = timezone.now()

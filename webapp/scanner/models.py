@@ -60,6 +60,17 @@ class MembershipStatus(models.Model):
 
 
 @civicrm_clone
+class ParticipantStatusType(models.Model):
+    remote_key = models.CharField(max_length=20, null=True, blank=True)  # CiviCRM primary key
+    name = models.CharField(max_length=40)
+
+    import_order = 12
+    remote_fieldmap = {  # <remote_field>: (<local_field>, <method>),
+        'name': ('name', lambda v: v),
+    }
+
+
+@civicrm_clone
 class Contact(models.Model):
     remote_key = models.CharField(max_length=20, null=True, blank=True)  # CiviCRM primary key
     first_name = models.CharField(max_length=200)
@@ -185,6 +196,16 @@ class Event(models.Model):
 # as opposed to those above that are mirrored from CiviCRM
 
 class Attendance(models.Model):
+    """
+    Attendance is the equivalent of the Participant table in CiviCRM.
+
+    Its name is different because it's not a mirror of CiviCRM, but a log
+    of membership "scans" to be uploaded to CiviCRM periodically.
+
+    For more information::
+
+        ./manage.py export_attendance --help
+    """
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     contact = models.ForeignKey(Contact, on_delete=models.CASCADE)
     checkin_time = models.DateTimeField('checkin time', null=True, blank=True)

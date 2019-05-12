@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.html import format_html
 
-from .models import MembershipType, MembershipStatus
+from .models import MembershipType, MembershipStatus, ParticipantStatusType
 from .models import Contact, Membership, Location, Event, Attendance
 
 
@@ -15,6 +15,12 @@ class MembershipTypeAdmin(admin.ModelAdmin):
 class MembershipStatusAdmin(admin.ModelAdmin):
     list_display = ('name', 'label', 'is_active')
     search_fields = ('name', 'label')
+
+
+@admin.register(ParticipantStatusType)
+class ParticipantStatusTypeAdmin(admin.ModelAdmin):
+    list_display = ('name', 'remote_key')
+    search_fields = ('name',)
 
 
 @admin.register(Contact)
