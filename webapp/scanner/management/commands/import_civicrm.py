@@ -69,7 +69,7 @@ class Command(BaseCommand):
 
     def import_model(self, cls):
         self.stdout.write(self.style.NOTICE(cls.__name__))
-        self.stdout.write('Fetching data from CiviCRM ...')
+        self.stdout.write('  Fetching data from CiviCRM ...')
 
         remote_fieldmap = getattr(cls, 'remote_fieldmap', {})
 
@@ -94,10 +94,10 @@ class Command(BaseCommand):
         if request_json['is_error']:
             raise ValueError("response error message: {!r}".format(request_json.get('error_message', None)))
 
-        self.stdout.write('   ' + self.style.SUCCESS('[ok]') + ' received data for {} objects'.format(request_json['count']))
+        self.stdout.write('    ' + self.style.SUCCESS('[ok]') + ' received data for {} objects'.format(request_json['count']))
 
         # Import Loop
-        self.stdout.write('Writing to local database ...')
+        self.stdout.write('  Writing to local database ...')
         count = {'created': 0, 'updated': 0}
         for (remote_id, data) in request_json['values'].items():
             if self.showdata:
@@ -123,7 +123,7 @@ class Command(BaseCommand):
                 )
 
         self.stdout.write(
-            '   ' + self.style.SUCCESS('[ok]') + ' ' +
+            '    ' + self.style.SUCCESS('[ok]') + ' ' +
             '{model_name} imported (added {created}, updated {updated})'.format(
                 model_name=cls.__name__,
                 **count
