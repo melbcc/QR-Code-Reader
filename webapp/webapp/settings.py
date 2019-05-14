@@ -29,7 +29,9 @@ SECRET_KEY = 'sfirq7i#bdvynhn++8tvf(+bcm7%e007!li*v8%7km@3i++y07'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '192.168.81.61',  # static ip on MelbPC network (may change, only required to see remotely)
+]
 
 
 # Application definition
