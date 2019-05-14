@@ -5,7 +5,7 @@ import json
 from django.core.management.base import BaseCommand, CommandError
 from django.utils import timezone
 from django.db.models import Q
-from scanner.models import Contact, Attendance
+from scanner.models import Contact, Attendance, ParticipantStatusType
 from scanner.conf import settings
 
 
@@ -52,13 +52,48 @@ class Command(BaseCommand):
             default=True, const=False, action='store_const',
             help="if set, tool continues after each failure (instead of exiting)",
         )
+        group.add_argument(
+            '--dryrun', dest='dryrun',
+            default=False, const=True, action='store_const',
+            help="if set, no create requests are sent to CiviCRM",
+        )
 
     def get_keys(self, filename):
         if not os.path.exists(filename):
             return {}
         return json.load(open(filename, 'r'))
 
+    def get(self, table_name, **kwargs):
+        payload = {
+            'entity': table_name,
+            'action': 'get',
+            'api_key': self.api_key,
+            'key': self.key,
+            'json': 1,
+            'return': 'id',
+        }
+        payload.update(kwargs)
+
+        # Send Request
+        request = requests.post(self.REST_URL_BASE, data=payload)
+        if request.status_code != 200:
+            raise ValueError("response status code: {!r}".format(request.status_code))
+
+        # Extract Data
+        request_json = request.json()
+        if request_json.get('is_error', False):
+            raise ValueError("response error message: {!r}".format(request_json.get('error_message', None)))
+
+        # Return first
+        if request_json['values']:
+            for (remote_id, data) in request_json['values'].items():
+                return data
+        return {}
+
     def create(self, table_name, **kwargs):
+        if self.dryrun:
+            return None
+
         # Generate Payload
         payload = {
             'entity': table_name,
@@ -109,6 +144,7 @@ class Command(BaseCommand):
         """
 
         self.failfast = kwargs['failfast']
+        self.dryrun = kwargs['dryrun']
 
         # ----- Get Keys
         key_data = self.get_keys(kwargs['keyfile'])
@@ -170,15 +206,30 @@ class Command(BaseCommand):
             Q(contact__remote_key__isnull=False) & ~Q(contact__remote_key__exact=''),
             export_time=None,
         ).prefetch_related('contact', 'event')
+        status_attended = ParticipantStatusType.objects.get(name='Attended')
 
         for attendance in attendance_queryset:
             (contact, event) = (attendance.contact, attendance.event)
             self.stdout.write('    {!r} : {!r}'.format(contact, event))
-            participant = self.create('Participant',
-                contact_id=contact.remote_key,
-                event_id=event.remote_key,
-                register_date=attendance.checkin_time,
-            )
+
+            params = {
+                'contact_id': contact.remote_key,
+                'event_id': event.remote_key,
+            }
+
+            # Find existing CiviCRM entry
+            participant = self.get('Participant', **params)
+            if participant:
+                params.update({
+                    'id': participant['id'],
+                })
+
+            # Create new / update existing CiviCRM entry
+            params.update({
+                'register_date': attendance.checkin_time,
+                'participant_status_id': status_attended.remote_key,
+            })
+            participant = self.create('Participant', **params)
             if participant:
                 attendance.export_time = timezone.now()
                 attendance.save()
