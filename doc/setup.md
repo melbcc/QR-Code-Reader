@@ -230,7 +230,7 @@ can be found [here](https://www.raspberrypi.org/documentation/linux/usage/cron.m
 
 ```
 0 0 * * *  cd /home/pi/QR-Code-Reader/webapp && python manage.py import_civicrm
-*/5 * * * *  cd /home/pi/QR-Code-Reader/webapp && python manage.py export_attendance
+*/5 * * * *  cd /home/pi/QR-Code-Reader/webapp && python manage.py export_attendance --fail-slow
 ```
 
 ## Scanner Command(s)

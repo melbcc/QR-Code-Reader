@@ -9,6 +9,10 @@ from scanner.models import Contact, Attendance, ParticipantStatusType
 from scanner.conf import settings
 
 
+class CiviCRMRequestError(Exception):
+    """Raised upon erroneous response from CiviCRM"""
+
+
 class Command(BaseCommand):
     help = "Export recorded attendance to CiviCRM"
 
@@ -77,12 +81,12 @@ class Command(BaseCommand):
         # Send Request
         request = requests.post(self.REST_URL_BASE, data=payload)
         if request.status_code != 200:
-            raise ValueError("response status code: {!r}".format(request.status_code))
+            raise CiviCRMRequestError("response status code: {!r}".format(request.status_code))
 
         # Extract Data
         request_json = request.json()
         if request_json.get('is_error', False):
-            raise ValueError("response error message: {!r}".format(request_json.get('error_message', None)))
+            raise CiviCRMRequestError("response error message: {!r}".format(request_json.get('error_message', None)))
 
         # Return first
         if request_json['values']:
@@ -110,7 +114,7 @@ class Command(BaseCommand):
         # Validate Response
         if request.status_code != 200:
             if self.failfast:
-                raise ValueError("response status code: {!r}".format(request.status_code))
+                raise CiviCRMRequestError("response status code: {!r}".format(request.status_code))
 
             self.stdout.write(self.style.ERROR(
                 'Response status code: {}'.format(request.status_code)
@@ -122,7 +126,7 @@ class Command(BaseCommand):
         request_json = request.json()
         if request_json['is_error']:
             if self.failfast:
-                raise ValueError("response error  message: {!r}".format(request_json['error_message']))
+                raise CiviCRMRequestError("response error  message: {!r}".format(request_json['error_message']))
 
             self.stdout.write(self.style.ERROR(
                 'Error Message: {}'.format(request_json['error_message'])
