@@ -1,3 +1,27 @@
+/* Big Scrollbar : https://stackoverflow.com/questions/9232529#9232587 */
+::-webkit-scrollbar{
+    width: 7vw;
+    height: 10px;
+    padding-top: 40px;
+}
+::-webkit-scrollbar-track{
+    border: 0.2vw solid black;
+    border-radius: 2vw;
+
+}
+::-webkit-scrollbar-thumb{
+    border-radius: 2vw;
+    height: 30px;
+    width: 8px;
+    border: 0.2vw solid black;
+    background: rgb(111,111,111);
+    background: #55f;
+}
+::-webkit-scrollbar-track-piece {
+    height: 30px;
+    width: 30px;
+}
+
 body {
     font-family: sans-serif;
     font-size: 5vh;
