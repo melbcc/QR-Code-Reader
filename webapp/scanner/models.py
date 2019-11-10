@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 import pytz
 
 from django.db import models
+from django.db.models import Q
 from django.utils import timezone
 from phonenumber_field.modelfields import PhoneNumberField
 
@@ -159,6 +160,16 @@ class Event(models.Model):
         'start_date': ('start_time', lambda v: pytz.timezone(settings.TIME_ZONE).localize(datetime.strptime(v, '%Y-%m-%d %H:%M:%S'))),
         'end_date': ('end_time', lambda v: pytz.timezone(settings.TIME_ZONE).localize(datetime.strptime(v, '%Y-%m-%d %H:%M:%S')) if v else v),
     }
+
+    @classmethod
+    def remote_cleanup_queryset(cls):
+        now = pytz.timezone(settings.TIME_ZONE).normalize(timezone.now())
+        return cls.objects.filter(
+            Q(start_time__range=[(now + timedelta(days=x)) for x in (-7, 14)]) or
+            (Q(start_time__lt=now) and Q(end_time__gt=now))
+        ).exclude(
+            pk__in=Attendance.objects.filter(export_time__isnull=True).values_list('event__pk', flat=True)
+        )
 
     def __str__(self):
         return self.title

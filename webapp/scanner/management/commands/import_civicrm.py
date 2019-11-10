@@ -68,7 +68,9 @@ class Command(BaseCommand):
         return json.load(open(filename, 'r'))
 
     def import_model(self, cls):
-        self.stdout.write(self.style.NOTICE(cls.__name__))
+        """
+        Import model data from remote database
+        """
         self.stdout.write('  Fetching data from CiviCRM ...')
 
         remote_fieldmap = getattr(cls, 'remote_fieldmap', {})
@@ -130,6 +132,46 @@ class Command(BaseCommand):
             )
         )
 
+    def clean_deleted_model(self, cls):
+        """
+        Remove local model instances that no longer exist on the remote.
+
+        Method: Send REST request per model instance, read response and
+        act accordingly.
+        """
+        func = getattr(cls, 'remote_cleanup_queryset', None)
+        if func is None:
+            return
+
+        queryset = func()
+        self.stdout.write('  Cleaning {} objects ...'.format(queryset.count()))
+
+        for obj in queryset:
+            # Generate Payload
+            payload = {
+                'entity': cls.__name__,
+                'action': 'get',
+                'api_key': self.api_key,
+                'key': self.key,
+                'json': 1,
+                'return': 'id',
+                'id': obj.remote_key,
+            }
+
+            # Send Request
+            request = requests.post(self.REST_URL_BASE, data=payload)
+            if request.status_code != 200:
+                raise ValueError("response status code: {!r}".format(request.status_code))
+
+            request_json = request.json()
+            if request_json['count'] > 0:
+                self.stdout.write('    {!r} {}'.format(obj, self.style.SUCCESS('[ok]')))
+            else:
+                # Delete object
+                self.stdout.write('    {!r} {}'.format(obj, self.style.ERROR('[removed]')))
+                obj.delete()
+                self.stdout.write('      removed {!r} from local database'.format(obj))
+
     def handle(self, *args, **kwargs):
         self.showdata = kwargs['showdata']
 
@@ -149,7 +191,9 @@ class Command(BaseCommand):
         for model in sorted(scanner.models.civicrm_tables.values(), key=lambda x: x.import_order):
             try:
                 if (model in kwargs['models']) or (not kwargs['models']):
+                    self.stdout.write(self.style.NOTICE(model.__name__))
                     self.import_model(model)
+                    self.clean_deleted_model(model)
             except Exception as e:
                 if self.strict:
                     raise
