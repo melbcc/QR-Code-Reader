@@ -4,6 +4,47 @@
   <head>
     <link rel="shortcut icon" type="image/png" href="{% static 'scanner/img/favicon.ico' %}"/>
     <link type="text/css" rel="stylesheet" href="{% static 'scanner/css/config.css' %}">
+    <!-- jquery -->
+    <script src="{% static 'scanner/js/jquery.min.js' %}"></script>
+    <script>
+        const TEST_URL = 'https://www.melbpc.org.au/wp-content/plugins/civicrm/civicrm/extern/rest.php';
+        const POLLING_PERIOD = 5000; // msec
+
+        // Error show/hide
+        const setConnectionState = function(good) {
+          if (good) {
+            // positive message
+            $('#wan-available').show();
+            $('#wan-unavailable').hide();
+          } else {
+            // negative message
+            $('#wan-available').hide();
+            $('#wan-unavailable').show();
+          }
+        };
+
+        // Polling Function
+        const pollRemote = function(url) {
+          if (url === undefined) url = TEST_URL;  // default
+          // Poll Application URI
+          fetch(url, {mode: 'no-cors'})
+          .then(response => {
+            //console.log(response);
+            setConnectionState(response !== undefined);
+          })
+          .catch(error => {
+            setConnectionState(false);
+          });
+        };
+
+        // Loop
+        const pollRemoteLoop = function() {
+          pollRemote();
+          // Run regularly
+          setTimeout(() => { pollRemoteLoop(); }, POLLING_PERIOD);
+        };
+        pollRemoteLoop();  // begin polling
+    </script>
   </head>
   <body>
       <h1>MelbPC QR-Code Scanner</h1>
@@ -24,6 +65,11 @@
           <li><a href="/api">Browse the REST API</a></li>
         </ul>
         -->
+      </p>
+      <p>
+        Connection Status:
+        <span id="wan-available" style="display:none;color:#0f0">CiviCRM available</span>
+        <span id="wan-unavailable" style="display:none;color:#f00">CiviCRM <b>NOT</b> available</span>
       </p>
 
       <span class="version">v{{ version }}</span>
