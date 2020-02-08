@@ -143,6 +143,9 @@ class Address(models.Model):
     street_address = models.CharField(max_length=255, blank=True, null=True)
     city = models.CharField(max_length=255, blank=True, null=True)
     postal_code = models.CharField(max_length=20, blank=True, null=True)
+    supplemental_address_1 = models.CharField(max_length=255, blank=True, null=True)
+    supplemental_address_2 = models.CharField(max_length=255, blank=True, null=True)
+    supplemental_address_3 = models.CharField(max_length=255, blank=True, null=True)
 
     import_order = 2.0
     # Limit the objects imported from CiviCRM using the folling data
@@ -155,14 +158,21 @@ class Address(models.Model):
         'street_address': ('street_address', lambda v: v),
         'city': ('city', lambda v: v),
         'postal_code': ('postal_code', lambda v: v),
+        'supplemental_address_1': ('supplemental_address_1', lambda v: v),
+        'supplemental_address_2': ('supplemental_address_2', lambda v: v),
+        'supplemental_address_3': ('supplemental_address_3', lambda v: v),
     }
 
+    def _supplamental_iter(self):
+        for i in (1, 2, 3):
+            supplemental = getattr(self, 'supplemental_address_{}'.format(i))
+            if supplemental:
+                yield supplemental
+
     def __str__(self):
-        return "{street_address}, {city}, {postal_code}".format(
-            cls=type(self).__name__,
+        return "{street_address}, {supplementals}".format(
             street_address=self.street_address,
-            city=self.city,
-            postal_code=self.postal_code,
+            supplementals=', '.join(self._supplamental_iter()),
         )
 
     def __repr__(self):

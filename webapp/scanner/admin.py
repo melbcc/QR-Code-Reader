@@ -91,7 +91,11 @@ class EventAdmin(admin.ModelAdmin):
 
 @admin.register(Address)
 class AddressAdmin(admin.ModelAdmin):
-    list_display = ('street_address', 'city', 'postal_code')
+    list_display = (
+        'street_address',
+        'supplemental_address_1', 'supplemental_address_2', 'supplemental_address_3',
+        'city', 'postal_code',
+    )
 
 @admin.register(LocBlock)
 class LocBlockAdmin(admin.ModelAdmin):
