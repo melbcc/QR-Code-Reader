@@ -101,7 +101,7 @@ class ConfigEventsView(View):
         std_session(request)
 
         loc_blocks = get_loc_blocks(request)
-        events = Event.objects.all()
+        events = Event.objects.filter(is_template=False)
         if loc_blocks:
             events = events.filter(loc_block__in=loc_blocks)
         events = [e for e in events if e.is_active]
