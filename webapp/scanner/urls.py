@@ -21,6 +21,7 @@ urlpatterns = [
 from .serializers import ContactViewSet
 from .serializers import MembershipViewSetByCID, MembershipViewSetByMemNo
 from .serializers import AttendanceViewSet
+from .serializers import LocBlockViewSet
 from .serializers import EventViewSet
 
 # Routers provide an easy way of automatically determining the URL conf.
@@ -29,4 +30,5 @@ router.register(r'contact', ContactViewSet)
 router.register(r'members_cid', MembershipViewSetByCID)
 router.register(r'members_memno', MembershipViewSetByMemNo)
 router.register(r'attendance', AttendanceViewSet)
+router.register(r'loc_block', LocBlockViewSet)
 router.register(r'events', EventViewSet)

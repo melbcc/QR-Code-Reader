@@ -9,8 +9,8 @@ from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
 from django.core.serializers.json import DjangoJSONEncoder
 
-from .models import Event, Attendance
-from .serializers import EventSerializer
+from .models import Event, Attendance, LocBlock
+from .serializers import EventSerializer, LocBlockSerializer
 from .conf import settings
 
 
@@ -29,12 +29,15 @@ class RootView(generic.TemplateView):
 def std_session(request):
     # Location: loc (either an int, or None)
     if request.GET.get('clear_location', None):
-        request.session['location'] = None
-    if 'loc' in request.GET:
-        location_pk = request.GET['loc']
-        if location_pk is not None:
-            location_pk = int(location_pk)
-        request.session['location'] = location_pk
+        request.session['loc_blocks'] = []
+
+    loc_block_pks = request.session['loc_blocks'] = [
+        int(key[3:])
+        for key in request.GET.keys()
+        if re.search(r'^loc\d+$', key)
+    ]
+    if loc_block_pks:
+        request.session['loc_blocks'] = loc_block_pks
 
     # Events: ev<pk>=on
     if request.GET.get('clear_events', None):
@@ -52,15 +55,15 @@ def std_session(request):
     return request
 
 
-def get_location(request):
+def get_loc_blocks(request):
     # Get location and relevant events
-    location_pk = request.session.get('location', None)
-    location = None
-    if location_pk is not None:
-        location = Location.objects.filter(
-            pk=location_pk
-        ).first()
-    return location
+    loc_block_pks = request.session.get('loc_blocks', [])
+    loc_blocks = []
+    if loc_block_pks:
+        loc_blocks = LocBlock.objects.filter(
+            pk__in=loc_block_pks
+        )
+    return loc_blocks
 
 
 def get_events(request, only_upcoming=True):
@@ -83,11 +86,11 @@ class ConfigLocationView(View):
 
     def get(self, request, *args, **kwargs):
         # Locations QuerySet
-        locations = Location.objects.all()
+        loc_block = LocBlock.objects.all()
 
         # Render & Return
         return render(request, self.template_name, {
-            'locations': locations,
+            'locations': loc_block,
         })
 
 
@@ -97,17 +100,17 @@ class ConfigEventsView(View):
     def get(self, request, *args, **kwargs):
         std_session(request)
 
-        location = get_location(request)
+        loc_blocks = get_loc_blocks(request)
         events = Event.objects.all()
-        if location is not None:
-            events = events.filter(location=location)
+        if loc_blocks:
+            events = events.filter(loc_block__in=loc_blocks)
         events = [e for e in events if e.is_active]
 
         # Render & Return
         return render(
             request,
             self.template_name, {
-                'location': location,
+                'location': loc_blocks,
                 'events': events,
             },
         )
@@ -120,13 +123,16 @@ class ScannerView(View):
         std_session(request)
 
         # Get Objects from Session
-        location = get_location(request)
+        loc_blocks = get_loc_blocks(request)
         events = get_events(request)
 
         # Serialize Objects
-        location_ser = None
-        if location:
-            location_ser = LocationSerializer(location).data
+        loc_blocks_ser = None
+        if loc_blocks:
+            loc_blocks_ser = [
+                LocBlockSerializer(loc_block).data
+                for loc_block in loc_blocks
+            ]
         events_ser = []
         if events:
             events_ser = [EventSerializer(e).data for e in events]
@@ -137,10 +143,10 @@ class ScannerView(View):
             self.template_name,
             {
                 # Objects
-                'location': location,
+                'locations': loc_blocks,
                 'events': events,
                 # Jsonified Objects (for javascript)
-                'location_json': json.dumps(location_ser, cls=DjangoJSONEncoder),
+                'locations_json': json.dumps(loc_blocks_ser, cls=DjangoJSONEncoder),
                 'events_json': json.dumps(events_ser, cls=DjangoJSONEncoder),
             },
         )

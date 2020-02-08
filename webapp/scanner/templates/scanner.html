@@ -21,7 +21,7 @@
     <!-- application code -->
     <script>
       /* globally defined variables (rendered from django objects) */
-      var g_location = {{ location_json|safe }};
+      var g_locations = {{ locations_json|safe }};
       var g_events = {{ events_json|safe }};
     </script>
     <script src="{% static 'scanner/js/scanner.js' %}"></script>

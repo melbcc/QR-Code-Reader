@@ -9,6 +9,7 @@ from .conf import settings
 
 from .models import Contact
 from .models import Membership
+from .models import LocBlock
 from .models import Event
 from .models import Attendance
 
@@ -75,12 +76,29 @@ class MembershipViewSetByMemNo(MembershipViewSet):
     lookup_field = 'contact__membership_num'
 
 
+# ---------- Address
+class AddressSerializer(serializers.Serializer):
+    #pk = serializers.IntegerField()
+    street_address = serializers.CharField()
+    city = serializers.CharField()
+    postal_code = serializers.CharField()
+
+
+# ---------- LocBlock
+class LocBlockSerializer(serializers.Serializer):
+    pk = serializers.IntegerField()
+    address = AddressSerializer()
+
+class LocBlockViewSet(viewsets.ModelViewSet):
+    queryset = LocBlock.objects.all()
+    serializer_class = LocBlockSerializer
+
 
 # ---------- Events
 class EventSerializer(serializers.Serializer):
     pk = serializers.IntegerField()
     title = serializers.CharField()
-    #location = LocationSerializer()
+    loc_block = LocBlockSerializer()
     #email = serializers.EmailField()
     #content = serializers.CharField(max_length=200)
     #created = serializers.DateTimeField()

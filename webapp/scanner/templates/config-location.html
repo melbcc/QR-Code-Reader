@@ -3,7 +3,7 @@
 <html>
   <head>
     <link rel="shortcut icon" type="image/png" href="{% static 'scanner/img/favicon.ico' %}"/>
-    <!-- CSS -->
+    <!-- Style -->
     <link type="text/css" rel="stylesheet" href="{% static 'scanner/css/config.css' %}">
     <link type="text/css" rel="stylesheet" href="{% static 'scanner/css/checkboxes.css' %}">
     <!-- JavaScript -->
@@ -14,16 +14,18 @@
       <a href="{% url 'index' %}">&#x21bb;</a>
     </div>
 
-    <h1>Select Location</h1>
+    <h1>Select Location(s)</h1>
     <form class="form" action="{% url 'scanner-config-events' %}">
       {% for location in locations %}
-      <div class="radiocheck">
-        <input type="radio" class="radio" id="loc{{ location.pk }}" name="loc" value="{{ location.pk }}"/>
-        <label for="loc{{ location.pk }}">{{ location.name }}</label>
+      <div class="radiocheck check">
+        <input id="loc{{ location.pk }}" name="loc{{ location.pk }}" class="checkbox" type="checkbox"/>
+        <label for="loc{{ location.pk }}">{{ location.address }}</label>
       </div>
       {% endfor %}
 
-      <input type="submit" value="Continue">
+      <p>
+        <input type="submit" value="Continue" class="button">
+      </p>
     </form>
   </body>
 </html>
