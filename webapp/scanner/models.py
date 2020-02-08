@@ -209,6 +209,7 @@ class Event(models.Model):
     start_time = models.DateTimeField('start time')
     end_time = models.DateTimeField('end time', null=True, blank=True)
     loc_block = models.ForeignKey(LocBlock, on_delete=models.CASCADE, null=True, blank=True)
+    is_template = models.BooleanField(null=False, default=False)
 
     import_order = 5
     remote_fieldmap = {  # <remote_field>: (<local_field>, <method>),
@@ -216,6 +217,7 @@ class Event(models.Model):
         'start_date': ('start_time', lambda v: pytz.timezone(settings.TIME_ZONE).localize(datetime.strptime(v, '%Y-%m-%d %H:%M:%S'))),
         'end_date': ('end_time', lambda v: pytz.timezone(settings.TIME_ZONE).localize(datetime.strptime(v, '%Y-%m-%d %H:%M:%S')) if v else v),
         'loc_block_id': ('loc_block', lambda v: LocBlock.objects.filter(remote_key=v).first()),
+        'is_template': ('is_template', lambda v: v != "0"),
     }
 
     @classmethod
