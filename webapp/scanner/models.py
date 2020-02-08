@@ -182,6 +182,10 @@ class LocBlock(models.Model):
         'address_id': ('address', lambda v: Address.objects.filter(remote_key=v).first()),
     }
 
+    @classmethod
+    def remote_cleanup_queryset(cls):
+        return cls.objects.all()
+
     def __str__(self):
         return str(self.address)
 
