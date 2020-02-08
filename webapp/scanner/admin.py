@@ -71,7 +71,12 @@ class MembershipAdmin(admin.ModelAdmin):
 
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
-    list_display = ('title', 'loc_block', 'start_time', 'end_time', 'is_active_pill', 'remote_key')
+    list_display = (
+        'title', 'loc_block',
+        'start_time', 'end_time',
+        'is_template',
+        'is_active_pill', 'remote_key',
+    )
     search_fields = ('title', 'location__name')
 
     def is_active_pill(self, obj):
