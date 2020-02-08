@@ -53,11 +53,10 @@
       </p>
       <p>
         <h3>What to do from here:</h3>
-        <a href="{% url 'scanner-config-events' %}?clear_location=1&clear_events=1" class="button">Configure</a>
-        <!--
-        <a href="{% url 'scanner-config-location' %}?clear_location=1&clear_events=1" class="button">Location &gt; Event</a>
-        -->
-        <a href="{% url 'attendance-select' %}" class="button">List</a>
+        <a href="{% url 'scanner-config-location' %}?clear_location=1&clear_events=1" class="button">Select Location</a>
+        <a href="{% url 'scanner-config-events' %}?clear_location=1&clear_events=1" class="button">Select Event</a>
+        <br/><br/>
+        <a href="{% url 'attendance-select' %}" class="button">List Attendees</a>
         <a href="{% url 'power-confirm' %}" class="button">Shutdown</a>
         <!--
         <ul>

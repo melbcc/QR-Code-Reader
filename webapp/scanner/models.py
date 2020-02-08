@@ -20,8 +20,8 @@ from .conf import settings
 civicrm_tables = {}
 
 def civicrm_clone(cls):
-    assert getattr(cls, 'remote_key', None) is not None, "{} model must have 'remote_key'".format(cls)
-    if getattr(cls, 'import_order', None) is None:
+    assert hasattr(cls, 'remote_key'), "{} model must have 'remote_key'".format(cls)
+    if not hasattr(cls, 'import_order'):
         cls.import_order = 999
     civicrm_tables[cls.__name__.lower()] = cls
     return cls
@@ -137,28 +137,85 @@ class Membership(models.Model):
         )
 
 
-#@civicrm_clone
-class Location(models.Model):
-    remote_key = models.CharField(max_length=20)
-    name = models.CharField(max_length=200, blank=True)
+@civicrm_clone
+class Address(models.Model):
+    remote_key = models.CharField(max_length=20, unique=True)
+    street_address = models.CharField(max_length=255, blank=True, null=True)
+    city = models.CharField(max_length=255, blank=True, null=True)
+    postal_code = models.CharField(max_length=20, blank=True, null=True)
+    supplemental_address_1 = models.CharField(max_length=255, blank=True, null=True)
+    supplemental_address_2 = models.CharField(max_length=255, blank=True, null=True)
+    supplemental_address_3 = models.CharField(max_length=255, blank=True, null=True)
+
+    import_order = 2.0
+    # Limit the objects imported from CiviCRM using the folling data
+    import_limiter_data = {
+        'model': 'LocBlock',  # Model to query
+        'field': 'address_id',  # Field containing CiviCRM's id for this object
+    }
+
+    remote_fieldmap = {  # <remote_field>: (<local_field>, <method>),
+        'street_address': ('street_address', lambda v: v),
+        'city': ('city', lambda v: v),
+        'postal_code': ('postal_code', lambda v: v),
+        'supplemental_address_1': ('supplemental_address_1', lambda v: v),
+        'supplemental_address_2': ('supplemental_address_2', lambda v: v),
+        'supplemental_address_3': ('supplemental_address_3', lambda v: v),
+    }
+
+    def _supplamental_iter(self):
+        for i in (1, 2, 3):
+            supplemental = getattr(self, 'supplemental_address_{}'.format(i))
+            if supplemental:
+                yield supplemental
 
     def __str__(self):
-        return self.name
+        return "{street_address}, {supplementals}".format(
+            street_address=self.street_address,
+            supplementals=', '.join(self._supplamental_iter()),
+        )
 
+    def __repr__(self):
+        return "<{cls}: {str}>".format(
+            cls=type(self).__name__,
+            str=str(self),
+        )
+
+
+@civicrm_clone
+class LocBlock(models.Model):
+    remote_key = models.CharField(max_length=20, unique=True)
+    address = models.ForeignKey(Address, on_delete=models.CASCADE)
+
+    import_order = 2.1
+    remote_fieldmap = {  # <remote_field>: (<local_field>, <method>),
+        'address_id': ('address', lambda v: Address.objects.filter(remote_key=v).first()),
+    }
+
+    @classmethod
+    def remote_cleanup_queryset(cls):
+        return cls.objects.all()
+
+    def __str__(self):
+        return str(self.address)
+
+    def __repr__(self):
+        return "<{}: {}>".format(type(self).__name__, str(self.address))
 
 @civicrm_clone
 class Event(models.Model):
     remote_key = models.CharField(max_length=20, unique=True)
     title = models.CharField(max_length=200)
-    location = models.ForeignKey(Location, on_delete=models.CASCADE, blank=True, null=True)
     start_time = models.DateTimeField('start time')
     end_time = models.DateTimeField('end time', null=True, blank=True)
+    loc_block = models.ForeignKey(LocBlock, on_delete=models.CASCADE, null=True, blank=True)
 
     import_order = 5
     remote_fieldmap = {  # <remote_field>: (<local_field>, <method>),
         'title': ('title', lambda v: v),
         'start_date': ('start_time', lambda v: pytz.timezone(settings.TIME_ZONE).localize(datetime.strptime(v, '%Y-%m-%d %H:%M:%S'))),
         'end_date': ('end_time', lambda v: pytz.timezone(settings.TIME_ZONE).localize(datetime.strptime(v, '%Y-%m-%d %H:%M:%S')) if v else v),
+        'loc_block_id': ('loc_block', lambda v: LocBlock.objects.filter(remote_key=v).first()),
     }
 
     @classmethod
