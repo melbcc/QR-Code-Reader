@@ -9,8 +9,8 @@ from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
 from django.core.serializers.json import DjangoJSONEncoder
 
-from .models import Location, Event, Attendance
-from .serializers import EventSerializer, LocationSerializer
+from .models import Event, Attendance
+from .serializers import EventSerializer
 from .conf import settings
 
 

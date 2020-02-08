@@ -9,7 +9,6 @@ from .conf import settings
 
 from .models import Contact
 from .models import Membership
-from .models import Location
 from .models import Event
 from .models import Attendance
 
@@ -76,29 +75,12 @@ class MembershipViewSetByMemNo(MembershipViewSet):
     lookup_field = 'contact__membership_num'
 
 
-# ---------- Locations
-class LocationSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Location
-        fields = ('pk', 'name')
-
-class LocationViewSet(viewsets.ModelViewSet):
-    queryset = Location.objects.all()
-    serializer_class = LocationSerializer
-
 
 # ---------- Events
-#class EventSerializer(serializers.HyperlinkedModelSerializer):
-#    class Meta:
-#        model = Event
-#        #fields = ('pk', 'title', 'location')
-#        fields = '__all__'
-#    #title = serializers.CharField()
-
 class EventSerializer(serializers.Serializer):
     pk = serializers.IntegerField()
     title = serializers.CharField()
-    location = LocationSerializer()
+    #location = LocationSerializer()
     #email = serializers.EmailField()
     #content = serializers.CharField(max_length=200)
     #created = serializers.DateTimeField()

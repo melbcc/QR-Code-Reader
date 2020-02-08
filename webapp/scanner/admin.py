@@ -2,7 +2,8 @@ from django.contrib import admin
 from django.utils.html import format_html
 
 from .models import MembershipType, MembershipStatus, ParticipantStatusType
-from .models import Contact, Membership, Location, Event, Attendance
+from .models import Contact, Membership, Event, Attendance
+from .models import LocBlock, Address
 
 
 @admin.register(MembershipType)
@@ -68,15 +69,9 @@ class MembershipAdmin(admin.ModelAdmin):
         return obj.contact.remote_key
 
 
-@admin.register(Location)
-class LocationAdmin(admin.ModelAdmin):
-    list_display = ('remote_key', 'name')
-    search_fields = ('name',)
-
-
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
-    list_display = ('title', 'start_time', 'end_time', 'is_active_pill', 'remote_key')
+    list_display = ('title', 'loc_block', 'start_time', 'end_time', 'is_active_pill', 'remote_key')
     search_fields = ('title', 'location__name')
 
     def is_active_pill(self, obj):
@@ -92,6 +87,15 @@ class EventAdmin(admin.ModelAdmin):
             ]),
             text="{!r}".format(is_active),
         ))
+
+
+@admin.register(Address)
+class AddressAdmin(admin.ModelAdmin):
+    list_display = ('street_address', 'city', 'postal_code')
+
+@admin.register(LocBlock)
+class LocBlockAdmin(admin.ModelAdmin):
+    list_display = ('address',)
 
 
 @admin.register(Attendance)
