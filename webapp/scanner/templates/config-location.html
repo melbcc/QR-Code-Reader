@@ -19,7 +19,7 @@
       {% for address in addresses %}
       <div class="radiocheck check">
         <input id="addr{{ address.pk }}" name="addr{{ address.pk }}" class="checkbox" type="checkbox"/>
-        <label for="addr{{ address.pk }}">{{ address }}</label>
+        <label for="addr{{ address.pk }}">{{ address }} [{{ address.active_event_count }}]</label>
       </div>
       {% endfor %}
 

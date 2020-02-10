@@ -88,7 +88,7 @@ class ConfigLocationView(View):
         # Render & Return
         return render(request, self.template_name, {
             'addresses': Address.objects.filter(
-                pk__in=Event.objects.all().values_list('loc_block__address', flat=True).distinct()
+                pk__in=Event.objects.are_active().values_list('loc_block__address', flat=True).distinct()
             ),
         })
 
@@ -100,10 +100,9 @@ class ConfigEventsView(View):
         std_session(request)
 
         addresses = get_addresses(request)
-        events = Event.objects.filter(is_template=False)
+        events = Event.objects.filter(is_template=False).are_active()
         if addresses:
             events = events.filter(loc_block__address__in=addresses)
-        events = [e for e in events if e.is_active]
 
         # Render & Return
         return render(
@@ -113,6 +112,7 @@ class ConfigEventsView(View):
                 'events': events,
             },
         )
+
 
 # ---------- Scanner
 class ScannerView(View):

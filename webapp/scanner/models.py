@@ -181,6 +181,13 @@ class Address(models.Model):
             str=str(self),
         )
 
+    def events(self):
+        return Event.objects.filter(loc_block__address=self)
+
+    @property
+    def active_event_count(self):
+        return self.events().are_active().count()
+
 
 @civicrm_clone
 class LocBlock(models.Model):
