@@ -173,6 +173,12 @@ const runCommand = (cmd) => {
         case 'HOME': // Navigate to root path
             window.location.href = '/';
             break;
+        case 'ADMIN': // Django admin
+            window.location.href = '/admin';
+            break;
+        case 'API':
+            window.location.href = '/api';
+            break;
         default:
             break;
     }
