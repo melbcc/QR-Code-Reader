@@ -16,10 +16,10 @@
 
     <h1>Select Location(s)</h1>
     <form class="form" action="{% url 'scanner-config-events' %}">
-      {% for location in locations %}
+      {% for address in addresses %}
       <div class="radiocheck check">
-        <input id="loc{{ location.pk }}" name="loc{{ location.pk }}" class="checkbox" type="checkbox"/>
-        <label for="loc{{ location.pk }}">{{ location.address }}</label>
+        <input id="addr{{ address.pk }}" name="addr{{ address.pk }}" class="checkbox" type="checkbox"/>
+        <label for="addr{{ address.pk }}">{{ address }}</label>
       </div>
       {% endfor %}
 

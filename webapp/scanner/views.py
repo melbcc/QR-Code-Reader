@@ -9,8 +9,8 @@ from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
 from django.core.serializers.json import DjangoJSONEncoder
 
-from .models import Event, Attendance, LocBlock
-from .serializers import EventSerializer, LocBlockSerializer
+from .models import Event, Attendance, Address
+from .serializers import EventSerializer, AddressSerializer
 from .conf import settings
 
 
@@ -29,15 +29,15 @@ class RootView(generic.TemplateView):
 def std_session(request):
     # Location: loc (either an int, or None)
     if request.GET.get('clear_location', None):
-        request.session['loc_blocks'] = []
+        request.session['addresses'] = []
 
-    loc_block_pks = request.session['loc_blocks'] = [
-        int(key[3:])
+    address_pks = request.session['addresses'] = [
+        int(key[4:])  # everything after 'addr'
         for key in request.GET.keys()
-        if re.search(r'^loc\d+$', key)
+        if re.search(r'^addr\d+$', key)
     ]
-    if loc_block_pks:
-        request.session['loc_blocks'] = loc_block_pks
+    if address_pks:
+        request.session['addresses'] = address_pks
 
     # Events: ev<pk>=on
     if request.GET.get('clear_events', None):
@@ -55,15 +55,15 @@ def std_session(request):
     return request
 
 
-def get_loc_blocks(request):
+def get_addresses(request):
     # Get location and relevant events
-    loc_block_pks = request.session.get('loc_blocks', [])
-    loc_blocks = []
-    if loc_block_pks:
-        loc_blocks = LocBlock.objects.filter(
-            pk__in=loc_block_pks
+    address_pks = request.session.get('addresses', [])
+    addresses = []
+    if address_pks:
+        addresses = Address.objects.filter(
+            pk__in=address_pks
         )
-    return loc_blocks
+    return addresses
 
 
 def get_events(request, only_upcoming=True):
@@ -85,12 +85,9 @@ class ConfigLocationView(View):
     template_name = 'config-location.html'
 
     def get(self, request, *args, **kwargs):
-        # Locations QuerySet
-        loc_block = LocBlock.objects.all()
-
         # Render & Return
         return render(request, self.template_name, {
-            'locations': loc_block,
+            'addresses': Address.objects.all(),
         })
 
 
@@ -100,17 +97,17 @@ class ConfigEventsView(View):
     def get(self, request, *args, **kwargs):
         std_session(request)
 
-        loc_blocks = get_loc_blocks(request)
+        addresses = get_addresses(request)
         events = Event.objects.filter(is_template=False)
-        if loc_blocks:
-            events = events.filter(loc_block__in=loc_blocks)
+        if addresses:
+            events = events.filter(loc_block__address__in=addresses)
         events = [e for e in events if e.is_active]
 
         # Render & Return
         return render(
             request,
             self.template_name, {
-                'location': loc_blocks,
+                'location': addresses,
                 'events': events,
             },
         )
@@ -123,15 +120,15 @@ class ScannerView(View):
         std_session(request)
 
         # Get Objects from Session
-        loc_blocks = get_loc_blocks(request)
+        addresses = get_addresses(request)
         events = get_events(request)
 
         # Serialize Objects
-        loc_blocks_ser = None
-        if loc_blocks:
-            loc_blocks_ser = [
-                LocBlockSerializer(loc_block).data
-                for loc_block in loc_blocks
+        addresses_ser = None
+        if addresses:
+            addresses_ser = [
+                AddressSerializer(a).data
+                for a in addresses
             ]
         events_ser = []
         if events:
@@ -143,10 +140,10 @@ class ScannerView(View):
             self.template_name,
             {
                 # Objects
-                'locations': loc_blocks,
+                'locations': addresses,
                 'events': events,
                 # Jsonified Objects (for javascript)
-                'locations_json': json.dumps(loc_blocks_ser, cls=DjangoJSONEncoder),
+                'locations_json': json.dumps(addresses_ser, cls=DjangoJSONEncoder),
                 'events_json': json.dumps(events_ser, cls=DjangoJSONEncoder),
             },
         )
