@@ -169,19 +169,12 @@ jumpTo.withTimeout = (h, timeout_ms) => {
 /* ========== Cheat Codes ========== */
 const runCommand = (cmd) => {
     console.log("Running Command:", cmd);
-    switch (cmd.toUpperCase()) {
-        case 'HOME': // Navigate to root path
-            window.location.href = '/';
-            break;
-        case 'ADMIN': // Django admin
-            window.location.href = '/admin';
-            break;
-        case 'API':
-            window.location.href = '/api';
-            break;
-        default:
-            break;
-    }
+    let cmdMap = {
+        "HOME": "/",
+        "ADMIN": "/admin",
+        "API": "/api"
+    };
+    window.location.href = cmdMap[cmd.toUpperCase()];
 }
 
 
