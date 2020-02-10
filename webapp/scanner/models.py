@@ -247,10 +247,10 @@ class Event(models.Model):
     def remote_cleanup_queryset(cls):
         now = pytz.timezone(settings.TIME_ZONE).normalize(timezone.now())
         return cls.objects.filter(
-            Q(start_time__range=[(now + timedelta(days=x)) for x in (-7, 14)]) or
-            (Q(start_time__lt=now) and Q(end_time__gt=now))
+            Q(start_time__range=[(now + timedelta(days=x)) for x in (-7, 14)]) |
+            (Q(start_time__lt=now) & Q(end_time__gt=now))
         ).exclude(
-            pk__in=Attendance.objects.filter(export_time__isnull=True).values_list('event__pk', flat=True)
+            pk__in=Attendance.objects.filter(export_time__isnull=True).values_list('event__pk', flat=True).distinct()
         )
 
     def __str__(self):
