@@ -202,6 +202,27 @@ class LocBlock(models.Model):
     def __repr__(self):
         return "<{}: {}>".format(type(self).__name__, str(self.address))
 
+
+class EventQuerySet(models.QuerySet):
+    def are_active(self):
+        # QuerySet version of Event().is_active()
+        now = pytz.timezone(settings.TIME_ZONE).normalize(timezone.now())
+        return self.filter(
+            # now > start_time - ACTIVE_BEFORE
+            Q(start_time__lt=(now + timedelta(seconds=settings.SCANNER_EVENT_ACTIVE_BEFORE))) &
+            (
+                # now < start_time + (DEFAULT_DURATION + ACTIVE_AFTER)
+                (Q(end_time__isnull=True) & Q(start_time__gt=(now - timedelta(
+                    seconds=settings.SCANNER_EVENT_ACTIVE_DEFAULT_DURATION + settings.SCANNER_EVENT_ACTIVE_AFTER
+                )))) |
+                # now < end_time + ACTIVE_AFTER
+                (Q(end_time__isnull=False) & Q(end_time__gt=(now - timedelta(
+                    seconds=settings.SCANNER_EVENT_ACTIVE_AFTER
+                ))))
+            )
+        )
+
+
 @civicrm_clone
 class Event(models.Model):
     remote_key = models.CharField(max_length=20, unique=True)
@@ -219,6 +240,8 @@ class Event(models.Model):
         'loc_block_id': ('loc_block', lambda v: LocBlock.objects.filter(remote_key=v).first()),
         'is_template': ('is_template', lambda v: v != "0"),
     }
+
+    objects = EventQuerySet.as_manager()
 
     @classmethod
     def remote_cleanup_queryset(cls):
