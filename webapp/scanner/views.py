@@ -87,7 +87,9 @@ class ConfigLocationView(View):
     def get(self, request, *args, **kwargs):
         # Render & Return
         return render(request, self.template_name, {
-            'addresses': Address.objects.all(),
+            'addresses': Address.objects.filter(
+                pk__in=Event.objects.all().values_list('loc_block__address', flat=True).distinct()
+            ),
         })
 
 
