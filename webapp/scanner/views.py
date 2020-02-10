@@ -1,6 +1,7 @@
 import re
 import json
 import csv
+from collections import defaultdict
 
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseBadRequest
@@ -108,7 +109,10 @@ class ConfigEventsView(View):
         return render(
             request,
             self.template_name, {
-                'location': addresses,
+                'location': defaultdict(lambda: (lambda: '(multiple)'), {
+                    0: lambda: None,
+                    1: lambda: addresses.first(),
+                })[addresses.count() if addresses else 0](),
                 'events': events,
             },
         )
