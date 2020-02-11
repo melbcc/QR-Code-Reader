@@ -363,6 +363,8 @@ const continueWithMember = (member) => {
 }
 
 /* ----- Scan contact_id ----- */
+
+
 const submitScan = async () => {
     /* Run when submitting the QR-Code */
     // Scan Text
