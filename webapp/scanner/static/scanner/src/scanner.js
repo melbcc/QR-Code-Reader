@@ -363,7 +363,22 @@ const continueWithMember = (member) => {
 }
 
 /* ----- Scan contact_id ----- */
-
+const openQRCamera = (node) => {
+    var reader = new FileReader();
+    reader.onload = function() {
+        //node.value = "";
+        qrcode.callback = function(res) {
+            if(res instanceof Error) {
+                errorSet("No QR code found. Please make sure the QR code is within the camera's frame and try again.");
+            } else {
+                $('#scanform input[name=contact_id]').val(res);
+                submitScan();
+            }
+        };
+        qrcode.decode(reader.result);
+    };
+    reader.readAsDataURL(node.files[0]);
+}
 
 const submitScan = async () => {
     /* Run when submitting the QR-Code */

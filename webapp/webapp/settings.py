@@ -31,9 +31,17 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     'localhost', '127.0.0.1',
-    '192.168.81.61',  # static ip on MelbPC network (may change, only required to see remotely)
 ]
 
+# Add LAN IP to allowed hosts
+try:
+    import socket
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(('8.8.8.8', 1))  # connect() for UDP doesn't send packets
+    ALLOWED_HOSTS.append(s.getsockname()[0])
+    s.close()
+except:
+    pass  # meh, I tried
 
 # Application definition
 

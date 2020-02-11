@@ -86,6 +86,12 @@
       <form id="scanform" onsubmit="submitScan(); return false;" autocomplete="off">
         <input name="contact_id" type="text" size="30" autocomplete="off" />
       </form>
+
+      <input type=text size=16 placeholder="Tracking Code" class="qrcode-text">
+      <label class=qrcode-text-btn>
+        <input type="file" accept="image/*" capture="environment" onchange="openQRCamera(this);" tabindex=-1>
+      </label>
+      <!--<input type="button" value="Go" disabled>-->
     </div></div>
 
     <!-- ============== Sign in as Guest ============== -->
