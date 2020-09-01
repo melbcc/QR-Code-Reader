@@ -17,27 +17,17 @@ class Command(BaseCommand):
     help = "Export recorded attendance to CiviCRM"
 
     REST_URL_BASE = 'https://www.melbpc.org.au/wp-content/plugins/civicrm/civicrm/extern/rest.php'
-    DEFAULT_KEYFILE = '{HOME}/civicrm-keys.json'
 
     def add_arguments(self, parser):
-
-        def env_formatted_str(value):
-            return value.format(**os.environ)
 
         group = parser.add_argument_group('CiviCRM Options')
         group.add_argument(
             '--site-key', dest='site_key',
-            help="CiviCRM site key (default from keyfile)",
+            help="site key (default from 'CIVICRM_SITEKEY' env var)",
         )
         group.add_argument(
             '--user-key', dest='user_key',
-            help="CiviCRM user key (default from keyfile)",
-        )
-        default_keyfile = env_formatted_str(self.DEFAULT_KEYFILE)
-        group.add_argument(
-            '--keyfile', dest='keyfile',
-            default=default_keyfile, type=env_formatted_str,
-            help="CiviCRM key json file (default: {!r})".format(default_keyfile),
+            help="user key (default from 'CIVICRM_USERKEY' env var)",
         )
 
         group = parser.add_argument_group('Export Options')
@@ -61,11 +51,6 @@ class Command(BaseCommand):
             default=False, const=True, action='store_const',
             help="if set, no create requests are sent to CiviCRM",
         )
-
-    def get_keys(self, filename):
-        if not os.path.exists(filename):
-            return {}
-        return json.load(open(filename, 'r'))
 
     def get(self, table_name, **kwargs):
         payload = {
@@ -151,9 +136,8 @@ class Command(BaseCommand):
         self.dryrun = kwargs['dryrun']
 
         # ----- Get Keys
-        key_data = self.get_keys(kwargs['keyfile'])
-        self.api_key = kwargs.get('user_key', None) or key_data.get('user_key', None)
-        self.key = kwargs.get('site_key', None) or key_data.get('site_key', None)
+        self.api_key = kwargs.get('user_key', None) or os.environ.get('CIVICRM_USERKEY', None)
+        self.key = kwargs.get('site_key', None) or os.environ.get('CIVICRM_SITEKEY', None)
 
         # Validate
         if None in (self.api_key, self.key):

@@ -16,35 +16,28 @@ class Command(BaseCommand):
     help = "Test CiviCRM API (only for debugging)"
 
     REST_URL_BASE = 'https://www.melbpc.org.au/wp-content/plugins/civicrm/civicrm/extern/rest.php'
-    DEFAULT_KEYFILE = '{HOME}/civicrm-keys.json' if 'HOME' in os.environ else 'civicrm-keys.json'
 
     def add_arguments(self, parser):
 
-        def t_env_formatted_str(value):
-            return value.format(**os.environ)
-
         parser.add_argument(
-            '--model',
+            '--model', default='MembershipStatus',
             help="Model to import.",
         )
 
-        default_keyfile = t_env_formatted_str(self.DEFAULT_KEYFILE)
-        parser.add_argument(
-            '--keyfile', dest='keyfile',
-            default=default_keyfile, type=t_env_formatted_str,
-            help="CiviCRM key json file (default: {!r})".format(default_keyfile),
+        group = parser.add_argument_group('CiviCRM Options')
+        group.add_argument(
+            '--site-key', dest='site_key',
+            help="site key (default from 'CIVICRM_SITEKEY' env var)",
         )
-
-    def get_keys(self, filename):
-        if not os.path.exists(filename):
-            return {}
-        return json.load(open(filename, 'r'))
+        group.add_argument(
+            '--user-key', dest='user_key',
+            help="user key (default from 'CIVICRM_USERKEY' env var)",
+        )
 
     def handle(self, *args, **kwargs):
         # ----- Get Keys
-        key_data = self.get_keys(kwargs['keyfile'])
-        self.api_key = kwargs.get('user_key', None) or key_data.get('user_key', None)
-        self.key = kwargs.get('site_key', None) or key_data.get('site_key', None)
+        self.api_key = kwargs.get('user_key', None) or os.environ.get('CIVICRM_USERKEY', None)
+        self.key = kwargs.get('site_key', None) or os.environ.get('CIVICRM_SITEKEY', None)
 
         # Generate Payload
         payload = {

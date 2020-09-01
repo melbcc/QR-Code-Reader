@@ -17,7 +17,6 @@ class Command(BaseCommand):
     help = "Import members from CiviCRM"
 
     REST_URL_BASE = 'https://www.melbpc.org.au/wp-content/plugins/civicrm/civicrm/extern/rest.php'
-    DEFAULT_KEYFILE = '{HOME}/civicrm-keys.json' if 'HOME' in os.environ else 'civicrm-keys.json'
 
     def add_arguments(self, parser):
 
@@ -25,9 +24,6 @@ class Command(BaseCommand):
             if value not in scanner.models.civicrm_tables:
                 raise argparse.ArgumentTypeError("invalid table: {!r}".format(value))
             return scanner.models.civicrm_tables[value]
-
-        def t_env_formatted_str(value):
-            return value.format(**os.environ)
 
         parser.add_argument(
             '--showdata', dest='showdata',
@@ -42,18 +38,11 @@ class Command(BaseCommand):
         group = parser.add_argument_group('CiviCRM Options')
         group.add_argument(
             '--site-key', dest='site_key',
-            help="CiviCRM site key (default from keyfile)",
+            help="site key (default from 'CIVICRM_SITEKEY' env var)",
         )
         group.add_argument(
             '--user-key', dest='user_key',
-            help="CiviCRM user key (default from keyfile)",
-        )
-
-        default_keyfile = t_env_formatted_str(self.DEFAULT_KEYFILE)
-        group.add_argument(
-            '--keyfile', dest='keyfile',
-            default=default_keyfile, type=t_env_formatted_str,
-            help="CiviCRM key json file (default: {!r})".format(default_keyfile),
+            help="user key (default from 'CIVICRM_USERKEY' env var)",
         )
 
         parser.add_argument(
@@ -62,11 +51,6 @@ class Command(BaseCommand):
                 ', '.join([k for (k, v) in sorted(scanner.models.civicrm_tables.items(), key=lambda x: x[1].import_order)])
             ),
         )
-
-    def get_keys(self, filename):
-        if not os.path.exists(filename):
-            return {}
-        return json.load(open(filename, 'r'))
 
     def civicrm_get(self, table_name, *fields, **conditions):
         print_ok = conditions.pop('print_ok', True)
@@ -218,9 +202,8 @@ class Command(BaseCommand):
         self.showdata = kwargs['showdata']
 
         # ----- Get Keys
-        key_data = self.get_keys(kwargs['keyfile'])
-        self.api_key = kwargs.get('user_key', None) or key_data.get('user_key', None)
-        self.key = kwargs.get('site_key', None) or key_data.get('site_key', None)
+        self.api_key = kwargs.get('user_key', None) or os.environ.get('CIVICRM_USERKEY', None)
+        self.key = kwargs.get('site_key', None) or os.environ.get('CIVICRM_SITEKEY', None)
         self.strict = kwargs['strict']
 
         # Validate
