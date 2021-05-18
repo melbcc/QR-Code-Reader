@@ -29,6 +29,7 @@ def civicrm_clone(cls):
 
 @civicrm_clone
 class MembershipType(models.Model):
+    id = models.AutoField(primary_key=True)
     remote_key = models.CharField(max_length=20, null=True, blank=True)  # CiviCRM primary key
     name = models.CharField(max_length=200)
     allow_event_entry = models.BooleanField(default=True)
@@ -44,6 +45,7 @@ class MembershipType(models.Model):
 
 @civicrm_clone
 class MembershipStatus(models.Model):
+    id = models.AutoField(primary_key=True)
     remote_key = models.CharField(max_length=20, null=True, blank=True)  # CiviCRM primary key
     name = models.CharField(max_length=200)
     label = models.CharField(max_length=200)
@@ -62,6 +64,7 @@ class MembershipStatus(models.Model):
 
 @civicrm_clone
 class ParticipantStatusType(models.Model):
+    id = models.AutoField(primary_key=True)
     remote_key = models.CharField(max_length=20, null=True, blank=True)  # CiviCRM primary key
     name = models.CharField(max_length=40)
 
@@ -73,6 +76,7 @@ class ParticipantStatusType(models.Model):
 
 @civicrm_clone
 class Contact(models.Model):
+    id = models.AutoField(primary_key=True)
     remote_key = models.CharField(max_length=20, null=True, blank=True)  # CiviCRM primary key
     first_name = models.CharField(max_length=200)
     last_name = models.CharField(max_length=200)
@@ -100,6 +104,7 @@ class Contact(models.Model):
 
 @civicrm_clone
 class Membership(models.Model):
+    id = models.AutoField(primary_key=True)
     remote_key = models.CharField(max_length=20)  # CiviCRM primary key
     end_date = models.DateTimeField('membership end', null=True, blank=True)
     contact = models.ForeignKey(Contact, on_delete=models.CASCADE)
@@ -139,6 +144,7 @@ class Membership(models.Model):
 
 @civicrm_clone
 class Address(models.Model):
+    id = models.AutoField(primary_key=True)
     remote_key = models.CharField(max_length=20, unique=True)
     street_address = models.CharField(max_length=255, blank=True, null=True)
     city = models.CharField(max_length=255, blank=True, null=True)
@@ -191,6 +197,7 @@ class Address(models.Model):
 
 @civicrm_clone
 class LocBlock(models.Model):
+    id = models.AutoField(primary_key=True)
     remote_key = models.CharField(max_length=20, unique=True)
     address = models.ForeignKey(Address, on_delete=models.CASCADE)
 
@@ -232,6 +239,7 @@ class EventQuerySet(models.QuerySet):
 
 @civicrm_clone
 class Event(models.Model):
+    id = models.AutoField(primary_key=True)
     remote_key = models.CharField(max_length=20, unique=True)
     title = models.CharField(max_length=200)
     start_time = models.DateTimeField('start time')
@@ -306,6 +314,7 @@ class Attendance(models.Model):
 
         ./manage.py export_attendance --help
     """
+    id = models.AutoField(primary_key=True)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     contact = models.ForeignKey(Contact, on_delete=models.CASCADE)
     checkin_time = models.DateTimeField('checkin time', null=True, blank=True)
