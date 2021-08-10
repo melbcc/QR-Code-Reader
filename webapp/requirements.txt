@@ -1,9 +1,13 @@
+# Prerequisites
+cryptography==3.1.1
+
 # Django
 Django
 django-extensions
 djangorestframework
 django-appconf
 django-phonenumber-field
+django-allauth
 phonenumbers
 
 # Database
