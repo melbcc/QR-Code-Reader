@@ -9,12 +9,9 @@ services:
       - frontend_libs:/code/node_modules/
     depends_on:
       - web
-    environment:
-      - HOST=0.0.0.0
-      - PORT=8080
     ports:
       - 8080:8080
-    command: npm run dev
+    command: npm run serve
 
   # Web backend - Django
   web:
