@@ -87,7 +87,8 @@ SOCIALACCOUNT_PROVIDERS = {
     },
 }
 
-SITE_ID = 3
+if 'SITE_ID' in os.environ:
+    globals()['SITE_ID'] = int(os.environ['SITE_ID'])
 
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
