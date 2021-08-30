@@ -32,6 +32,10 @@ app.directive('swipe', {
 	}
 })
 
+// ===== Store (Vuex)
+import store from './store.js'
+app.use(store)
+
 // ===== Router
 import router from './router.js'
 app.use(router)

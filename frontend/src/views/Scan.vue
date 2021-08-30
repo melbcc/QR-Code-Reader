@@ -1,14 +1,15 @@
 <template>
   <div v-swipe:left="navNext" v-swipe:right="navPrev">
     <h1>Scan Attendees</h1>
-    <qrcode-stream @decode="onDecode" @init="onInit" :track="paintOutline">
+    <qrcode-stream v-if="cameraRender" @decode="onDecode" @init="onInit" :track="paintOutline">
       <div class="loading-indicator" v-if="loading">
         Loading...
       </div>
     </qrcode-stream>
     result: {{ result }}<br/>
-    type: {{ resultType }} <br/>
-    {{ error }}
+    type: {{ resultType }}<br/>
+    error: {{ error }}<br/>
+    render: {{ cameraRender }}
   </div>
 </template>
 
@@ -38,6 +39,11 @@
         resultType: null,
         error: "",
       }
+    },
+    computed: {
+      cameraRender() {
+        return this.$store.state.cameraDisplayEnabled;
+      },
     },
     methods: {
       navPrev() { this.$router.push('/select') },

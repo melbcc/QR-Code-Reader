@@ -1,12 +1,18 @@
 <template>
   <div class="nav-bar">
     <!-- Burger Menu Toggle button -->
-    <input type="checkbox" class="burger-checkbox" id="burger-checkbox" />
+    <input type="checkbox" class="burger-checkbox" id="burger-checkbox" v-on:click="burgerClick" />
     <label for="burger-checkbox" class="burger-button">
       <i class="fas fa-cog" id="burger-icon" />
     </label>
     <div class="burger-menu">
-      
+      <h2>Options</h2> <!-- TODO: make interactive -->
+      <ul>
+        <li><span>Logout</span></li>
+        <li><span>Kiosk mode <i class="fas fa-info-circle" /></span></li>
+        <li><span>Camera: overlay <i class="fas fa-info-circle" /></span></li>
+        <li><span>Duplicate delay <i class="fas fa-info-circle" /></span></li>
+      </ul>
     </div>
     <!-- Navigation Buttons -->
     <span v-for="(route, i) in navRoutes" :key="i" class="nav-bar-item">
@@ -24,6 +30,12 @@
       navRoutes() {
         return this.$router.options.routes
           .filter(r => r?.meta?.nav === true)
+      },
+    },
+    methods: {
+      burgerClick(event) {
+        // Treat burger as modal, to disable camera rendering (which is always on top)
+        this.$store.dispatch('modalDisplayOpen', event.target.checked);
       },
     },
   }
@@ -61,7 +73,7 @@
     z-index: 999;
 
     top: 0vh;
-    right: 0;
+    right: 0vw;
     height: 100vh;
     width: 75vw;
 
@@ -69,15 +81,20 @@
     border-bottom-left-radius: 5vh;
 
     transition: all 0.5s;
-    transform: translateX(75vh);
-    backface-visibility: hidden;
+    transform: translateX(75vw);
+    
+    padding: 8vh 5vw 4vh 10vw;
+    font-size: 5vw;
+    
+    overflow: auto;
   }
+
 
   #burger-checkbox:checked ~ .burger-menu {
     display: block;
     background: lightsteelblue;
 
-    transform: translateX(0vh);
+    transform: translateX(0vw);
     box-shadow: 0 0 3vw 2vw rgba(0, 0, 0, 0.3);
   }
   #burger-checkbox:checked ~ .burger-button {
