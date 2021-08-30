@@ -109,6 +109,10 @@ class EventViewSet(viewsets.ModelViewSet):
     queryset = Event.objects.all()
     serializer_class = EventSerializer
 
+class ActiveEventViewSet(viewsets.ModelViewSet):
+    queryset = Event.objects.are_active()
+    serializer_class = EventSerializer
+
 
 # ---------- Attendance
 class AttendanceSerializer(serializers.Serializer):
