@@ -16,7 +16,7 @@ export default createStore({
             cameraDisplayEnabled: true,  // if false, camera output won't display
             events: {
                 active: [],
-                selected: new Set(), // PKs of selected events
+                selected: new Set(JSON.parse(localStorage.getItem('events.selected')) || []), // PKs of selected events
             },
         }
     },
@@ -35,6 +35,8 @@ export default createStore({
             } else {
                 state.events.selected.add(pk)
             }
+            // Store in local storage
+            localStorage.setItem('events.selected', JSON.stringify([...state.events.selected])) // as list
         },
         // Camera State
         SET_CAMERA_DISPLAY(state, render) {
@@ -50,7 +52,14 @@ export default createStore({
             context.commit('SET_LOADING_EVENTS', true);
             axios.get('/api/activeevents/').then(response => {
                 context.commit('SET_LOADING_EVENTS', false);
-                context.commit('SET_EVENTS_ACTIVE', response.data);
+                let events = response.data;
+                context.commit('SET_EVENTS_ACTIVE', events);
+
+                // remove irrelevant selection indexes
+                let eventPks = new Set(events.map(e => e.pk));
+                [...context.state.events.selected]
+                    .filter(pk => ! eventPks.has(pk))
+                    .forEach(pk => context.commit('TOGGLE_EVENT_PK', pk))
             })
         },
     }
