@@ -1,15 +1,19 @@
 <template>
-    <div v-swipe:left="navNext" v-swipe:right="navPrev">
-        <h1>Scan Attendees</h1>
-        <qrcode-stream v-if="cameraRender" @decode="onDecode" @init="onInit" :track="paintOutline">
-            <div class="loading-indicator" v-if="loading">
-                Loading...
+    <div v-swipe:left="navNext" v-swipe:right="navPrev" class="view">
+        <div class="camera-view">
+            <qrcode-stream v-if="cameraRender" @decode="onDecode" @init="onInit" :track="paintOutline">
+                <div class="dialog" v-if="loading">
+                    Loading...
+                </div>
+            </qrcode-stream>
+            <div v-else class="dialog">
+                <span>Disabled</span>
             </div>
-        </qrcode-stream>
-        result: {{ result }}<br/>
-        type: {{ resultType }}<br/>
-        error: {{ error }}<br/>
-        render: {{ cameraRender }}
+        </div>
+        <div>
+            <div class="button"><i class="fas fa-user"/> Guest</div>
+            <div class="button"><i class="fas fa-keyboard"/> Manual</div>
+        </div>
     </div>
 </template>
 
@@ -105,8 +109,32 @@
 </script>
 
 <style scoped>
-    .qrcode-stream-wrapper {
+    .camera-view {
         height: 60vh;
         width: 100vw;
+        text-align: center;
+        vertical-align: middle;
     }
+
+    .camera-view .dialog {
+        font-size: 5vw;
+        padding: 40%;
+        height: 100%;
+    }
+
+    .button {
+        display: inline-block;
+        text-align: center;
+        vertical-align: middle;
+        width: 44vw;
+        font-size: 4vw;
+        background-color: dodgerblue;
+        color: white;
+        border-radius: 3vw;
+        margin: 2vh 3vw 0 3vw;
+        padding: 2vh 0;
+        cursor: pointer;
+        font-weight: bold
+    }
+
 </style>

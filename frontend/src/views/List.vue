@@ -1,5 +1,5 @@
 <template>
-    <div v-swipe:right="navPrev">
+    <div v-swipe:right="navPrev" class="view">
         <h1>List Attendees</h1>
         <a-button type="primary" @click="showModal">Click Me</a-button>
     </div>

@@ -1,5 +1,5 @@
 <template>
-    <div v-swipe:left="navNext">
+    <div v-swipe:left="navNext" class="view">
         <Spinner loadkey="events" v-on:click="fetchEvents" />
         <h1>Select Event</h1>
         <Event
