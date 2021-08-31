@@ -2,8 +2,8 @@
 import { createApp } from 'vue'
 
 import {
-  Button,
-  Modal,
+    Button,
+    Modal,
 } from 'ant-design-vue'
 import 'ant-design-vue/dist/antd.css'
 
@@ -19,17 +19,17 @@ app.use(Modal)
 // vue2 binding example: https://codepen.io/lisilinhart/pen/wxRQBo?editors=0010
 import Hammer from 'hammerjs'
 app.directive('swipe', {
-	mounted: function(el, binding) {
-		if (typeof binding.value === "function") {
-			const mc = new Hammer(el)
-      const direction = (
-        ((binding.arg !== 'left') ? Hammer.DIRECTION_RIGHT : 0) |
-        ((binding.arg !== 'right') ? Hammer.DIRECTION_LEFT : 0)
-      )
-			mc.get("swipe").set({ direction: direction })
-			mc.on("swipe", binding.value)
-		}
-	}
+    mounted: function(el, binding) {
+        if (typeof binding.value === "function") {
+            const mc = new Hammer(el)
+            const direction = (
+                ((binding.arg !== 'left') ? Hammer.DIRECTION_RIGHT : 0) |
+                ((binding.arg !== 'right') ? Hammer.DIRECTION_LEFT : 0)
+            )
+            mc.get("swipe").set({ direction: direction })
+            mc.on("swipe", binding.value)
+        }
+    }
 })
 
 // ===== Store (Vuex)
@@ -43,9 +43,8 @@ app.use(router)
 // ===== Fontawesome Icons
 import fontawesome from '@fortawesome/fontawesome'
 fontawesome.library.add(
-  import('@fortawesome/fontawesome-free-solid'),
-  import('@fortawesome/fontawesome-free-regular'),
+    import('@fortawesome/fontawesome-free-solid'),
+    import('@fortawesome/fontawesome-free-regular'),
 )
-
 
 app.mount('#app')
