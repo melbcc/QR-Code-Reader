@@ -1,5 +1,6 @@
 <template>
     <div v-swipe:left="navNext" v-swipe:right="navPrev" class="view">
+        <!-- Camera Render -->
         <div class="camera-view">
             <qrcode-stream v-if="cameraRender" @decode="onDecode" @init="onInit" :track="paintOutline">
                 <div class="dialog" v-if="loading">
@@ -10,15 +11,32 @@
                 <span>Disabled</span>
             </div>
         </div>
+        <!-- Manual Selection Buttons -->
         <div>
-            <div class="button"><i class="fas fa-user"/> Guest</div>
-            <div class="button"><i class="fas fa-keyboard"/> Manual</div>
+            <div class="button" v-on:click="buttonGuest"><i class="fas fa-user"/> Guest</div>
+            <div class="button" v-on:click="buttonManual"><i class="fas fa-keyboard"/> Manual</div>
         </div>
+
+        <!-- Modal : Member Number Entry -->
+        <ModalScreen name="member-entry">
+            <h2>Member Entry</h2>
+        </ModalScreen>
+
+        <!-- Modal : Guest Entry -->
+        <ModalScreen name="guest-entry">
+            <h2>Guest Entry</h2>
+        </ModalScreen>
+        
+        <!-- Modal : Welcome Message -->
+        <ModalScreen name="welcome-message">
+            <h2>Welcome Message</h2>
+        </ModalScreen>
     </div>
 </template>
 
 <script>
     import { QrcodeStream } from 'qrcode-reader-vue3'
+    import ModalScreen from '../components/ModalScreen.vue'
 
     function getMemberNumber(decodedText) {
         if (typeof decodedText === 'string') {
@@ -34,6 +52,7 @@
 
     export default {
         components: {
+            ModalScreen,
             QrcodeStream,
         },
         data() {
@@ -104,6 +123,12 @@
                     ctx.fillText(this.resultType, centerX, centerY)
                 }
             },
+            buttonManual() {
+                this.$store.dispatch('modalDisplayOpen', 'member-entry')
+            },
+            buttonGuest() {
+                this.$store.dispatch('modalDisplayOpen', 'guest-entry')
+            },
         },
     }
 </script>
@@ -136,5 +161,6 @@
         cursor: pointer;
         font-weight: bold
     }
+    
 
 </style>

@@ -14,6 +14,7 @@
                 <li><span>Duplicate delay <i class="fas fa-info-circle" /></span></li>
                 <li><span>Confirmation delay <i class="fas fa-info-circle" /></span></li>
                 <li><span>Sounds on/off</span></li>
+                <li><span>List attendees from all events</span></li>
             </ul>
         </div>
         <!-- Navigation Buttons -->
@@ -37,7 +38,7 @@
         methods: {
             burgerClick(event) {
                 // Treat burger as modal, to disable camera rendering (which is always on top)
-                this.$store.dispatch('modalDisplayOpen', event.target.checked);
+                this.$store.dispatch('modalDisplayOpen', event.target.checked ? 'burger-menu' : null);
             },
         },
     }

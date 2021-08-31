@@ -18,6 +18,7 @@ export default createStore({
                 active: [],
                 selected: new Set(JSON.parse(localStorage.getItem('events.selected')) || []), // PKs of selected events
             },
+            modal: null,
         }
     },
     mutations: {
@@ -42,11 +43,16 @@ export default createStore({
         SET_CAMERA_DISPLAY(state, render) {
             state.cameraDisplayEnabled = render;
         },
+        // Modal Screens
+        SET_MODAL_NAME(state, name) {
+            state.modal = name;  // set to null to clear
+        },
     },
     actions: {
-        modalDisplayOpen(context, isOpen) {
+        modalDisplayOpen(context, name) {
+            context.commit('SET_MODAL_NAME', name);
             // Stop render of camera while modal dipslay is open
-            context.commit('SET_CAMERA_DISPLAY', isOpen ? false : true);
+            context.commit('SET_CAMERA_DISPLAY', name ? false : true);
         },
         fetchEvents(context) {
             context.commit('SET_LOADING_EVENTS', true);
