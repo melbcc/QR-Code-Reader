@@ -26,10 +26,10 @@
     }
 
     #app-view {
-        margin: 10vh 0 0;
+        padding: 10vh 0 5vh;
     }
 
     h1 {
-        margin: 20px;
+        margin: 0 5vw;
     }
 </style>
