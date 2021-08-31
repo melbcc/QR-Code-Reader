@@ -1,18 +1,16 @@
 <template>
     <div v-swipe:left="navNext">
-        <h1>Select Event</h1>
         <Spinner loadkey="events" v-on:click="fetchEvents" />
-        <h2>Events</h2>
+        <h1>Select Event</h1>
         <Event
             v-for="event in events"
             :pk="event.pk"
             :title="event.title"
             :key="event.pk"
         />
-        <h2>Filter</h2>
-        <router-link to="/scan">
-            Begin Scanning <i class="fas fa-camera" /> &gt;&gt;
-        </router-link>
+        <div id="begin-button" v-on:click="navNext">
+            Begin: <i class="fas fa-qrcode" />&nbsp;<i class="fas fa-chevron-right" />&nbsp;<i class="fas fa-camera" />
+        </div>
     </div>
 </template>
 
@@ -51,4 +49,14 @@
 </script>
 
 <style scoped>
+    #begin-button {
+        color: white;
+        background-color: dodgerblue;
+        border-radius: 3vh;
+        padding: 2vh 5vw;
+        text-align: center;
+        font-size: 4vw;
+        width: 50vw;
+        margin: 5vh 25vw;
+    }
 </style>
