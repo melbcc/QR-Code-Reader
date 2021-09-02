@@ -26,10 +26,14 @@
         <ModalScreen name="guest-entry">
             <h2>Guest Entry</h2>
         </ModalScreen>
-        
+
         <!-- Modal : Welcome Message -->
         <ModalScreen name="welcome-message">
-            <h2>Welcome Message</h2>
+            <h2>Welcome {{ member.first_name }}</h2>
+            <p>Membership Number: {{ member.membership_num }}</p>
+            <p>Contact ID: {{ member.contact_id }}</p>
+            <p>Status: {{ member.status }}</p>
+            <p>{{ member }}</p>
         </ModalScreen>
     </div>
 </template>
@@ -65,14 +69,18 @@
         },
         computed: {
             cameraRender() {
-                return this.$store.state.cameraDisplayEnabled;
+                return this.$store.state.cameraDisplayEnabled
+            },
+            member() {
+                return this.$store.state.member
             },
         },
         methods: {
             navPrev() { this.$router.push('/select') },
             navNext() { this.$router.push('/list') },
             async onDecode(decoded) {
-                this.result = decoded;
+                this.result = decoded
+                this.$store.dispatch('fetchMember', getMemberNumber(decoded))
             },
             async onInit (promise) {
                 // Error Lokup:

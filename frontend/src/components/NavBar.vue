@@ -9,12 +9,13 @@
             <h2>Options</h2> <!-- TODO: make interactive -->
             <ul>
                 <li><span>Logout</span></li>
-                <li><span>Kiosk mode <i class="fas fa-info-circle" /></span></li>
-                <li><span>Camera: overlay <i class="fas fa-info-circle" /></span></li>
-                <li><span>Duplicate delay <i class="fas fa-info-circle" /></span></li>
-                <li><span>Confirmation delay <i class="fas fa-info-circle" /></span></li>
+                <li><span>Kiosk mode <i class="fas fa-info-circle"/></span></li>
+                <li><span>Camera: overlay <i class="fas fa-info-circle"/></span></li>
+                <li><span>Duplicate delay <i class="fas fa-info-circle"/></span></li>
+                <li><span>Confirmation delay <i class="fas fa-info-circle"/></span></li>
                 <li><span>Sounds on/off</span></li>
                 <li><span>List attendees from all events</span></li>
+                <li><span>Keep camera on <i class="fas fa-info-circle"/></span></li>
             </ul>
         </div>
         <!-- Navigation Buttons -->
