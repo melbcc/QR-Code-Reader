@@ -1,14 +1,14 @@
 <template>
     <div v-swipe:left="navNext" class="view">
         <Spinner loadkey="events" v-on:click="fetchEvents" />
-        <h1>Select Event</h1>
+        <h1>Select Event(s)</h1>
         <Event
             v-for="event in events"
             :pk="event.pk"
             :title="event.title"
             :key="event.pk"
         />
-        <div id="begin-button" v-on:click="navNext">
+        <div id="begin-button" :class="beginButtonClass" v-on:click="navNext">
             Begin: <i class="fas fa-qrcode" />&nbsp;<i class="fas fa-chevron-right" />&nbsp;<i class="fas fa-camera" />
         </div>
     </div>
@@ -32,12 +32,19 @@
             events() {
                 return this.$store.state.events.active;
             },
+            beginButtonClass() {
+                return this.$store.state.events.selected.size ? null : 'inactive'
+            },
             eventsSpinnerClass() {
                 return this.$store.state.loading.events ? 'rotating' : '';
             },
         },
         methods: {
-            navNext() { this.$router.push('/scan') },
+            navNext() {
+                if (this.$store.state.events.selected.size > 0) {
+                    this.$router.push('/scan')
+                }
+            },
             fetchEvents() {
                 this.$store.dispatch('fetchEvents');
             },
@@ -58,5 +65,8 @@
         font-size: 4vw;
         width: 50vw;
         margin: 5vh 25vw;
+    }
+    #begin-button.inactive {
+        background-color: grey;
     }
 </style>
