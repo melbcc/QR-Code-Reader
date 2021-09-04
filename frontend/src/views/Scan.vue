@@ -80,7 +80,10 @@
             navNext() { this.$router.push('/list') },
             async onDecode(decoded) {
                 this.result = decoded
+                const memberNum = getMemberNumber(decoded)
+                if (memberNum) {
                 this.$store.dispatch('fetchMember', getMemberNumber(decoded))
+                }
             },
             async onInit (promise) {
                 // Error Lokup:
