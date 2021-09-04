@@ -82,7 +82,7 @@
                 this.result = decoded
                 const memberNum = getMemberNumber(decoded)
                 if (memberNum) {
-                this.$store.dispatch('fetchMember', getMemberNumber(decoded))
+                    this.$store.dispatch('fetchMember', getMemberNumber(decoded))
                 }
             },
             async onInit (promise) {
@@ -122,12 +122,12 @@
                     // Floating Text
                     const centerX = boundingBox.x + boundingBox.width / 2;
                     const centerY = boundingBox.y + boundingBox.height / 2;
-                    const fontSize = Math.max(12, 50 * boundingBox.width / ctx.canvas.width);
+                    const fontSize = Math.max(32, 200 * (boundingBox.width / ctx.canvas.width));
 
                     ctx.font = `bold ${fontSize}px sans-serif`;
                     ctx.textAlign = 'center';
 
-                    ctx.lineWidth = boundingBox.width / 30;
+                    ctx.lineWidth = boundingBox.width / 10;
                     ctx.strokeText(this.resultType, centerX, centerY);
 
                     ctx.fillStyle = 'white';
