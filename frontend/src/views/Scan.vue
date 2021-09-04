@@ -76,8 +76,8 @@
             },
         },
         methods: {
-            navPrev() { this.$router.push('/select') },
-            navNext() { this.$router.push('/list') },
+            navPrev() { this.$router.push({name: 'Select'}) },
+            navNext() { this.$router.push({name: 'List'}) },
             async onDecode(decoded) {
                 this.result = decoded
                 const memberNum = getMemberNumber(decoded)

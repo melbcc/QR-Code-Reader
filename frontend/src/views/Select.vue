@@ -42,7 +42,7 @@
         methods: {
             navNext() {
                 if (this.$store.state.events.selected.size > 0) {
-                    this.$router.push('/scan')
+                    this.$router.push({name: 'Scan'})
                 }
             },
             fetchEvents() {

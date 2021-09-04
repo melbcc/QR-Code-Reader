@@ -4,7 +4,7 @@ const router = createRouter({
     history: createWebHistory(),
     routes: [
         {
-            path: "/select",
+            path: "/app/select",
             name: "Select",
             component: () => import("@/views/Select.vue"),
             meta: {
@@ -13,7 +13,7 @@ const router = createRouter({
             },
         },
         {
-            path: "/scan",
+            path: "/app/scan",
             name: "Scan",
             component: () => import("@/views/Scan.vue"),
             meta: {
@@ -22,7 +22,7 @@ const router = createRouter({
             },
         },
         {
-            path: "/list",
+            path: "/app/list",
             name: "List",
             component: () => import("@/views/List.vue"),
             meta: {

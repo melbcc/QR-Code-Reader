@@ -16,7 +16,7 @@
 <script>
     export default {
         methods: {
-            navPrev() { this.$router.push('/scan') },
+            navPrev() { this.$router.push({name: 'Scan'}) },
             showModal() { this.visible = true },
             hideModal() { this.visible = false },
         },
