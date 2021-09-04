@@ -17,6 +17,11 @@
                 <li><span>List attendees from all events</span></li>
                 <li><span>Keep camera on <i class="fas fa-info-circle"/></span></li>
             </ul>
+            <h3>Admin Links</h3>
+            <ul>
+                <li><a href="/admin"><i class="fas fa-database"/> Database (django)</a></li>
+                <li><a href="/adi"><i class="fas fa-code"/> API Docs</a></li>
+            </ul>
         </div>
         <!-- Navigation Buttons -->
         <span v-for="(route, i) in navRoutes" :key="i" class="nav-bar-item">
