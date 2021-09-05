@@ -16,6 +16,7 @@
                 <li><span>Sounds on/off</span></li>
                 <li><span>List attendees from all events</span></li>
                 <li><span>Keep camera on <i class="fas fa-info-circle"/></span></li>
+                <li><span>Enable torch</span></li>
             </ul>
             <h3>Admin Links</h3>
             <ul>
