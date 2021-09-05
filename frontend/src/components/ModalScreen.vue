@@ -50,6 +50,7 @@
         border-radius: 3vh;
         padding: 2vh 3vw;
         text-align: center;
+        overflow: auto;
     }
 
     /* Close Button */

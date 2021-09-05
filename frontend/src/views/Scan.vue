@@ -4,11 +4,11 @@
         <div class="camera-view">
             <qrcode-stream v-if="cameraRender" @decode="onDecode" @init="onInit" :track="paintOutline">
                 <div class="dialog" v-if="loading">
-                    Loading...
+                    <i class="fas fa-camera"/> Loading...
                 </div>
             </qrcode-stream>
             <div v-else class="dialog">
-                <span>Disabled</span>
+                <span><i class="fas fa-power-off"/> Disabled</span>
             </div>
         </div>
         <!-- Manual Selection Buttons -->
@@ -29,11 +29,24 @@
 
         <!-- Modal : Welcome Message -->
         <ModalScreen name="welcome-message">
-            <h2>Welcome {{ member.first_name }}</h2>
-            <p>Membership Number: {{ member.membership_num }}</p>
-            <p>Contact ID: {{ member.contact_id }}</p>
-            <p>Status: {{ member.status }}</p>
-            <p>{{ member }}</p>
+            <div class="welcome">
+                <span class="heading">Welcome </span>
+                <span class="name">{{ member.first_name }}</span>
+                <span class="icon" :class="memberIconClass">
+                    <div class="icon-graphic status-deceased"><i class="fas fa-user-alt-slash"/></div>
+                    <div class="icon-graphic status-cancelled"><i class="fas fa-ban"/></div>
+                    <div class="icon-graphic status-pending"><i class="fas fa-hourglass-half"/></div>
+                    <div class="icon-graphic status-expired"><i class="fas fa-ban"/></div>
+                    <div class="icon-graphic status-grace"><i class="fas fa-hourglass-half"/></div>
+                    <div class="icon-graphic status-current"><i class="fas fa-check-circle"/></div>
+                    <div class="icon-graphic status-new"><i class="fas fa-plus-circle"/></div>
+                    <div class="icon-graphic status-unknown"><i class="fas fa-question"/></div>
+                    <span class="icon-text">Status: {{ member.status }}</span>
+                </span>
+                <span class="number">Membership # <code>{{ member.membership_num }}</code></span>
+                <!--<span>Contact ID: {{ member.contact_id }}</span>-->
+                <!-- <span>{{ member }}</span> -->
+            </div>
         </ModalScreen>
     </div>
 </template>
@@ -43,6 +56,7 @@
     import ModalScreen from '../components/ModalScreen.vue'
 
     function getMemberNumber(decodedText) {
+        // Get member number from decoded QR-Code text
         if (typeof decodedText === 'string') {
             const match = decodedText.match(/(?<type>M)?(?<number>\d+)$/i);
             if (match) {
@@ -53,6 +67,17 @@
             }
         }
     }
+    // Supported member.status values (lower-case)
+    //  (all others will be styled as "unknown")
+    const MEMBER_STATUS_MAP = [
+        'deceased',
+        'cancelled',
+        'pending',
+        'expired',
+        'grace',
+        'current',
+        'new',
+    ]
 
     export default {
         components: {
@@ -68,11 +93,17 @@
             }
         },
         computed: {
-            cameraRender() {
-                return this.$store.state.cameraDisplayEnabled
-            },
-            member() {
-                return this.$store.state.member
+            cameraRender() { return this.$store.state.cameraDisplayEnabled },
+            member() { return this.$store.state.member },
+            memberIconClass() {
+                const memberStatus = (this.$store.state.member?.status || '').toLowerCase()
+                if (!memberStatus) {
+                    return 'status-none'
+                } else if (MEMBER_STATUS_MAP.includes(memberStatus)) {
+                    return 'status-' + memberStatus
+                } else {
+                    return 'status-unknown'
+                }
             },
         },
         methods: {
@@ -82,12 +113,13 @@
                 this.result = decoded
                 const memberNum = getMemberNumber(decoded)
                 if (memberNum) {
-                    this.$store.dispatch('fetchMember', getMemberNumber(decoded))
+                    this.$store.dispatch('fetchScannedMember', getMemberNumber(decoded))
                 }
             },
             async onInit (promise) {
                 // Error Lokup:
                 // https://gruhn.github.io/vue-qrcode-reader/api/QrcodeStream.html#events
+                this.loading = true;
                 try {
                     await promise;
                 } catch (error) {
@@ -99,8 +131,7 @@
             paintOutline (detectedCodes, ctx) {
                 // copied from: https://gruhn.github.io/vue-qrcode-reader/demos/CustomTracking.html
                 for (const detectedCode of detectedCodes) {
-                    const [ firstPoint, ...otherPoints ] = detectedCode.cornerPoints;
-                    const { boundingBox, rawValue } = detectedCode;
+                    const { cornerPoints, boundingBox, rawValue } = detectedCode;
                     const memberNum = getMemberNumber(rawValue);
 
                     // Component Data
@@ -111,18 +142,15 @@
                     ctx.lineWidth = boundingBox.width / 20;
 
                     ctx.beginPath();
-                    ctx.moveTo(firstPoint.x, firstPoint.y);
-                    for (const { x, y } of otherPoints) {
-                        ctx.lineTo(x, y);
-                    }
-                    ctx.lineTo(firstPoint.x, firstPoint.y);
+                    ctx.moveTo(...Object.values(cornerPoints[cornerPoints.length-1]));  // last
+                    cornerPoints.forEach((point) => ctx.lineTo(...Object.values(point)))
                     ctx.closePath();
                     ctx.stroke();
 
                     // Floating Text
-                    const centerX = boundingBox.x + boundingBox.width / 2;
-                    const centerY = boundingBox.y + boundingBox.height / 2;
                     const fontSize = Math.max(32, 200 * (boundingBox.width / ctx.canvas.width));
+                    const centerX = (cornerPoints[0].x + cornerPoints[2].x) / 2
+                    const centerY = (cornerPoints[0].y + cornerPoints[2].y) / 2 + (fontSize / 3)
 
                     ctx.font = `bold ${fontSize}px sans-serif`;
                     ctx.textAlign = 'center';
@@ -145,6 +173,7 @@
 </script>
 
 <style scoped>
+    /* ----- Camera Render ----- */
     .camera-view {
         height: 60vh;
         width: 100vw;
@@ -158,6 +187,7 @@
         height: 100%;
     }
 
+    /* ----- Buttons ----- */
     .button {
         display: inline-block;
         text-align: center;
@@ -173,5 +203,50 @@
         font-weight: bold
     }
     
+    /* ----- Welcome Message -----*/
+    .welcome span {
+        display: block;
+        font-size: 5vw;
+    }
+    .welcome .heading {
+        font-weight: bold;
+        font-size: 10vw;
+    }
+    .welcome .name {
+        font-size: 8vw;
+        margin: 0 0 2vh;
+    }
+    .welcome .number code {
+        font-size: 7vw;
+        font-weight: bold;
+    }
 
+    /* Membership Status Indicator Icon */
+    .welcome .icon .icon-graphic {
+        font-size: 30vw;
+        margin: -0.25em 0;  /* remove inner padding (unknown origin)*/
+    }
+    .welcome .icon .icon-text {
+        font-weight: bold;
+        margin: 0 0 2vw;
+    }
+    .welcome .status-deceased  { color: grey;       }
+    .welcome .status-cancelled { color: red;        }
+    .welcome .status-pending   { color: grey;       }
+    .welcome .status-expired   { color: red;        }
+    .welcome .status-grace     { color: grey;       }
+    .welcome .status-current   { color: limegreen;  }
+    .welcome .status-new       { color: grey;       }
+    .welcome .status-unknown   { color: grey;       }  /* set if status is anything else */
+
+    /* hide non-selected icons */
+    .welcome .icon.status-deceased    .icon-graphic:not(.status-deceased)   { display: none; }
+    .welcome .icon.status-cancelled   .icon-graphic:not(.status-cancelled)  { display: none; }
+    .welcome .icon.status-pending     .icon-graphic:not(.status-pending)    { display: none; }
+    .welcome .icon.status-expired     .icon-graphic:not(.status-expired)    { display: none; }
+    .welcome .icon.status-grace       .icon-graphic:not(.status-grace)      { display: none; }
+    .welcome .icon.status-current     .icon-graphic:not(.status-current)    { display: none; }
+    .welcome .icon.status-new         .icon-graphic:not(.status-new)        { display: none; }
+    .welcome .icon.status-unknown     .icon-graphic:not(.status-unknown)    { display: none; }
+    .welcome .icon.status-none        .icon-graphic { display: none; }  /* hide all */
 </style>
