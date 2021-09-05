@@ -8,7 +8,7 @@ import axios from 'axios'
 
 
 export default createStore({
-    state() {
+    state() { // $store.state
         return {
             loading: {  // state of loading spinners
                 events: false,
@@ -23,7 +23,7 @@ export default createStore({
             member: null, // /api/
         }
     },
-    mutations: {
+    mutations: { // $store.commit()
         // Loading States
         SET_LOADING(state, key, isLoading) {
             state.loading[key] = isLoading;
@@ -31,7 +31,15 @@ export default createStore({
         // Events
         SET_EVENTS_ACTIVE(state, events) {
             state.events.active = events;
-            // TODO: prune selected
+
+            // remove irrelevant selection indexes
+            let eventPks = new Set(events.map(e => e.pk));
+            [...state.events.selected]
+                .filter(pk => ! eventPks.has(pk))
+                .forEach(pk => state.events.selected.delete(pk))
+
+            // Save to localStorage
+            localStorage.setItem('events.selected', JSON.stringify([...state.events.selected])) // as list
         },
         TOGGLE_EVENT_PK(state, pk) {
             if (state.events.selected.has(pk)) {
@@ -42,7 +50,7 @@ export default createStore({
             // Save to localStorage
             localStorage.setItem('events.selected', JSON.stringify([...state.events.selected])) // as list
         },
-        // Member
+        // Scanner Member
         SET_MEMBER(state, member) {
             state.member = member
         },
@@ -55,7 +63,7 @@ export default createStore({
             state.modal = name;  // set to null to clear
         },
     },
-    actions: {
+    actions: { // $store.dispatch()
         modalDisplayOpen(context, name) {
             context.commit('SET_MODAL_NAME', name);
             // Stop render of camera while modal dipslay is open
@@ -68,12 +76,6 @@ export default createStore({
                     context.commit('SET_LOADING', 'events', false);
                     let events = response.data;
                     context.commit('SET_EVENTS_ACTIVE', events);
-
-                    // remove irrelevant selection indexes
-                    let eventPks = new Set(events.map(e => e.pk));
-                    [...context.state.events.selected]
-                        .filter(pk => ! eventPks.has(pk))
-                        .forEach(pk => context.commit('TOGGLE_EVENT_PK', pk))
                 }
             ).catch(
                 (error) => {  // failure
@@ -82,7 +84,7 @@ export default createStore({
                 }
             )
         },
-        fetchMember(context, memberNum) {
+        fetchScannedMember(context, memberNum) {
             // memberNum: {type: <contact|member>, number: <int>}
             context.commit('SET_LOADING', 'member', true);
             var uri = null;
