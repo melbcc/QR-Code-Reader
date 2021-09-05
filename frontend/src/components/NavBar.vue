@@ -1,7 +1,7 @@
 <template>
     <div class="nav-bar">
         <!-- Burger Menu Toggle button -->
-        <input type="checkbox" class="burger-checkbox" id="burger-checkbox" v-on:click="burgerClick" />
+        <input type="checkbox" class="burger-checkbox" id="burger-checkbox" v-on:click="burgerClick" :checked="burgerChecked"/>
         <label for="burger-checkbox" class="burger-button">
             <i class="fas fa-cog" id="burger-icon" />
         </label>
@@ -39,6 +39,9 @@
             navRoutes() {
                 return this.$router.options.routes
                 .filter(r => r?.meta?.nav === true)
+            },
+            burgerChecked() {
+                return this.$store.state.modal === 'burger-menu'
             },
         },
         methods: {
