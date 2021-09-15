@@ -27,7 +27,7 @@
     }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
     /* Fullscreen Modal Content */
     .modal {
         position: absolute;
@@ -38,19 +38,19 @@
         background-color: rgba(50, 50, 50, 0.8);
         /*display: none;*/
         z-index: 2000;
-    }
-    .modal.active {
-        display: unset;
-    }
-    .modal .content {
-        background-color: aliceblue;
-        width: 90vw;
-        height: 92vh;
-        margin: 4vh 5vw;
-        border-radius: 3vh;
-        padding: 2vh 3vw;
-        text-align: center;
-        overflow: auto;
+        .content {
+            background-color: aliceblue;
+            width: 90vw;
+            max-height: 80vh;
+            margin: 4vh 5vw;
+            border-radius: 3vh;
+            padding: 2vh 3vw;
+            text-align: center;
+            overflow: auto;
+        }
+        &.active {
+            display: unset;
+        }
     }
 
     /* Close Button */
@@ -67,12 +67,10 @@
         vertical-align: middle;
         cursor: pointer;
         transition: all 0.75s;
+        .close-icon {
+            font-size: 4vh;
+            color: white;
+            height: 100%;
+        }
     }
-
-    .close-button .close-icon {
-        font-size: 4vh;
-        color: white;
-        height: 100%;
-    }
-
 </style>

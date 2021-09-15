@@ -28,32 +28,51 @@
         </ModalScreen>
 
         <!-- Modal : Welcome Message -->
-        <ModalScreen name="welcome-message">
-            <div class="welcome">
-                <span class="heading">Welcome </span>
+        <div class="welcome" v-if="member">
+            <div class="close-button" v-on:click="cancelMember">
+                <i class="fas fa-times close-icon"/>
+            </div>
+            <div class="content">
+                <span class="heading">Welcome</span>
                 <span class="name">{{ member.first_name }}</span>
-                <span class="icon" :class="memberIconClass">
-                    <div class="icon-graphic status-deceased"><i class="fas fa-user-alt-slash"/></div>
-                    <div class="icon-graphic status-cancelled"><i class="fas fa-ban"/></div>
-                    <div class="icon-graphic status-pending"><i class="fas fa-hourglass-half"/></div>
-                    <div class="icon-graphic status-expired"><i class="fas fa-ban"/></div>
-                    <div class="icon-graphic status-grace"><i class="fas fa-hourglass-half"/></div>
-                    <div class="icon-graphic status-current"><i class="fas fa-check-circle"/></div>
-                    <div class="icon-graphic status-new"><i class="fas fa-plus-circle"/></div>
-                    <div class="icon-graphic status-unknown"><i class="fas fa-question"/></div>
+                <span class="icon">
+                    <div v-if="memberIcon=='unknown'" class="icon-graphic status-unknown"><i class="fas fa-question"/></div>
+                    <div v-else-if="memberIcon=='deceased'" class="icon-graphic status-deceased"><i class="fas fa-user-alt-slash"/></div>
+                    <div v-else-if="memberIcon=='cancelled'" class="icon-graphic status-cancelled"><i class="fas fa-ban"/></div>
+                    <div v-else-if="memberIcon=='pending'" class="icon-graphic status-pending"><i class="fas fa-hourglass-half"/></div>
+                    <div v-else-if="memberIcon=='expired'" class="icon-graphic status-expired"><i class="fas fa-ban"/></div>
+                    <div v-else-if="memberIcon=='grace'" class="icon-graphic status-grace"><i class="fas fa-hourglass-half"/></div>
+                    <div v-else-if="memberIcon=='current'" class="icon-graphic status-current"><i class="fas fa-check-circle"/></div>
+                    <div v-else-if="memberIcon=='new'" class="icon-graphic status-new"><i class="fas fa-plus-circle"/></div>
                     <span class="icon-text">Status: {{ member.status }}</span>
                 </span>
                 <span class="number">Membership # <code>{{ member.membership_num }}</code></span>
-                <!--<span>Contact ID: {{ member.contact_id }}</span>-->
-                <!-- <span>{{ member }}</span> -->
+                
+                <!-- Checkin Options (mutually exclusive) -->
+                <div class="submit" v-if="submitType=='passive'">
+                    <span class="button button-ok" v-on:click="submitAttendance">OK</span>
+                </div>
+                <div class="submit" v-else-if="submitType=='select'">
+                    <span>What is {{ member.first_name }} attending?</span>
+                    <span v-for="event in events"
+                            class="button button-event"
+                            v-on:click="submitAttendance(event)"
+                            :key="event.pk"
+                    >{{ event.title }}</span>
+                </div>
+                <div class="submit" v-else>
+                    <span class="button button-subtle" v-on:click="forceMemberOK">Admit Anyway</span>
+                </div>
+                
             </div>
-        </ModalScreen>
+        </div>
     </div>
 </template>
 
 <script>
     import { QrcodeStream } from 'qrcode-reader-vue3'
     import ModalScreen from '../components/ModalScreen.vue'
+    import axios from 'axios'
 
     function getMemberNumber(decodedText) {
         // Get member number from decoded QR-Code text
@@ -87,33 +106,73 @@
         data() {
             return {
                 loading: true,
+                error: "",
                 result: "",
                 resultType: null,
-                error: "",
+                members: [],  // Stack acquired from QR-Code, then member request
             }
         },
         computed: {
-            cameraRender() { return this.$store.state.cameraDisplayEnabled },
-            member() { return this.$store.state.member },
-            memberIconClass() {
-                const memberStatus = (this.$store.state.member?.status || '').toLowerCase()
-                if (!memberStatus) {
-                    return 'status-none'
-                } else if (MEMBER_STATUS_MAP.includes(memberStatus)) {
-                    return 'status-' + memberStatus
-                } else {
-                    return 'status-unknown'
+            cameraRender() {
+                // Display camera if :
+                //  - one or more events are selected
+                //  - $store cameraDisplayEnabled
+                return (
+                    this.$store.state.events.selected.size &&
+                    this.$store.state.cameraDisplayEnabled
+                )
+            },
+            member() {
+                // First member on the stack
+                return this.members ? this.members[0] : null
+            },
+            submitType() {
+                // One of: {passive|select|none}
+                if (this.member.status_isok) {
+                    if (this.$store.state.events.selected.size == 1) {
+                        return 'passive'
+                    } else {
+                        return 'select'
+                    }
                 }
+                return 'none'
+            },
+            events() {
+                const state = this.$store.state
+                return state.events.active.filter(event => state.events.selected.has(event.pk))
+            },
+            memberIcon() {
+                if (this.member) {
+                    const status = this.member.status.toLowerCase()
+                    return MEMBER_STATUS_MAP.includes(status) ? status : 'unknown'
+                }
+                return 'none'
             },
         },
         methods: {
+            // Navigation
             navPrev() { this.$router.push({name: 'Select'}) },
             navNext() { this.$router.push({name: 'List'}) },
+
+            // QR-Code Scanner
             async onDecode(decoded) {
                 this.result = decoded
                 const memberNum = getMemberNumber(decoded)
-                if (memberNum) {
-                    this.$store.dispatch('fetchScannedMember', getMemberNumber(decoded))
+                if (memberNum) { // looks like a member code, fetch!
+                    // memberNum: {type: <contact|member>, number: <int>}
+                    this.$store.commit('SET_LOADING', 'member', true);
+                    const uri = `/api/members_${(memberNum.type === 'contact') ? 'cid' : 'memno'}/${memberNum.number}`
+                    axios.get(uri).then(
+                        (response) => {  // success
+                            this.$store.commit('SET_LOADING', 'member', false);
+                            this.members.push(response.data)
+                        }
+                    ).catch(
+                        (error) => {  // failure
+                            this.$store.commit('SET_LOADING', 'member', false);
+                            // TODO: set error message
+                        }
+                    )
                 }
             },
             async onInit (promise) {
@@ -162,6 +221,23 @@
                     ctx.fillText(this.resultType, centerX, centerY)
                 }
             },
+            forceMemberOK() {
+                this.member.status_isok = true
+            },
+            cancelMember() {
+                // Cancel the admittance of member (pop member stack)
+                this.members.shift()
+            },
+            submitAttendance(event) {
+                //! TODO
+                this.members.shift()
+
+                //if (this.member) {
+                //    this.$store.dispatch('submitAttendance')
+                //}
+            },
+
+            // Buttons
             buttonManual() {
                 this.$store.dispatch('modalDisplayOpen', 'member-entry')
             },
@@ -172,19 +248,20 @@
     }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
     /* ----- Camera Render ----- */
     .camera-view {
         height: 60vh;
         width: 100vw;
         text-align: center;
         vertical-align: middle;
-    }
 
-    .camera-view .dialog {
-        font-size: 5vw;
-        padding: 40%;
-        height: 100%;
+        .dialog {
+            font-size: 5vw;
+            padding: 40%;
+            height: 100%;
+            span { display: block; }
+        }
     }
 
     /* ----- Buttons ----- */
@@ -204,49 +281,99 @@
     }
     
     /* ----- Welcome Message -----*/
-    .welcome span {
-        display: block;
-        font-size: 5vw;
-    }
-    .welcome .heading {
-        font-weight: bold;
-        font-size: 10vw;
-    }
-    .welcome .name {
-        font-size: 8vw;
-        margin: 0 0 2vh;
-    }
-    .welcome .number code {
-        font-size: 7vw;
-        font-weight: bold;
+    .welcome {
+        position: absolute;
+        width: 100vw;
+        height: 100vh;
+        top: 0;
+        left: 0;
+        background-color: rgba(50, 50, 50, 0.8);
+        z-index: 2000;
+        .content {
+            background-color: aliceblue;
+            width: 90vw;
+            max-height: 90vh;
+            margin: 3vh 5vw;
+            border-radius: 3vh;
+            padding: 5vh 3vw;
+            text-align: center;
+            overflow: auto;
+        }
+        span {
+            display: block;
+            font-size: 5vw;
+        }
+        .heading {
+            font-weight: bold;
+            font-size: 10vw;
+        }
+        .name {
+            font-size: 8vw;
+            margin: 0 0 2vh;
+        }
+        .number code {
+            font-size: 7vw;
+            font-weight: bold;
+        }
+
+        /* Membership Status Indicator Icon */
+        .icon .icon-graphic {
+            font-size: 30vw;
+            margin: -0.25em 0;  /* remove inner padding (unknown origin)*/
+        }
+        .icon .icon-text {
+            font-weight: bold;
+            margin: 0 0 2vw;
+        }
+        .status-deceased  { color: grey;       }
+        .status-cancelled { color: red;        }
+        .status-pending   { color: grey;       }
+        .status-expired   { color: red;        }
+        .status-grace     { color: grey;       }
+        .status-current   { color: limegreen;  }
+        .status-new       { color: grey;       }
+        .status-unknown   { color: grey;       }  // set if status is anything else
     }
 
-    /* Membership Status Indicator Icon */
-    .welcome .icon .icon-graphic {
-        font-size: 30vw;
-        margin: -0.25em 0;  /* remove inner padding (unknown origin)*/
-    }
-    .welcome .icon .icon-text {
-        font-weight: bold;
-        margin: 0 0 2vw;
-    }
-    .welcome .status-deceased  { color: grey;       }
-    .welcome .status-cancelled { color: red;        }
-    .welcome .status-pending   { color: grey;       }
-    .welcome .status-expired   { color: red;        }
-    .welcome .status-grace     { color: grey;       }
-    .welcome .status-current   { color: limegreen;  }
-    .welcome .status-new       { color: grey;       }
-    .welcome .status-unknown   { color: grey;       }  /* set if status is anything else */
 
-    /* hide non-selected icons */
-    .welcome .icon.status-deceased    .icon-graphic:not(.status-deceased)   { display: none; }
-    .welcome .icon.status-cancelled   .icon-graphic:not(.status-cancelled)  { display: none; }
-    .welcome .icon.status-pending     .icon-graphic:not(.status-pending)    { display: none; }
-    .welcome .icon.status-expired     .icon-graphic:not(.status-expired)    { display: none; }
-    .welcome .icon.status-grace       .icon-graphic:not(.status-grace)      { display: none; }
-    .welcome .icon.status-current     .icon-graphic:not(.status-current)    { display: none; }
-    .welcome .icon.status-new         .icon-graphic:not(.status-new)        { display: none; }
-    .welcome .icon.status-unknown     .icon-graphic:not(.status-unknown)    { display: none; }
-    .welcome .icon.status-none        .icon-graphic { display: none; }  /* hide all */
+    /* Close Button */
+    .close-button {
+        position: absolute;
+        top: 1vh;
+        right: 1vh;
+        width: 6vh;
+        height: 6vh;
+        border-radius: 50%;
+        background-color: red;
+        z-index: 1000;
+        text-align: center;
+        vertical-align: middle;
+        cursor: pointer;
+        transition: all 0.75s;
+        .close-icon {
+            font-size: 4vh;
+            color: white;
+            height: 100%;
+        }
+    }
+
+    .submit {
+        .button-ok {
+            margin: 0 20%;
+        }
+        .button-event {
+            margin: 0 0%;
+            font-size: 4vw;
+            width: unset;
+            padding: 0.5em 2em;
+            margin: 0.5em 0;
+        }
+        .button-subtle {
+            margin: 0 20%;
+            background-color: lightgrey;
+            color: dodgerblue;
+            border-color: dodgerblue;
+            border-width: 0.5vw;
+        }
+    }
 </style>

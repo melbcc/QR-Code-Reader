@@ -20,7 +20,10 @@ export default createStore({
                 selected: new Set(JSON.parse(localStorage.getItem('events.selected')) || []), // PKs of selected events
             },
             modal: null,
-            member: null, // /api/
+            // Settings
+            settings: JSON.parse(localStorage.getItem('settings')) || {
+                // TODO: populate from burger menu
+            },
         }
     },
     mutations: { // $store.commit()
@@ -50,17 +53,13 @@ export default createStore({
             // Save to localStorage
             localStorage.setItem('events.selected', JSON.stringify([...state.events.selected])) // as list
         },
-        // Scanner Member
-        SET_MEMBER(state, member) {
-            state.member = member
-        },
         // Camera State
         SET_CAMERA_DISPLAY(state, render) {
             state.cameraDisplayEnabled = render
         },
         // Modal Screens
         SET_MODAL_NAME(state, name) {
-            state.modal = name;  // set to null to clear
+            state.modal = name  // set to null to clear
         },
     },
     actions: { // $store.dispatch()
@@ -80,31 +79,16 @@ export default createStore({
             ).catch(
                 (error) => {  // failure
                     context.commit('SET_LOADING', 'events', false)
-                    //console.log(error)
+                    // TODO: set error message
                 }
             )
         },
-        fetchScannedMember(context, memberNum) {
-            // memberNum: {type: <contact|member>, number: <int>}
-            context.commit('SET_LOADING', 'member', true);
-            var uri = null;
-            if (memberNum.type === 'contact') {
-                uri = '/api/members_cid/' + memberNum.number + '/'
-            } else {
-                uri = '/api/members_memno/' + memberNum.number + '/'
+        submitAttendance(context, member) {
+            //! TODO: submi attendance via api call
+            context.commit('POP_MEMBER')
+            if (! context.state.memberStack) {
+                context.commit('SET_MODAL_NAME', null)
             }
-            axios.get(uri).then(
-                (response) => {  // success
-                    context.commit('SET_LOADING', 'member', false);
-                    context.commit('SET_MEMBER', response.data)
-                    context.commit('SET_MODAL_NAME', 'welcome-message')
-                }
-            ).catch(
-                (error) => {  // failure
-                    context.commit('SET_LOADING', 'member', false);
-                }
-            )
-            
         },
     }
 });
