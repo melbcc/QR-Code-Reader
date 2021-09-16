@@ -15,6 +15,7 @@ urlpatterns = [
     path(r'power/confirm', views.PowerConfirmationView.as_view(), name='power-confirm'),
     path(r'power/off', views.PowerOffView.as_view(), name='power-off'),
     path(r'power/restart', views.PowerRestartView.as_view(), name='power-restart'),
+    path(r'token/csrf', views.get_csrf_token, name='token-csrf'),  # responds with: {'token': <token>}
 ]
 
 # ----- REST API

@@ -1,5 +1,6 @@
 import { createStore } from 'vuex'
 import axios from 'axios'
+import Cookies from 'js-cookie'
 
 // API Root : can be set in environmnet, for example:
 //  API_ROOT=http://localhost:8000
@@ -90,5 +91,27 @@ export default createStore({
                 context.commit('SET_MODAL_NAME', null)
             }
         },
-    }
+    },
+    getters: {
+        csrftoken(state) {
+            // get if not already defined
+            let csrftoken = Cookies.get('csrftoken')
+            if (!csrftoken) { // probably only necessary for dev
+                console.log('get token')
+                axios.get('/token/csrf').then(
+                    (response) => { // success
+                        Cookies.set('csrftoken', response.data.token)
+                    }
+                ).catch(
+                    (error) => { // failure
+                        console.log('ERROR while getting csrftoken:', error)
+                        // TODO: display error
+                    }
+                )
+                //! FIXME: promise is not complete, first call always yields nothing.
+                //!        workaround: called when app is first created.
+            }
+            return csrftoken
+        }
+    },
 });

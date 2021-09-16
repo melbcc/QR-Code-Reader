@@ -50,13 +50,17 @@
                 
                 <!-- Checkin Options (mutually exclusive) -->
                 <div class="submit" v-if="submitType=='passive'">
-                    <span class="button button-ok" v-on:click="submitAttendance">OK</span>
+                    <span v-for="event in events"
+                        class="button button-ok"
+                        v-on:click="submitAttendance(event, member)"
+                        :key="event.pk"
+                    >OK</span>
                 </div>
                 <div class="submit" v-else-if="submitType=='select'">
                     <span>What is {{ member.first_name }} attending?</span>
                     <span v-for="event in events"
                             class="button button-event"
-                            v-on:click="submitAttendance(event)"
+                            v-on:click="submitAttendance(event, member)"
                             :key="event.pk"
                     >{{ event.title }}</span>
                 </div>
@@ -228,13 +232,20 @@
                 // Cancel the admittance of member (pop member stack)
                 this.members.shift()
             },
-            submitAttendance(event) {
-                //! TODO
-                this.members.shift()
-
-                //if (this.member) {
-                //    this.$store.dispatch('submitAttendance')
-                //}
+            submitAttendance(event, member) {
+                axios.post('/api/attendance/', {
+                    "csrfmiddlewaretoken": this.$store.getters.csrftoken,
+                    "contact": member.contact_id,
+                    "event": event.pk,
+                }).then( // success
+                    (response) => {
+                        this.members.shift()
+                    }
+                ).catch( // failure
+                    (error) => {
+                        console.log('ERROR during attendance submission:', error)
+                    }
+                )
             },
 
             // Buttons

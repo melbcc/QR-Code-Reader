@@ -14,6 +14,9 @@
         components: {
             NavBar,
         },
+        created() {
+            this.$store.getters.csrftoken  // populates it
+        },
     }
 </script>
 
