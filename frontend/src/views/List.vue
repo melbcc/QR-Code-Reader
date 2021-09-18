@@ -11,11 +11,7 @@
                 <li v-for="attendee in event.attendees"
                     :key="attendee.contact.pk"
                 >
-                    <span class="fullname">{{ attendee.contact.first_name }} {{ attendee.contact.last_name }}</span>
-                    <span class="sync-status">
-                        <div v-if="attendee.export_time"><i class="fas fa-check-circle"/></div>
-                        <div v-else><i class="far fa-check-circle"/></div>
-                    </span>
+                    <Attendee :obj="attendee" />
                 </li>
                 <li v-if="!event.attendees.length">(empty)</li>
             </ul>
@@ -26,10 +22,12 @@
 <script>
     import axios from 'axios'
 
+    import Attendee from '../components/Attendee.vue'
     import Spinner from '../components/Spinner.vue'
 
     export default {
         components: {
+            Attendee,
             Spinner,
         },
         data() {
@@ -84,14 +82,8 @@
             font-size: 3vh;
             margin: 2vw 2vh;
         }
-        .attendees {
-            li {
-                font-size: 1.5em;
-            }
-            .sync-status {
-                float: right;
-                margin-right: 0.5em;
-            }
+        ul {
+            list-style-type: none;
         }
     }
 </style>
