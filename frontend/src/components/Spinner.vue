@@ -17,7 +17,7 @@
     }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
     .spinner {
         float: right;
         margin-right: 1vh;
@@ -30,14 +30,14 @@
         color: white;
         text-align: center;
         vertical-align: middle;
-    }
-    .spinner .icon {
-        height: 100%;
-    }
-    .spinner.rotating {
-        -webkit-animation:spin 1s linear infinite;
-        -moz-animation:spin 1s linear infinite;
-        animation:spin 1s linear infinite;
+        .icon {
+            height: 100%;
+        }
+        &.rotating {
+            -webkit-animation:spin 1s linear infinite;
+            -moz-animation:spin 1s linear infinite;
+            animation:spin 1s linear infinite;
+        }
     }
     @-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
     @-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }

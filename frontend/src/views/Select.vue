@@ -55,7 +55,7 @@
     }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
     #begin-button {
         color: white;
         background-color: dodgerblue;
@@ -65,8 +65,8 @@
         font-size: 4vw;
         width: 50vw;
         margin: 5vh 25vw;
-    }
-    #begin-button.inactive {
-        background-color: grey;
+        &.inactive {
+            background-color: grey;
+        }
     }
 </style>
