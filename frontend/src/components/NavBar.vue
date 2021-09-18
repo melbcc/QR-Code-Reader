@@ -8,16 +8,44 @@
         <div class="burger-menu">
             <h2>Options</h2> <!-- TODO: make interactive -->
             <ul>
-                <li><span>Logout</span></li>
-                <li><span>Kiosk mode <i class="fas fa-info-circle"/></span></li>
-                <li><span>Camera: overlay <i class="fas fa-info-circle"/></span></li>
+                <li><span><a href="/logout"><i class="fas fa-sign-out-alt"/> Logout</a></span></li>
+                <li><span v-on:click="optionToggle('cameraOverlay')">
+                    Camera: overlay 
+                    <div class="pill">
+                        <span v-if="settings.cameraOverlay"><i class="fas fa-toggle-on"/></span>
+                        <span v-else><i class="fas fa-toggle-off"/></span>
+                    </div>
+                </span></li>
+                <li><span v-on:click="optionToggle('sounds')">
+                    Sound 
+                    <div class="pill">
+                        <span v-if="settings.sounds"><i class="fas fa-volume-up"/> on</span>
+                        <span v-else><i class="fas fa-times"/> muted</span>
+                    </div>
+                </span></li>
+                <li><span v-on:click="optionToggle('listAttendanceFromAll')">
+                    List attendees
+                    <div class="pill">
+                        <span v-if="settings.listAttendanceFromAll">all</span>
+                        <span v-else>select</span>
+                    </div>
+                </span></li>
+                <li><span v-on:click="optionToggle('keepCameraOn')">
+                    Keep camera on
+                    <div class="pill">
+                        <span v-if="settings.keepCameraOn"><i class="fas fa-toggle-on"/></span>
+                        <span v-else><i class="fas fa-toggle-off"/></span>
+                    </div>
+                </span></li>
+                <li><span v-on:click="optionCycleCamera()">
+                    Camera: <div class="pill"><i class="fas fa-camera"/> {{ settings.cameraMode || 'auto'}}</div>
+                </span></li>
+                <hr/> <!-- TODO: implement -->
                 <li><span>Duplicate delay <i class="fas fa-info-circle"/></span></li>
                 <li><span>Confirmation delay <i class="fas fa-info-circle"/></span></li>
-                <li><span>Sounds on/off</span></li>
-                <li><span>List attendees from all events</span></li>
-                <li><span>Keep camera on <i class="fas fa-info-circle"/></span></li>
+                <li><span>Kiosk mode <i class="fas fa-info-circle"/></span></li>
                 <li><span>Enable torch</span></li>
-                <li><span>Camera front/rear/auto</span></li>
+
             </ul>
             <h3>Admin Links</h3>
             <ul>
@@ -45,17 +73,26 @@
             burgerChecked() {
                 return this.$store.state.modal === 'burger-menu'
             },
+            settings() {
+                return this.$store.state.settings
+            },
         },
         methods: {
             burgerClick(event) {
                 // Treat burger as modal, to disable camera rendering (which is always on top)
                 this.$store.dispatch('modalDisplayOpen', event.target.checked ? 'burger-menu' : null);
             },
+            optionToggle(name) {
+                this.$store.commit('SETTING_TOGGLE', name)
+            },
+            optionCycleCamera() {
+                this.$store.commit('SETTING_CYCLE_CAMERA')
+            },
         },
     }
 </script>
 
-<style>
+<style lang="scss" scoped>
     /* ----- Burger Menu ----- */
     #burger-checkbox {
         display: none;
@@ -101,6 +138,27 @@
         font-size: 5vw;
         
         overflow: auto;
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            li {
+                padding: 0.1em 0;
+            }
+        }
+
+        .pill {
+            display: inline-block;
+            position: absolute;
+            right: 0.5em;
+
+            border: black;
+            border-style: solid;
+            border-width: 2px;
+            border-radius: 1em;
+            padding: 0 0.5em;
+            //background-color: red;
+        }
     }
 
     #burger-checkbox:checked ~ .burger-menu {

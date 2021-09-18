@@ -2,7 +2,7 @@
     <div v-swipe:left="navNext" v-swipe:right="navPrev" class="view">
         <!-- Camera Render -->
         <div class="camera-view">
-            <qrcode-stream v-if="cameraRender" @decode="onDecode" @init="onInit" :track="paintOutline">
+            <qrcode-stream v-if="cameraRender" @decode="onDecode" @init="onInit" :track="paintOutline" :camera="camera">
                 <div class="dialog" v-if="loading">
                     <i class="fas fa-camera"/> Loading...
                 </div>
@@ -126,6 +126,9 @@
                     this.$store.state.cameraDisplayEnabled
                 )
             },
+            camera() {
+                return this.$store.state.settings.cameraMode || 'auto'
+            },
             member() {
                 // First member on the stack
                 return this.members ? this.members[0] : null
@@ -150,6 +153,9 @@
                     return MEMBER_STATUS_MAP.includes(status) ? status : 'unknown'
                 }
                 return 'none'
+            },
+            settings() {
+                return this.$store.settings
             },
         },
         methods: {
@@ -191,6 +197,9 @@
                 }
             },
             paintOutline (detectedCodes, ctx) {
+                if (!this.$store.state.settings.cameraOverlay) {
+                    return
+                }
                 // copied from: https://gruhn.github.io/vue-qrcode-reader/demos/CustomTracking.html
                 for (const detectedCode of detectedCodes) {
                     const { cornerPoints, boundingBox, rawValue } = detectedCode;
@@ -336,6 +345,7 @@
             font-weight: bold;
             margin: 0 0 2vw;
         }
+        // TODO: import membership status colours from common definition
         .status-deceased  { color: grey;       }
         .status-cancelled { color: red;        }
         .status-pending   { color: grey;       }

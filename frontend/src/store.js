@@ -7,6 +7,9 @@ import Cookies from 'js-cookie'
 // If not set, will be empty, which will default to the same host:port as served content.
 //const {API_ROOT = 'http://localhost:8000'} = process.env
 
+function saveSettings(obj) {
+    localStorage.setItem('settings', JSON.stringify(obj))
+}
 
 export default createStore({
     state() { // $store.state
@@ -23,8 +26,12 @@ export default createStore({
             },
             modal: null,
             // Settings
-            settings: JSON.parse(localStorage.getItem('settings')) || {
+            settings: JSON.parse(localStorage.getItem('settings')) || { // FIXME: defaults should apply to individual settings
                 listAttendanceFromAll: false,
+                cameraOverlay: true,
+                sounds: true,
+                keepCameraOn: false,
+                cameraMode: 'auto',
                 // TODO: populate from burger menu
             },
         }
@@ -63,6 +70,26 @@ export default createStore({
         // Modal Screens
         SET_MODAL_NAME(state, name) {
             state.modal = name  // set to null to clear
+        },
+        // Settings
+        SETTING_TOGGLE(state, name) {
+            // toggles settings value as boolean
+            state.settings[name] = !state.settings[name]
+            saveSettings(state.settings)
+        },
+        SETTING_CYCLE_CAMERA(state) {
+            switch (state.settings.cameraMode) {
+                case 'front':
+                    state.settings.cameraMode = 'rear'
+                    break
+                case 'rear':
+                    state.settings.cameraMode = 'auto'
+                    break
+                case 'auto':
+                default:
+                    state.settings.cameraMode = 'front'
+            }
+            saveSettings(state.settings)
         },
     },
     actions: { // $store.dispatch()
