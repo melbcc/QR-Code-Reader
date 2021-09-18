@@ -1,7 +1,7 @@
 <template>
     <div v-swipe:right="navPrev" class="view">
         <Spinner loadkey="attendees" v-on:click="fetchEvents" />
-        <h1>List Attendees</h1>
+        <h1>List of Attendees</h1>
         <div v-for="event in events"
              :key="event.pk"
              class="event"
@@ -15,6 +15,12 @@
                 </li>
                 <li v-if="!event.attendees.length">(empty)</li>
             </ul>
+        </div>
+        <div v-if="!activeEvents?.length" class="message">
+            <i class="fas fa-info-circle"/> There are no active events at this time.
+        </div>
+        <div v-else-if="!events.length" class="message">
+            <i class="fas fa-info-circle"/> Please <router-link to="select">select an event</router-link> first.
         </div>
     </div>
 </template>
@@ -34,6 +40,11 @@
             return {
                 events: [], // list of responses from /api/eventdetail/:pk/
             }
+        },
+        computed: {
+            activeEvents() {
+                return this.$store.state.events.active
+            },
         },
         methods: {
             // Navigation
@@ -75,7 +86,7 @@
         border-width: 2px;
         border: grey;
         border-radius: 2em;
-        background-color: lightgrey;
+        //background-color: lightgrey;
         border-style: solid;
         h2 {
             font-weight: bold;
@@ -85,5 +96,9 @@
         ul {
             list-style-type: none;
         }
+    }
+    .message {
+        font-size: 2em;
+        text-align: center;
     }
 </style>
