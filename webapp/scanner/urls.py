@@ -23,7 +23,7 @@ from .serializers import ContactViewSet
 from .serializers import MembershipViewSetByCID, MembershipViewSetByMemNo
 from .serializers import AttendanceViewSet
 from .serializers import LocBlockViewSet
-from .serializers import EventViewSet, ActiveEventViewSet
+from .serializers import EventViewSet, ActiveEventViewSet, EventDetailViewSet
 
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.SimpleRouter()
@@ -34,3 +34,4 @@ router.register(r'attendance', AttendanceViewSet)
 router.register(r'loc_block', LocBlockViewSet)
 router.register(r'events', EventViewSet)
 router.register(r'activeevents', ActiveEventViewSet, basename='activeevents')
+router.register(r'eventdetail', EventDetailViewSet, basename='eventdetail')

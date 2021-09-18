@@ -1,4 +1,4 @@
-from rest_framework import serializers, viewsets, generics
+from rest_framework import serializers, viewsets, generics, mixins
 from rest_framework.exceptions import NotFound
 from django.utils import timezone
 
@@ -104,6 +104,7 @@ class EventSerializer(serializers.Serializer):
     #created = serializers.DateTimeField()
     is_active = serializers.BooleanField()
     start_time_epoch = serializers.IntegerField()
+    is_long = serializers.BooleanField()
 
 class EventViewSet(viewsets.ModelViewSet):
     queryset = Event.objects.all()
@@ -115,6 +116,25 @@ class ActiveEventViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return Event.objects.are_active()
 
+
+# ---------- Event Detail
+class AttendanceDetailSerializer(serializers.Serializer):
+    contact = ContactSerializer()
+    checkin_time = serializers.DateTimeField(read_only=True)
+    export_time = serializers.DateTimeField(read_only=True)
+
+class EventDetailSerializer(serializers.ModelSerializer):
+    loc_block = LocBlockSerializer()
+    attendees = AttendanceDetailSerializer(many=True)
+
+    class Meta:
+        model = Event
+        fields = '__all__'  # unless specified above
+
+class EventDetailViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+    queryset = Event.objects.all()
+    serializer_class = EventDetailSerializer
+   
 
 # ---------- Attendance
 class AttendanceSerializer(serializers.Serializer):

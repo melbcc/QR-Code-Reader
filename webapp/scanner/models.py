@@ -296,6 +296,10 @@ class Event(models.Model):
     @property
     def start_time_epoch(self):
         return self.start_time.timestamp()
+    
+    @property
+    def attendees(self):
+        return Attendance.objects.filter(event=self)
 
 
 # ================================================
