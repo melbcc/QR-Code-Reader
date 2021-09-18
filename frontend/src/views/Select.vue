@@ -2,7 +2,7 @@
     <div v-swipe:left="navNext" class="view">
         <Spinner loadkey="events" v-on:click="fetchEvents" />
         <h1>Select Event(s)</h1>
-        <Event
+        <EventSelector
             v-for="event in events"
             :pk="event.pk"
             :title="event.title"
@@ -15,13 +15,13 @@
 </template>
 
 <script>
-    import Event from '../components/Event.vue'
+    import EventSelector from '../components/EventSelector.vue'
     import Spinner from '../components/Spinner.vue'
 
     export default {
         components: {
             Spinner,
-            Event,
+            EventSelector,
         },
         data() {
             return {
