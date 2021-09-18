@@ -46,7 +46,7 @@
                 }
             },
             fetchEvents() {
-                this.$store.dispatch('fetchEvents');
+                this.$store.dispatch('fetchEvents')
             },
         },
         mounted() {

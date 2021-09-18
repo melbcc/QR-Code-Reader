@@ -142,8 +142,7 @@
                 return 'none'
             },
             events() {
-                const state = this.$store.state
-                return state.events.active.filter(event => state.events.selected.has(event.pk))
+                return this.$store.getters.selectedEvents
             },
             memberIcon() {
                 if (this.member) {
@@ -226,6 +225,7 @@
                 }
             },
             forceMemberOK() {
+                // Force member's [cached] status as OK to admit
                 this.member.status_isok = true
             },
             cancelMember() {

@@ -1,32 +1,97 @@
 <template>
     <div v-swipe:right="navPrev" class="view">
+        <Spinner loadkey="attendees" v-on:click="fetchEvents" />
         <h1>List Attendees</h1>
-        <a-button type="primary" @click="showModal">Click Me</a-button>
+        <div v-for="event in events"
+             :key="event.pk"
+             class="event"
+        >
+            <h2>{{ event.title }}</h2>
+            <ul class="attendees">
+                <li v-for="attendee in event.attendees"
+                    :key="attendee.contact.pk"
+                >
+                    <span class="fullname">{{ attendee.contact.first_name }} {{ attendee.contact.last_name }}</span>
+                    <span class="sync-status">
+                        <div v-if="attendee.export_time"><i class="fas fa-check-circle"/></div>
+                        <div v-else><i class="far fa-check-circle"/></div>
+                    </span>
+                </li>
+                <li v-if="!event.attendees.length">(empty)</li>
+            </ul>
+        </div>
     </div>
-    <a-modal
-        :visible="visible"
-        title="Basic Modal"
-        @ok="hideModal"
-    >
-        <p>Thanks for clicking.</p>
-        <p>Please click OK to close.</p>
-    </a-modal>
 </template>
 
 <script>
+    import axios from 'axios'
+
+    import Spinner from '../components/Spinner.vue'
+
     export default {
-        methods: {
-            navPrev() { this.$router.push({name: 'Scan'}) },
-            showModal() { this.visible = true },
-            hideModal() { this.visible = false },
+        components: {
+            Spinner,
         },
         data() {
             return {
-                visible: false,
+                events: [], // list of responses from /api/eventdetail/:pk/
             }
+        },
+        methods: {
+            // Navigation
+            navPrev() { this.$router.push({name: 'Scan'}) },
+            fetchEvents() {
+                const settings = this.$store.state.settings
+                const eventStack = ( // which events to fetch
+                    settings.listAttendanceFromAll ?
+                    this.$store.state.events.active :
+                    this.$store.getters.selectedEvents
+                )
+                this.$store.commit('SET_LOADING', 'attendees', true)
+                axios.all(eventStack.map(
+                    // multiple requests, processed in parallel
+                    (event) => axios.get(`/api/eventdetail/${event.pk}/`)
+                )).then(
+                    (responses) => { // success
+                        this.$store.commit('SET_LOADING', 'attendees', false)
+                        this.events = responses.map((response) => response.data)
+                    }
+                ).catch(
+                    (errors) => { // failure
+                        this.$store.commit('SET_LOADING', 'attendees', false)
+                        console.log("ERROR while fetching event details", errors)
+                    }
+                )
+            },
+        },
+        mounted() {
+            this.$store.dispatch('fetchEvents')
+            this.fetchEvents()
         },
     }
 </script>
 
 <style lang="scss" scoped>
+    .event {
+        margin: 2vw 2vh;
+        border-width: 2px;
+        border: grey;
+        border-radius: 2em;
+        background-color: lightgrey;
+        border-style: solid;
+        h2 {
+            font-weight: bold;
+            font-size: 3vh;
+            margin: 2vw 2vh;
+        }
+        .attendees {
+            li {
+                font-size: 1.5em;
+            }
+            .sync-status {
+                float: right;
+                margin-right: 0.5em;
+            }
+        }
+    }
 </style>

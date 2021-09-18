@@ -14,6 +14,7 @@ export default createStore({
             loading: {  // state of loading spinners
                 events: false,
                 member: false,
+                attendees: false,
             },
             cameraDisplayEnabled: true,  // if false, camera output won't display
             events: {
@@ -23,6 +24,7 @@ export default createStore({
             modal: null,
             // Settings
             settings: JSON.parse(localStorage.getItem('settings')) || {
+                listAttendanceFromAll: false,
                 // TODO: populate from burger menu
             },
         }
@@ -112,6 +114,9 @@ export default createStore({
                 //!        workaround: called when app is first created.
             }
             return csrftoken
-        }
+        },
+        selectedEvents(state) {
+            return state.events.active.filter(event => state.events.selected.has(event.pk))
+        },
     },
 });
