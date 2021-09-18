@@ -101,6 +101,9 @@ class Contact(models.Model):
             last_name=self.last_name,
         )
 
+    @property
+    def membership(self):
+        return Membership.objects.filter(contact=self).order_by('-end_date').first()
 
 @civicrm_clone
 class Membership(models.Model):

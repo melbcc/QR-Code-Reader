@@ -118,8 +118,22 @@ class ActiveEventViewSet(viewsets.ModelViewSet):
 
 
 # ---------- Event Detail
+class MembershipStatusSerializer(serializers.Serializer):
+    pk = serializers.IntegerField()
+    membership_num = serializers.CharField()
+    status = serializers.CharField()
+    status_isok = serializers.BooleanField()
+
+class ContactDetailSerializer(serializers.Serializer):
+    pk = serializers.IntegerField(read_only=True)
+    first_name = serializers.CharField()
+    last_name = serializers.CharField()
+    email_address = serializers.CharField()
+    mobile_number = serializers.CharField(required=False)
+    membership = MembershipStatusSerializer()
+
 class AttendanceDetailSerializer(serializers.Serializer):
-    contact = ContactSerializer()
+    contact = ContactDetailSerializer()
     checkin_time = serializers.DateTimeField(read_only=True)
     export_time = serializers.DateTimeField(read_only=True)
 
