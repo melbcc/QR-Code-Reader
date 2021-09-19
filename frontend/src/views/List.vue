@@ -9,7 +9,7 @@
             <h2>{{ event.title }}</h2>
             <ul class="attendees">
                 <li v-for="attendee in event.attendees"
-                    :key="attendee.contact.pk"
+                    :key="attendee.pk"
                 >
                     <Attendee :obj="attendee" />
                 </li>

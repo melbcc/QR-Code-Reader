@@ -133,6 +133,7 @@ class ContactDetailSerializer(serializers.Serializer):
     membership = MembershipStatusSerializer()
 
 class AttendanceDetailSerializer(serializers.Serializer):
+    pk = serializers.IntegerField(read_only=True)
     contact = ContactDetailSerializer()
     checkin_time = serializers.DateTimeField(read_only=True)
     export_time = serializers.DateTimeField(read_only=True)
