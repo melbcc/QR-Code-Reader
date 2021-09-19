@@ -15,8 +15,26 @@ function saveSettings(obj) {
 const CAMERA_MODES = ['auto', 'front', 'rear']
 const AUTOADMIT_TIMES = [null, 1, 2, 3, 5, 10]
 
+const SETTINGS_DEFAULTS = {
+    autoAdmitTime: 2,
+    cameraMode: 'auto',
+    cameraOverlay: true,
+    cameraTorch: false,
+    listAttendanceFromAll: false,
+    sounds: true,
+}
+
 export default createStore({
     state() { // $store.state
+        // Settings
+        const settings = JSON.parse(localStorage.getItem('settings')) || {}
+        var key;
+        for (key in SETTINGS_DEFAULTS) {
+            if (settings[key] === undefined) {
+                settings[key] = SETTINGS_DEFAULTS[key]
+            }
+        }
+
         return {
             loading: {  // state of loading spinners
                 events: false,
@@ -29,15 +47,7 @@ export default createStore({
                 selected: new Set(JSON.parse(localStorage.getItem('events.selected')) || []), // PKs of selected events
             },
             modal: null,
-            // Settings
-            settings: JSON.parse(localStorage.getItem('settings')) || { // FIXME: defaults should apply to individual settings
-                listAttendanceFromAll: false,
-                cameraOverlay: true,
-                sounds: true,
-                cameraMode: 'auto',
-                autoAdmitTime: 2,
-                // TODO: populate from burger menu
-            },
+            settings: settings,
         }
     },
     mutations: { // $store.commit()
