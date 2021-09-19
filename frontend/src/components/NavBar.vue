@@ -9,13 +9,6 @@
             <h2>Options</h2> <!-- TODO: make interactive -->
             <ul>
                 <li><span><a href="/logout"><i class="fas fa-sign-out-alt"/> Logout</a></span></li>
-                <li v-on:click="optionToggle('cameraOverlay')"><span>
-                    Camera overlay 
-                    <div class="setting-value">
-                        <span v-if="settings.cameraOverlay">on <i class="fas fa-toggle-on"/></span>
-                        <span v-else>off <i class="fas fa-toggle-off"/></span>
-                    </div>
-                </span></li>
                 <li v-on:click="optionToggle('sounds')"><span>
                     Sound 
                     <div class="setting-value">
@@ -30,19 +23,26 @@
                         <span v-else>select <i class="fas fa-tasks"/></span>
                     </div>
                 </span></li>
-                <li v-on:click="optionToggle('keepCameraOn')"><span>
-                    Keep camera on
+                <li v-on:click="optionToggle('cameraOverlay')"><span>
+                    Camera overlay 
                     <div class="setting-value">
-                        <span v-if="settings.keepCameraOn">yes <i class="fas fa-toggle-on"/></span>
-                        <span v-else>no <i class="fas fa-toggle-off"/></span>
+                        <span v-if="settings.cameraOverlay">on <i class="fas fa-toggle-on"/></span>
+                        <span v-else>off <i class="fas fa-toggle-off"/></span>
                     </div>
                 </span></li>
                 <li v-on:click="optionCycleCamera()"><span>
                     Camera: <div class="setting-value">{{ settings.cameraMode || 'auto'}} <i class="fas fa-camera"/></div>
                 </span></li>
+                <li v-on:click="optionCycleAutoAdmit()"><span>
+                    Auto admit
+                    <div class="setting-value">
+                        <span v-if="!settings.autoAdmitTime">never </span>
+                        <span v-else>{{ settings.autoAdmitTime }} sec </span>
+                        <i class="far fa-clock"/>
+                    </div>
+                </span></li>
                 <hr/> <!-- TODO: implement -->
                 <li><span>Duplicate delay <i class="fas fa-info-circle"/></span></li>
-                <li><span>Confirmation delay <i class="fas fa-info-circle"/></span></li>
                 <li><span>Kiosk mode <i class="fas fa-info-circle"/></span></li>
                 <li><span>Enable torch</span></li>
 
@@ -82,12 +82,9 @@
                 // Treat burger as modal, to disable camera rendering (which is always on top)
                 this.$store.dispatch('modalDisplayOpen', event.target.checked ? 'burger-menu' : null);
             },
-            optionToggle(name) {
-                this.$store.commit('SETTING_TOGGLE', name)
-            },
-            optionCycleCamera() {
-                this.$store.commit('SETTING_CYCLE_CAMERA')
-            },
+            optionToggle(name) { this.$store.commit('SETTING_TOGGLE', name) },
+            optionCycleCamera() { this.$store.commit('SETTING_CYCLE_CAMERA') },
+            optionCycleAutoAdmit() { this.$store.commit('SETTING_CYCLE_AUTOADMIT') },
         },
     }
 </script>

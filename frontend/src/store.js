@@ -11,6 +11,10 @@ function saveSettings(obj) {
     localStorage.setItem('settings', JSON.stringify(obj))
 }
 
+// Settings ranges
+const CAMERA_MODES = ['auto', 'front', 'rear']
+const AUTOADMIT_TIMES = [null, 1, 2, 3, 5, 10]
+
 export default createStore({
     state() { // $store.state
         return {
@@ -30,8 +34,8 @@ export default createStore({
                 listAttendanceFromAll: false,
                 cameraOverlay: true,
                 sounds: true,
-                keepCameraOn: false,
                 cameraMode: 'auto',
+                autoAdmitTime: 2,
                 // TODO: populate from burger menu
             },
         }
@@ -78,17 +82,13 @@ export default createStore({
             saveSettings(state.settings)
         },
         SETTING_CYCLE_CAMERA(state) {
-            switch (state.settings.cameraMode) {
-                case 'front':
-                    state.settings.cameraMode = 'rear'
-                    break
-                case 'rear':
-                    state.settings.cameraMode = 'auto'
-                    break
-                case 'auto':
-                default:
-                    state.settings.cameraMode = 'front'
-            }
+            const i = (CAMERA_MODES.indexOf(state.settings.cameraMode) + 1) % CAMERA_MODES.length
+            state.settings.cameraMode = CAMERA_MODES[i]
+            saveSettings(state.settings)
+        },
+        SETTING_CYCLE_AUTOADMIT(state) {
+            const i = (AUTOADMIT_TIMES.indexOf(state.settings.autoAdmitTime) + 1) % AUTOADMIT_TIMES.length
+            state.settings.autoAdmitTime = AUTOADMIT_TIMES[i]
             saveSettings(state.settings)
         },
     },

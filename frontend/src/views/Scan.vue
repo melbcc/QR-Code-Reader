@@ -175,6 +175,7 @@
                         (response) => {  // success
                             this.$store.commit('SET_LOADING', 'member', false);
                             this.members.push(response.data)
+                            this.autoAdmitBegin(this.member) // new member
                         }
                     ).catch(
                         (error) => {  // failure
@@ -233,15 +234,35 @@
                     ctx.fillText(this.resultType, centerX, centerY)
                 }
             },
+            autoAdmitBegin(member) {
+                // Auto-admit (if configured, and member is valid)
+                const autoAdmitTime = this.$store.state.settings?.autoAdmitTime
+                const eventCount = this.$store.state.events.selected.size
+                if (member.status_isok && autoAdmitTime && (eventCount == 1) && (!member._autoAdmitTimeout)) { // else: requires manual
+                    const event = this.events[0]  // record at start time (incase it changes)
+                    member._autoAdmitTimeout = setTimeout(() => {
+                        this.submitAttendance(event, member)
+                    }, autoAdmitTime * 1000)
+                }
+            },
+            autoAdmitCancel(member) {
+                if (member?._autoAdmitTimeout) {
+                    clearTimeout(member._autoAdmitTimeout)
+                }
+            },
             forceMemberOK() {
                 // Force member's [cached] status as OK to admit
-                this.member.status_isok = true
+                const member = this.member
+                member.status_isok = true
+                this.autoAdmitBegin(member)
             },
             cancelMember() {
                 // Cancel the admittance of member (pop member stack)
+                this.autoAdmitCancel(this.member)
                 this.members.shift()
             },
             submitAttendance(event, member) {
+                this.autoAdmitCancel(member)
                 axios.post('/api/attendance/', {
                     "csrfmiddlewaretoken": this.$store.getters.csrftoken,
                     "contact": member.contact_id,
@@ -249,6 +270,7 @@
                 }).then( // success
                     (response) => {
                         this.members.shift()
+                        this.autoAdmitBegin(this.member) // next member (if any)
                     }
                 ).catch( // failure
                     (error) => {
