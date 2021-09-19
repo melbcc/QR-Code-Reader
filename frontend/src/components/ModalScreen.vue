@@ -44,7 +44,7 @@
             max-height: 80vh;
             margin: 4vh 5vw;
             border-radius: 3vh;
-            padding: 2vh 3vw;
+            padding: 1em 1em 2em;
             text-align: center;
             overflow: auto;
         }

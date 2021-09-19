@@ -14,17 +14,56 @@
         <!-- Manual Selection Buttons -->
         <div>
             <div class="button" v-on:click="buttonGuest"><i class="fas fa-user"/> Guest</div>
-            <div class="button" v-on:click="buttonManual"><i class="fas fa-keyboard"/> Manual</div>
+            <div class="button" v-on:click="buttonManual"><i class="fas fa-hashtag"/> Manual</div>
         </div>
 
         <!-- Modal : Member Number Entry -->
         <ModalScreen name="member-entry">
-            <h2>Member Entry</h2>
+            <div class="manual-entry">
+                <h2>Member Search</h2>
+                <div class="type-select">
+                    <span class="option opt-name" :class="manual.type" v-on:click="manualTypeSelect('name')">
+                        Name
+                    </span>
+                    <span class="option opt-number" :class="manual.type" v-on:click="manualTypeSelect('number')">
+                        Member #
+                    </span>
+                </div>
+                <div class="category by-number" v-if="manual.type=='number'">
+                    <input v-model="manual.search.number" type="number" placeholder="1234"/>
+                </div>
+                <div class="category by-name"  v-if="manual.type=='name'">
+                    <input v-model="manual.search.first" type="text" placeholder="First"/>
+                    <input v-model="manual.search.last" type="text" placeholder="Last"/>
+                </div>
+                <div class="button" v-on:click="memberSearch">Search</div>
+                <div class="results" v-if="manual.results.length">
+                    <hr/>
+                    <h3>Select one</h3>
+                    <ul>
+                        <li v-for="member in manual.results"
+                            :key="member.pk"
+                            v-on:click="manualPush(member)"
+                        >
+                            <div class="number">#{{ member.membership_num }}</div>
+                            <div class="fullname">{{ member.first_name }} {{ member.last_name }}</div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </ModalScreen>
 
         <!-- Modal : Guest Entry -->
         <ModalScreen name="guest-entry">
-            <h2>Guest Entry</h2>
+            <div class="guest-entry">
+                <h2>Guest Entry</h2>
+                <div class="guest-data">
+                    <div><input v-model="guest.data.first_name" type="text" placeholder="first name"/></div>
+                    <div><input v-model="guest.data.last_name" type="text" placeholder="last name"/></div>
+                    <div><input v-model="guest.data.email_address" type="text" placeholder="email address"/></div>
+                </div>
+                <div class="button" v-on:click="guestSubmit">Submit</div>
+            </div>
         </ModalScreen>
 
         <!-- Modal : Welcome Message -->
@@ -115,11 +154,26 @@
         },
         data() {
             return {
+                // Scanner Status
                 loading: true,
                 error: "",
                 result: "",
                 resultType: null,
-                members: [],  // Stack acquired from QR-Code, then member request
+
+                // Member admittance stack
+                members: [],
+
+                // Guest
+                guest: {
+                    data: {} // see guestClearData()
+                },
+
+                // Manual Entry
+                manual: {
+                    type: 'name', // toggle between: name, number (use $store?)
+                    search: {}, // see manualClearSearch()
+                    results: [{pk: 1}, {pk: 2}], // search results
+                },
             }
         },
         computed: {
@@ -292,16 +346,88 @@
                 )
             },
 
-            // Buttons
+            // Manual Entry
             buttonManual() {
                 if (this.$store.state.events.selected.size) {
+                    // clean before opening
+                    this.manual.results = []
+                    this.manualClearSearch()
+                    // open modal dialog
                     this.$store.dispatch('modalDisplayOpen', 'member-entry')
                 }
             },
+            memberSearch() {
+                const search = this.manual.search
+                axios.get('/api/membersearch/', {
+                    params: Object.keys(search).filter(k => search[k]) // search without null values
+                        .reduce((a, k) => ({ ...a, [k]: search[k] }), {})
+                }).then( // success
+                    (response) => {
+                        this.manual.results = response.data
+                    }
+                ).catch(
+                    (error) => {
+                        console.log("ERROR during memberSearch", error)
+                    }
+                )
+            },
+            manualClearSearch() {
+                this.manual.search = {
+                    number: '',
+                    first: '',
+                    last: '',
+                }
+            },
+            manualTypeSelect(name) {
+                this.manual.type = name
+                this.manualClearSearch()
+            },
+            manualPush(member) {
+                this.members.push(member)
+                this.autoAdmitBegin(member)
+                this.$store.dispatch('modalDisplayOpen', null)
+            },
+            // Guest
             buttonGuest() {
                 if (this.$store.state.events.selected.size) {
+                    // clean before opening
+                    this.guestClearData()
+                    // open modal dialog
                     this.$store.dispatch('modalDisplayOpen', 'guest-entry')
                 }
+            },
+            guestClearData() {
+                this.guest.data = {
+                    first_name: '',
+                    last_name: '',
+                    email_address: '',
+                }
+            },
+            guestSubmit() {
+                axios.post('/api/contact/', {
+                    "csrfmiddlewaretoken": this.$store.getters.csrftoken,
+                    ...this.guest.data,
+                }).then( // success
+                    (response) => {
+                        const contact = response.data
+                        // mock member object, push to stack
+                        const member = {
+                            contact_id: contact.pk,
+                            first_name: contact.first_name,
+                            last_name: contact.last_name,
+                            status: "Guest",
+                            status_isok: true,
+                            pk: -1,
+                        }
+                        this.members.push(member)
+                        this.autoAdmitBegin(member)
+                        this.$store.dispatch('modalDisplayOpen', null)
+                    }
+                ).catch( // failure
+                    (error) => {
+                        console.log('ERROR during submit guest:', error)
+                    }
+                )
             },
         },
     }
@@ -339,6 +465,67 @@
         font-weight: bold
     }
     
+    /* ----- Manual Entry ----- */
+    .manual-entry {
+        font-size: 2em;
+        h2 { font-size: 1.5em; }
+        input {
+            border-radius: 1em;
+            padding: 0 0.5em;
+            margin: 0 0 0.5em;
+            max-width: 80%;
+        }
+        .type-select {
+            margin: 0 0 1em;
+            .option {
+                border-style: dashed;
+                border-width: 0.1em;
+                border-radius: 0.3em;
+                padding: 0.2em 0.5em;
+                margin: 0 0.2em;
+                &.opt-name.name {
+                    border-style: solid;
+                    font-weight: bold;
+                }
+                &.opt-number.number {
+                    border-style: solid;
+                    font-weight: bold;
+                }
+            }
+        }
+        .results {
+            ul {
+                list-style: none;
+                text-align: left;
+                padding: 0;
+                li {
+                    border-style: solid;
+                    border-color: grey;
+                    border-width: 0.1em;
+                    border-radius: 0.3em;
+                    padding: 0 1em;
+                    margin: 0 0 0.2em;
+                }
+                .number {
+                    float: right;
+                }
+            }
+        }
+    }
+
+    /* ----- Guest Entry ----- */
+    .guest-entry {
+        font-size: 2em;
+        div {
+            input {
+                border-radius: 1em;
+                padding: 0 0.5em;
+                margin: 0 0 0.5em;
+                max-width: 80%;
+            }
+        }
+    }
+
     /* ----- Welcome Message -----*/
     .welcome {
         position: absolute;

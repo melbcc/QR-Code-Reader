@@ -1,6 +1,8 @@
 from rest_framework import serializers, viewsets, generics, mixins
 from rest_framework.exceptions import NotFound
+from rest_framework import filters
 from django.utils import timezone
+
 
 import re
 import pytz
@@ -74,6 +76,23 @@ class MembershipViewSetByCID(MembershipViewSet):
 
 class MembershipViewSetByMemNo(MembershipViewSet):
     lookup_field = 'contact__membership_num'
+
+class MembershipSearchViewSet(viewsets.ModelViewSet):
+    serializer_class = MembershipSerializer
+
+    def get_queryset(self):
+        params = self.request.query_params
+        kwargs = {
+            'type__allow_event_entry': True,
+        }
+        if 'number' in params:
+            kwargs['contact__membership_num'] = params['number']
+        else:
+            if 'first' in params:
+                kwargs['contact__first_name__icontains'] = params['first']
+            if 'last' in params:
+                kwargs['contact__last_name__icontains'] = params['last']
+        return Membership.objects.filter(**kwargs).order_by('contact__first_name', 'contact__last_name')[:100]
 
 
 # ---------- Address
