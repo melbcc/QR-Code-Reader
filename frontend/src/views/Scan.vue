@@ -14,7 +14,7 @@
         <!-- Manual Selection Buttons -->
         <div>
             <div class="button" v-on:click="buttonGuest"><i class="fas fa-user"/> Guest</div>
-            <div class="button" v-on:click="buttonManual"><i class="fas fa-hashtag"/> Manual</div>
+            <div class="button" v-on:click="buttonManual"><i class="fas fa-search"/> Search</div>
         </div>
 
         <!-- Modal : Member Number Entry -->
@@ -36,7 +36,7 @@
                     <input v-model="manual.search.first" type="text" placeholder="First"/>
                     <input v-model="manual.search.last" type="text" placeholder="Last"/>
                 </div>
-                <div class="button" v-on:click="memberSearch">Search</div>
+                <div class="button" v-on:click="memberSearch"><i class="fas fa-search"/> Search</div>
                 <div class="results" v-if="manual.results.length">
                     <hr/>
                     <h3>Select one</h3>
