@@ -8,6 +8,9 @@
             :title="event.title"
             :key="event.pk"
         />
+        <div v-if="!events?.length" class="message">
+            <i class="fas fa-info-circle"/> There are no active events at this time.
+        </div>
         <div id="begin-button" :class="beginButtonClass" v-on:click="navNext">
             Begin: <i class="fas fa-qrcode" />&nbsp;<i class="fas fa-chevron-right" />&nbsp;<i class="fas fa-camera" />
         </div>
@@ -22,11 +25,6 @@
         components: {
             Spinner,
             EventSelector,
-        },
-        data() {
-            return {
-                // TODO: needed?
-            }
         },
         computed: {
             events() {
@@ -68,5 +66,9 @@
         &.inactive {
             background-color: grey;
         }
+    }
+    .message {
+        font-size: 2em;
+        text-align: center;
     }
 </style>
