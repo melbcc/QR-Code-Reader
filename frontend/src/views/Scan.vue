@@ -251,13 +251,12 @@
             autoAdmitBegin(member) {
                 // Auto-admit (if configured, and member is valid)
                 const autoAdmitTime = this.$store.state.settings?.autoAdmitTime
-                const eventCount = this.$store.state.events.selected.size
-                if (member.status_isok && autoAdmitTime && (eventCount == 1) && (!member._autoAdmitTimeout)) { // else: requires manual
-                    const event = this.events[0]  // record at start time (incase it changes)
+                const event = (this.$store.state.events.selected.size == 1) ? this.events[0] : null
+                if (member?.status_isok && autoAdmitTime && event && (!member._autoAdmitTimeout)) {
                     member._autoAdmitTimeout = setTimeout(() => {
                         this.submitAttendance(event, member)
                     }, autoAdmitTime * 1000)
-                }
+                } // else: requires manual admission (or is already underway)
             },
             autoAdmitCancel(member) {
                 if (member?._autoAdmitTimeout) {
