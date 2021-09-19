@@ -259,10 +259,14 @@
 
             // Buttons
             buttonManual() {
-                this.$store.dispatch('modalDisplayOpen', 'member-entry')
+                if (this.$store.state.events.selected.size) {
+                    this.$store.dispatch('modalDisplayOpen', 'member-entry')
+                }
             },
             buttonGuest() {
-                this.$store.dispatch('modalDisplayOpen', 'guest-entry')
+                if (this.$store.state.events.selected.size) {
+                    this.$store.dispatch('modalDisplayOpen', 'guest-entry')
+                }
             },
         },
     }
