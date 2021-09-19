@@ -103,9 +103,9 @@
     ]
 
     // Sound effects
-    const sounds = {
-        success: new Audio(require('../assets/sound/beep.mp3')),
-        error: new Audio(require('../assets/sound/error.mp3')),
+    const SOUND = {
+        success: require('../assets/sound/beep.mp3'),
+        error: require('../assets/sound/error.mp3'),
     }
 
     export default {
@@ -186,11 +186,8 @@
                             const member = response.data
                             this.members.push(member)
                             if (this.$store.state.settings.sounds) {
-                                if (member.status_isok) {
-                                    sounds.success.play()
-                                } else {
-                                    sounds.error.play()
-                                }
+                                let sound = new Audio(member.status_isok ? SOUND.success : SOUND.error)
+                                sound.play()
                             }
                             this.autoAdmitBegin(member) // new member
                         }
