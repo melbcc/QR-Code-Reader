@@ -283,7 +283,7 @@
                     "event": event.pk,
                 }).then( // success
                     (response) => {
-                        this.members.shift()
+                        this.members = this.members.filter(m => m.pk != member.pk)
                         this.autoAdmitBegin(this.member) // next member (if any)
                     }
                 ).catch( // failure
