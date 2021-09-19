@@ -8,7 +8,10 @@
         <div class="burger-menu">
             <h2>Options</h2> <!-- TODO: make interactive -->
             <ul>
-                <li><span><a href="/logout"><i class="fas fa-sign-out-alt"/> Logout</a></span></li>
+                <li><span>
+                    <!-- FIXME: correct logout url? -->
+                    <a href="/logout"><i class="fas fa-sign-out-alt"/> Logout</a>
+                </span></li>
                 <li v-on:click="optionToggle('sounds')"><span>
                     Sound 
                     <div class="setting-value">
