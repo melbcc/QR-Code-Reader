@@ -102,6 +102,12 @@
         'new',
     ]
 
+    // Sound effects
+    const sounds = {
+        success: new Audio(require('../assets/sound/beep.mp3')),
+        error: new Audio(require('../assets/sound/error.mp3')),
+    }
+
     export default {
         components: {
             ModalScreen,
@@ -174,8 +180,16 @@
                     axios.get(uri).then(
                         (response) => {  // success
                             this.$store.commit('SET_LOADING', 'member', false);
-                            this.members.push(response.data)
-                            this.autoAdmitBegin(this.member) // new member
+                            const member = response.data
+                            this.members.push(member)
+                            if (this.$store.state.settings.sounds) {
+                                if (member.status_isok) {
+                                    sounds.success.play()
+                                } else {
+                                    sounds.error.play()
+                                }
+                            }
+                            this.autoAdmitBegin(member) // new member
                         }
                     ).catch(
                         (error) => {  // failure
