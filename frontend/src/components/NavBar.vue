@@ -31,7 +31,14 @@
                     </div>
                 </span></li>
                 <li v-on:click="optionCycleCamera()"><span>
-                    Camera: <div class="setting-value">{{ settings.cameraMode || 'auto'}} <i class="fas fa-camera"/></div>
+                    Camera select <div class="setting-value">{{ settings.cameraMode || 'auto'}} <i class="fas fa-camera"/></div>
+                </span></li>
+                <li v-on:click="optionToggle('cameraTorch')"><span>
+                    Torch 
+                    <div class="setting-value">
+                        <span v-if="settings.cameraTorch">on <i class="fas fa-toggle-on"/></span>
+                        <span v-else>off <i class="fas fa-toggle-off"/></span>
+                    </div>
                 </span></li>
                 <li v-on:click="optionCycleAutoAdmit()"><span>
                     Auto admit

@@ -2,7 +2,7 @@
     <div v-swipe:left="navNext" v-swipe:right="navPrev" class="view">
         <!-- Camera Render -->
         <div class="camera-view">
-            <qrcode-stream v-if="cameraRender" @decode="onDecode" @init="onInit" :track="paintOutline" :camera="camera">
+            <qrcode-stream v-if="cameraRender" @decode="onDecode" @init="onInit" :track="paintOutline" :camera="cameraMode" :torch="cameraTorch">
                 <div class="dialog" v-if="loading">
                     <i class="fas fa-camera"/> Loading...
                 </div>
@@ -132,8 +132,11 @@
                     this.$store.state.cameraDisplayEnabled
                 )
             },
-            camera() {
+            cameraMode() {
                 return this.$store.state.settings.cameraMode || 'auto'
+            },
+            cameraTorch() {
+                return this.$store.state.settings.cameraTorch || false
             },
             member() {
                 // First member on the stack
