@@ -1,7 +1,9 @@
 <template>
-    <NavBar />
-    <div id="app-view">
-        <router-view />
+    <div>
+        <NavBar />
+        <div id="app-view">
+            <router-view />
+        </div>
     </div>
 </template>
 
@@ -15,7 +17,8 @@
             NavBar,
         },
         created() {
-            this.$store.getters.csrftoken  // populates it
+            this.$store.getters.csrftoken  // getter fetches value
+            this.$store.dispatch('fetchEvents')  // prevents empty events on reload
         },
     }
 </script>
