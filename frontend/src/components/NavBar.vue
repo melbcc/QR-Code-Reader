@@ -48,11 +48,6 @@
                         <i class="far fa-clock"/>
                     </div>
                 </span></li>
-                <hr/> <!-- TODO: implement -->
-                <li><span>Duplicate delay <i class="fas fa-info-circle"/></span></li>
-                <li><span>Kiosk mode <i class="fas fa-info-circle"/></span></li>
-                <li><span>Enable torch</span></li>
-
             </ul>
             <h3>Admin Links</h3>
             <ul>
