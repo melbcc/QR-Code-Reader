@@ -9,36 +9,36 @@
             <h2>Options</h2> <!-- TODO: make interactive -->
             <ul>
                 <li><span><a href="/logout"><i class="fas fa-sign-out-alt"/> Logout</a></span></li>
-                <li><span v-on:click="optionToggle('cameraOverlay')">
-                    Camera: overlay 
-                    <div class="pill">
-                        <span v-if="settings.cameraOverlay"><i class="fas fa-toggle-on"/></span>
-                        <span v-else><i class="fas fa-toggle-off"/></span>
+                <li v-on:click="optionToggle('cameraOverlay')"><span>
+                    Camera overlay 
+                    <div class="setting-value">
+                        <span v-if="settings.cameraOverlay">on <i class="fas fa-toggle-on"/></span>
+                        <span v-else>off <i class="fas fa-toggle-off"/></span>
                     </div>
                 </span></li>
-                <li><span v-on:click="optionToggle('sounds')">
+                <li v-on:click="optionToggle('sounds')"><span>
                     Sound 
-                    <div class="pill">
-                        <span v-if="settings.sounds"><i class="fas fa-volume-up"/> on</span>
-                        <span v-else><i class="fas fa-times"/> muted</span>
+                    <div class="setting-value">
+                        <span v-if="settings.sounds">on <i class="fas fa-volume-up"/></span>
+                        <span v-else>muted <i class="fas fa-times"/></span>
                     </div>
                 </span></li>
-                <li><span v-on:click="optionToggle('listAttendanceFromAll')">
+                <li v-on:click="optionToggle('listAttendanceFromAll')"><span>
                     List attendees
-                    <div class="pill">
-                        <span v-if="settings.listAttendanceFromAll">all</span>
-                        <span v-else>select</span>
+                    <div class="setting-value">
+                        <span v-if="settings.listAttendanceFromAll">all <i class="fas fa-list-ul"/></span>
+                        <span v-else>select <i class="fas fa-tasks"/></span>
                     </div>
                 </span></li>
-                <li><span v-on:click="optionToggle('keepCameraOn')">
+                <li v-on:click="optionToggle('keepCameraOn')"><span>
                     Keep camera on
-                    <div class="pill">
-                        <span v-if="settings.keepCameraOn"><i class="fas fa-toggle-on"/></span>
-                        <span v-else><i class="fas fa-toggle-off"/></span>
+                    <div class="setting-value">
+                        <span v-if="settings.keepCameraOn">yes <i class="fas fa-toggle-on"/></span>
+                        <span v-else>no <i class="fas fa-toggle-off"/></span>
                     </div>
                 </span></li>
-                <li><span v-on:click="optionCycleCamera()">
-                    Camera: <div class="pill"><i class="fas fa-camera"/> {{ settings.cameraMode || 'auto'}}</div>
+                <li v-on:click="optionCycleCamera()"><span>
+                    Camera: <div class="setting-value">{{ settings.cameraMode || 'auto'}} <i class="fas fa-camera"/></div>
                 </span></li>
                 <hr/> <!-- TODO: implement -->
                 <li><span>Duplicate delay <i class="fas fa-info-circle"/></span></li>
@@ -147,17 +147,19 @@
             }
         }
 
-        .pill {
+        .setting-value {
             display: inline-block;
             position: absolute;
             right: 0.5em;
+            color: mediumblue;
 
+            /*
             border: black;
             border-style: solid;
             border-width: 2px;
             border-radius: 1em;
+            */
             padding: 0 0.5em;
-            //background-color: red;
         }
     }
 
@@ -189,24 +191,26 @@
         background: black;
     }
 
-    .nav-bar-item a {
-        display: table-cell;
-        color: dodgerblue;
-        text-align: center;
-        vertical-align: middle;
-        height: 8vh;
-        width: 28vw;
-        text-decoration: none;
-        font-size: 3vh;
-        border-top-left-radius: 2vh;
-        border-top-right-radius: 2vh;
-    }
+    .nav-bar-item {
+        a {
+            display: table-cell;
+            color: dodgerblue;
+            text-align: center;
+            vertical-align: middle;
+            height: 8vh;
+            width: 28vw;
+            text-decoration: none;
+            font-size: 3vh;
+            border-top-left-radius: 2vh;
+            border-top-right-radius: 2vh;
+        }
 
-    .nav-bar-item .active {
-        background-color: white;
-        color: black;
-        transition: all 0.2s;
-        transform: translateY(1vh);
-        font-weight: bold;
+        .active {
+            background-color: white;
+            color: black;
+            transition: all 0.2s;
+            transform: translateY(1vh);
+            font-weight: bold;
+        }
     }
 </style>
