@@ -2,6 +2,7 @@
     <div>
         <NavBar />
         <div id="app-view">
+            <ErrorOverlay />
             <router-view />
         </div>
     </div>
@@ -9,11 +10,13 @@
 
 <script>
     //import HelloWorld from './components/HelloWorld.vue'
+    import ErrorOverlay from './components/ErrorOverlay.vue'
     import NavBar from './components/NavBar.vue'
 
     export default {
         name: 'App',
         components: {
+            ErrorOverlay,
             NavBar,
         },
         created() {

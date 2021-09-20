@@ -48,11 +48,12 @@ export default createStore({
             },
             modal: null,
             settings: settings,
+            error: {}, // displayed as overlay
         }
     },
     mutations: { // $store.commit()
         // Loading States
-        SET_LOADING(state, key, isLoading) {
+        SET_LOADING(state, {key, isLoading}) {
             state.loading[key] = isLoading;
         },
         // Events
@@ -101,6 +102,17 @@ export default createStore({
             state.settings.autoAdmitTime = AUTOADMIT_TIMES[i]
             saveSettings(state.settings)
         },
+        // Error Message
+        SET_ERROR(state, {title, message}) {
+            console.log(title, message)
+            state.error = {
+                title: title,
+                message: message,
+            }
+        },
+        CLEAR_ERROR(state) {
+            state.error = {}
+        },
     },
     actions: { // $store.dispatch()
         modalDisplayOpen(context, name) {
@@ -109,17 +121,17 @@ export default createStore({
             context.commit('SET_CAMERA_DISPLAY', name ? false : true);
         },
         fetchEvents(context) {
-            context.commit('SET_LOADING', 'events', true);
+            context.commit('SET_LOADING', {key: 'events', isLoading: true});
             axios.get('/api/activeevents/').then(
                 (response) => {  // success
-                    context.commit('SET_LOADING', 'events', false);
+                    context.commit('SET_LOADING', {key: 'events', isLoading: false});
                     let events = response.data;
                     context.commit('SET_EVENTS_ACTIVE', events);
                 }
             ).catch(
                 (error) => {  // failure
-                    context.commit('SET_LOADING', 'events', false)
-                    // TODO: set error message
+                    context.commit('SET_LOADING', {key: 'events', isLoading: false});
+                    context.commit('SET_ERROR', {title: "Error getting active events", message: error})
                 }
             )
         },
@@ -144,7 +156,7 @@ export default createStore({
                 ).catch(
                     (error) => { // failure
                         console.log('ERROR while getting csrftoken:', error)
-                        // TODO: display error
+                        // does not display error message
                     }
                 )
                 //! FIXME: promise is not complete, first call always yields nothing.

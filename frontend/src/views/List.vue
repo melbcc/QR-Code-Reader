@@ -56,19 +56,19 @@
                     this.$store.state.events.active :
                     this.$store.getters.selectedEvents
                 )
-                this.$store.commit('SET_LOADING', 'attendees', true)
+                this.$store.commit('SET_LOADING', {key: 'attendees', isLoading: true})
                 axios.all(eventStack.map(
                     // multiple requests, processed in parallel
                     (event) => axios.get(`/api/eventdetail/${event.pk}/`)
                 )).then(
                     (responses) => { // success
-                        this.$store.commit('SET_LOADING', 'attendees', false)
+                        this.$store.commit('SET_LOADING', {key: 'attendees', isLoading: false})
                         this.events = responses.map((response) => response.data)
                     }
                 ).catch(
                     (errors) => { // failure
-                        this.$store.commit('SET_LOADING', 'attendees', false)
-                        console.log("ERROR while fetching event details", errors)
+                        this.$store.commit('SET_LOADING', {key: 'attendees', isLoading: false})
+                        this.$store.commit('SET_ERROR', {title: "Error fetching attendance", message: errors})
                     }
                 )
             },

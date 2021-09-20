@@ -232,11 +232,11 @@
                 const memberNum = getMemberNumber(decoded)
                 if (memberNum) { // looks like a member code, fetch!
                     // memberNum: {type: <contact|member>, number: <int>}
-                    this.$store.commit('SET_LOADING', 'member', true);
+                    this.$store.commit('SET_LOADING', {key: 'member', isLoading: true});
                     const uri = `/api/members_${(memberNum.type === 'contact') ? 'cid' : 'memno'}/${memberNum.number}`
                     axios.get(uri).then(
                         (response) => {  // success
-                            this.$store.commit('SET_LOADING', 'member', false);
+                            this.$store.commit('SET_LOADING', {key: 'member', isLoading: false});
                             const member = response.data
                             this.members.push(member)
                             if (this.$store.state.settings.sounds) {
@@ -247,8 +247,8 @@
                         }
                     ).catch(
                         (error) => {  // failure
-                            this.$store.commit('SET_LOADING', 'member', false);
-                            // TODO: set error message
+                            this.$store.commit('SET_LOADING', {key: 'member', isLoading: false});
+                            this.$store.commit('SET_ERROR', {title: "Error getting member", message: error})
                         }
                     )
                 }
@@ -341,7 +341,7 @@
                     }
                 ).catch( // failure
                     (error) => {
-                        console.log('ERROR during attendance submission:', error)
+                        this.$store.commit('SET_ERROR', {title: "Error posting attendance", message: error})
                     }
                 )
             },
@@ -367,7 +367,7 @@
                     }
                 ).catch(
                     (error) => {
-                        console.log("ERROR during memberSearch", error)
+                        this.$store.commit('SET_ERROR', {title: "Error searching members", message: error})
                     }
                 )
             },
@@ -425,7 +425,7 @@
                     }
                 ).catch( // failure
                     (error) => {
-                        console.log('ERROR during submit guest:', error)
+                        this.$store.commit('SET_ERROR', {title: "Error posting new contact", message: error})
                     }
                 )
             },
