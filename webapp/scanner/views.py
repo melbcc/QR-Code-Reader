@@ -7,7 +7,6 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.views import generic, View
 from django.template import RequestContext
-from django.views.decorators.csrf import csrf_exempt
 from django.core.serializers.json import DjangoJSONEncoder
 
 from .models import Event, Attendance, Address
@@ -250,3 +249,12 @@ class PowerOffView(_PowerView):
 class PowerRestartView(_PowerView):
     MESSAGE = "Restarting"
     CMD = "sudo /sbin/reboot"
+
+
+# ---------- CSRF Token
+def get_csrf_token(request):
+    from django.http import JsonResponse
+    from django.middleware import csrf
+    # ref: https://stackoverflow.com/questions/43567052#43567080
+    token = csrf.get_token(request)
+    return JsonResponse({'token': token})

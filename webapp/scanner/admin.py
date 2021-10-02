@@ -69,6 +69,21 @@ class MembershipAdmin(admin.ModelAdmin):
         return obj.contact.remote_key
 
 
+class ActiveEventFilter(admin.SimpleListFilter):
+    title = "Relevance"  # a label for our filter
+    parameter_name = "active"  # you can put anything here
+
+    def lookups(self, request, model_admin):
+        # This is where you create filter options; we have two:
+        return [
+            ("active", "Is Active"),
+        ]
+
+    def queryset(self, request, queryset):
+        if self.value() == 'active':
+            return queryset & Event.objects.are_active()
+        return queryset
+
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
     list_display = (
@@ -77,7 +92,8 @@ class EventAdmin(admin.ModelAdmin):
         'is_template',
         'is_active_pill', 'remote_key',
     )
-    search_fields = ('title', 'location__name')
+    search_fields = ('title',)
+    list_filter = (ActiveEventFilter,)
 
     def is_active_pill(self, obj):
         is_active = obj.is_active
