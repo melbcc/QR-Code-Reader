@@ -115,3 +115,6 @@ dmypy.json
 # Environment Files
 env/prod*.env
 env/civicrm.env
+
+# vscode
+.vscode
