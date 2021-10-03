@@ -1,11 +1,186 @@
 {% load socialaccount %}
+{% load static %}
 <html>
+<header>
+  <!-- Template credit: Simple CSS Waves
+    Daniel Österman | 2019
+    License: "Free to use"
+    codepen : https://codepen.io/goodkatz/pen/LYPGxQz
+  -->
+  <style>
+    body {
+      margin: 0;
+    }
+
+    h1 {
+      font-family: 'Lato', sans-serif;
+      font-weight: bold;
+      font-size: 8em;
+      text-shadow: 2vw 2vw 2vw rgb(1, 51, 70, 39%);
+    }
+
+    p {
+      font-family: 'Lato', sans-serif;
+      color: #333333;
+      font-size: 3em;
+    }
+
+    .header {
+      position: relative;
+      text-align: center;
+      background: linear-gradient(60deg, rgba(84, 58, 183, 1) 0%, rgba(0, 172, 193, 1) 100%);
+      color: white;
+    }
+
+    .logo {
+      width: 50px;
+      fill: white;
+      padding-right: 15px;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    .inner-header {
+      height: 80vh;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    .flex {
+      /*Flexbox for containers*/
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    .logo {
+      width: 20vw;
+      -webkit-filter: drop-shadow(2vw 2vw 2vw rgb(1, 51, 70, 66%));
+      filter: drop-shadow(2vw 2vw 2vw rgb(1, 51, 70, 66%));
+    }
+
+    .login-button {
+      width: 66vw;
+    }
+
+    .waves {
+      position: relative;
+      width: 100%;
+      height: 15vh;
+      margin-bottom: -7px;
+      /*Fix for safari gap*/
+      min-height: 100px;
+      max-height: 150px;
+    }
+
+    .content {
+      position: relative;
+      height: 0vh; /* effectively removed */
+      text-align: center;
+      background-color: white;
+    }
+
+    /* Animation */
+
+    .parallax>use {
+      animation: move-forever 25s cubic-bezier(.55, .5, .45, .5) infinite;
+    }
+
+    .parallax>use:nth-child(1) {
+      animation-delay: -2s;
+      animation-duration: 7s;
+    }
+
+    .parallax>use:nth-child(2) {
+      animation-delay: -3s;
+      animation-duration: 10s;
+    }
+
+    .parallax>use:nth-child(3) {
+      animation-delay: -4s;
+      animation-duration: 13s;
+    }
+
+    .parallax>use:nth-child(4) {
+      animation-delay: -5s;
+      animation-duration: 20s;
+    }
+
+    @keyframes move-forever {
+      0% {
+        transform: translate3d(-90px, 0, 0);
+      }
+
+      100% {
+        transform: translate3d(85px, 0, 0);
+      }
+    }
+
+    /*Shrinking for mobile*/
+    @media (max-width: 768px) {
+      .waves {
+        height: 40px;
+        min-height: 40px;
+      }
+
+      .content {
+        height: 30vh;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+    }
+  </style>
+</header>
+
 <body>
-<h1>My Google OAuth Project </h1>
-{% if user.is_authenticated %}
-  <p>Welcome, You are logged in as {{ user.username }}</p>
-{% else %}
-  <a href="{% provider_login_url 'google' %}">Login With Google</a>
-{% endif %}
+  <div class="header">
+
+    <!--Content before waves-->
+    <div class="inner-header flex">
+      <div>
+        <img class="logo" src="{% static 'scanner/img/MelbCC-100x100.png' %}" />
+        <h1>MelbCC<br/>Attendance<br/>Scanner</h1>
+      </div>
+      <div>
+        {% if user.is_authenticated %}
+        <p>Welcome.<br/>You are logged in as {{ user.username }}.<br/><a href="/logout">Logout</a></p>
+        {% else %}
+        <p><a href="{% provider_login_url 'google' %}">
+          <img class="login-button" src="{% static 'scanner/img/btn_google_signin_light_normal_web@2x.png' %}" />
+        </a></p>
+        {% endif %}
+      </div>
+    </div>
+
+    <!--Waves Container-->
+    <div>
+      <svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+        viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+        <defs>
+          <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+        </defs>
+        <g class="parallax">
+          <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(255,255,255,0.7" />
+          <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(255,255,255,0.5)" />
+          <use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(255,255,255,0.3)" />
+          <use xlink:href="#gentle-wave" x="48" y="7" fill="#fff" />
+        </g>
+      </svg>
+    </div>
+    <!--Waves end-->
+
+  </div>
+  <!--Header ends-->
+
+  <!--Content starts-->
+  <div class="content">
+  </div>
+  <!--Content ends-->
 </body>
+
 </html>
