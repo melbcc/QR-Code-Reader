@@ -2,6 +2,9 @@
 {% load static %}
 <html>
 <header>
+  <!-- jquery -->
+  <script src="{% static 'scanner/js/jquery.min.js' %}"></script>
+
   <!-- Template credit: Simple CSS Waves
     Daniel Österman | 2019
     License: "Free to use"
@@ -10,6 +13,7 @@
   <style>
     body {
       margin: 0;
+      scroll-behavior: smooth;
     }
 
     h1 {
@@ -62,7 +66,7 @@
       filter: drop-shadow(2vw 2vw 2vw rgb(1, 51, 70, 66%));
     }
 
-    .login-button {
+    .login-button img {
       width: 66vw;
     }
 
@@ -78,7 +82,7 @@
 
     .content {
       position: relative;
-      height: 0vh; /* effectively removed */
+      height: 0; /* effectively removed */
       text-align: center;
       background-color: white;
     }
@@ -135,6 +139,25 @@
       }
     }
   </style>
+
+  <script>
+    $(window).on('load', function() {
+      $(window).on('scroll', function(event) {
+        $('.inner-header').css({
+          'transform': 'translate3d(0, ' + window.scrollY + 'px, 0)'
+        });
+      });
+
+      $('.login-button').on('click', function () {
+        $('#content').css({'height': '100vh'});
+        $('html, body').animate({
+          scrollTop: $('#content').offset().top
+        }, 1000, function() {
+          window.location.hash = '#content';
+        });      
+      });
+    })
+  </script>
 </header>
 
 <body>
@@ -150,8 +173,8 @@
         {% if user.is_authenticated %}
         <p>Welcome.<br/>You are logged in as {{ user.username }}.<br/><a href="/logout">Logout</a></p>
         {% else %}
-        <p><a href="{% provider_login_url 'google' %}">
-          <img class="login-button" src="{% static 'scanner/img/btn_google_signin_light_normal_web@2x.png' %}" />
+        <p><a href="{% provider_login_url 'google' %}" class="login-button">
+          <img src="{% static 'scanner/img/btn_google_signin_light_normal_web@2x.png' %}" />
         </a></p>
         {% endif %}
       </div>
@@ -178,7 +201,7 @@
   <!--Header ends-->
 
   <!--Content starts-->
-  <div class="content">
+  <div class="content" id="content">
   </div>
   <!--Content ends-->
 </body>
