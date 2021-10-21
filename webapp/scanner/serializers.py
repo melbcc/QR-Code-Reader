@@ -1,8 +1,9 @@
 from rest_framework import serializers, viewsets, generics, mixins
 from rest_framework.exceptions import NotFound
 from rest_framework import filters
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication 
 from django.utils import timezone
-
+from django.views.decorators.csrf import csrf_exempt
 
 import re
 import pytz
@@ -15,6 +16,14 @@ from .models import LocBlock
 from .models import Event
 from .models import Attendance
 
+import logging
+log = logging.getLogger(__name__)
+
+
+class CsrfExemptSessionAuthentication(SessionAuthentication):
+    # ref: https://stackoverflow.com/questions/30871033#30875830
+    def enforce_csrf(self, request):
+        return  # To not perform the csrf check previously happening
 
 # ---------- Contacts
 class ContactSerializer(serializers.Serializer):
@@ -43,6 +52,9 @@ class ContactSerializer(serializers.Serializer):
         return obj
 
 class ContactViewSet(viewsets.ModelViewSet):
+    # FIXME: CSRF token exempt, but shouldn't be, a problem for another time.
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+
     queryset = Contact.objects.all()
     serializer_class = ContactSerializer
 
@@ -195,5 +207,8 @@ class AttendanceSerializer(serializers.Serializer):
 
 
 class AttendanceViewSet(viewsets.ModelViewSet):
+    # FIXME: CSRF token exempt, but shouldn't be, a problem for another time.
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+
     queryset = Attendance.objects.all()
     serializer_class = AttendanceSerializer
