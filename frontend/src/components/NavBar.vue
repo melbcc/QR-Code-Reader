@@ -55,7 +55,7 @@
             <h3>Admin Links</h3>
             <ul>
                 <li><a href="/admin"><i class="fas fa-database"/> Database (django)</a></li>
-                <li><a href="/adi"><i class="fas fa-code"/> API Docs</a></li>
+                <li><a href="/api"><i class="fas fa-code"/> API Docs</a></li>
             </ul>
         </div>
         <!-- Navigation Buttons -->
