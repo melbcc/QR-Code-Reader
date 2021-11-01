@@ -2,10 +2,10 @@
 FROM python:3.8.8-alpine
 
 # create directory for the app user
-RUN mkdir -p /srv/prod
+RUN mkdir -p /srv/app
 
 # set work directory
-WORKDIR /srv/prod
+WORKDIR /srv/app
 
 # set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
@@ -23,4 +23,4 @@ RUN python -m pip install -r requirements.txt
 RUN python -m pip install gunicorn
 
 # run entrypoint.prod.sh
-ENTRYPOINT ["sh", "/srv/prod/entrypoint.prod.sh"]
+ENTRYPOINT ["sh", "/srv/app/entrypoint.prod.sh"]
