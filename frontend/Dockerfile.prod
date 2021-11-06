@@ -1,0 +1,4 @@
+FROM node:16.13.0-alpine
+WORKDIR /code
+RUN npm install -g @vue/cli
+ENTRYPOINT ["sh", "entrypoint.sh"]

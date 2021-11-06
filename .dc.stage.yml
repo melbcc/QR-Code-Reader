@@ -1,0 +1,95 @@
+version: '3.9'
+
+services:
+  # --- Public
+  nginx:
+    image: nginx:1.20-alpine
+    restart: unless-stopped
+    ports:
+      - 443:443
+      - 80:80
+    volumes:
+      # shared with nginx-proxy-letsencrypt (companion)
+      - nginx_certs:/etc/nginx/certs
+      - nginx_html:/usr/share/nginx/html
+      - nginx_vhost:/etc/nginx/vhost.d
+      # docker socket (to /tmp (?))
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      # config & served content
+      - ./nginx.stage.conf:/etc/nginx/conf.d/default.conf
+      - srv_static:/srv/prod/static
+      - srv_frontend:/srv/prod/frontend
+    depends_on:
+      - web
+
+  # --- Internal
+  web:
+    build:
+      context: ./webapp
+      dockerfile: Dockerfile.prod
+    command: gunicorn webapp.wsgi:application --bind 0.0.0.0:8000
+    restart: unless-stopped
+    volumes:
+      - ./webapp:/srv/app
+      - srv_static:/srv/static
+    environment:
+      - DJANGO_STATIC_ROOT=/srv/static
+    env_file:
+      - ./env/stage.env
+      - ./env/civicrm.env
+    depends_on:
+      - db
+
+  db:
+    image: postgres:12.0-alpine
+    volumes:
+      - srv_db:/var/lib/postgresql/data/
+    restart: unless-stopped
+    env_file:
+      - ./env/stage.env
+
+  nginx-letsencrypt:
+    image: nginxproxy/acme-companion:2.1.0
+    env_file:
+      - ./env/stage.env
+    profiles: ["helper"]
+    volumes:
+      # shared with nginx-proxy
+      - nginx_certs:/etc/nginx/certs
+      - nginx_html:/usr/share/nginx/html
+      - nginx_vhost:/etc/nginx/vhost.d
+      # docker socket (?)
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    depends_on:
+      - nginx
+
+  # --- Builders
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+    profiles: ["build"]
+    volumes:
+      - ./frontend/:/code/
+      - env_frontend:/code/node_modules/
+      - srv_frontend:/srv/frontend/
+    environment:
+      - VUE_OUTPUT_DIR=/srv/frontend/dist
+      - VUE_PUBLIC_PATH=/app/
+    env_file:
+      - ./env/stage.env
+    command: npm run build
+
+volumes:
+  # Served volumes
+  srv_frontend:
+  srv_static:
+  srv_db:
+
+  # Nginx specific
+  nginx_html:
+  nginx_certs:
+  nginx_vhost:
+
+  # Environment(s)
+  env_frontend:
