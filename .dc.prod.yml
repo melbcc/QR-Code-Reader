@@ -9,21 +9,18 @@ services:
       - 443:443
       - 80:80
     volumes:
-      # shared with nginx-proxy-letsencrypt (companion)
-      - nginx_certs:/etc/nginx/certs
-      - nginx_html:/usr/share/nginx/html
-      - nginx_vhost:/etc/nginx/vhost.d
-      # docker socket (to /tmp (?))
-      - /var/run/docker.sock:/tmp/docker.sock:ro
-      # config & served content
+      # nginx config
       - ./nginx.prod.conf:/etc/nginx/conf.d/default.conf
+      # shared with certbot (for https certs)
+      - certbot_conf:/etc/letsencrypt
+      - certbot_www:/var/www/certbot
+      # served content
       - srv_static:/srv/prod/static
       - srv_frontend:/srv/prod/frontend
-    depends_on:
-      - web
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
 
   # --- Internal
-  web:
+  django:
     build:
       context: ./webapp
       dockerfile: Dockerfile.prod
@@ -37,9 +34,9 @@ services:
     env_file:
       - ./env/prod.env
     depends_on:
-      - db
+      - postgres
 
-  db:
+  postgres:
     image: postgres:12.0-alpine
     volumes:
       - srv_db:/var/lib/postgresql/data/
@@ -47,23 +44,16 @@ services:
     env_file:
       - ./env/prod.env
 
-  nginx-letsencrypt:
-    image: nginxproxy/acme-companion:2.1.0
-    env_file:
-      - ./env/prod.env
-    profiles: ["helper"]
+  certbot:
+    image: certbot/certbot
+    restart: unless-stopped
     volumes:
-      # shared with nginx-proxy
-      - nginx_certs:/etc/nginx/certs
-      - nginx_html:/usr/share/nginx/html
-      - nginx_vhost:/etc/nginx/vhost.d
-      # docker socket (?)
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    depends_on:
-      - nginx
+      - certbot_conf:/etc/letsencrypt/
+      - certbot_www:/var/www/certbot/
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
   # --- Builders
-  frontend:
+  vue:
     build:
       context: ./frontend
       dockerfile: Dockerfile.prod
@@ -86,9 +76,11 @@ volumes:
   srv_db:
 
   # Nginx specific
-  nginx_html:
-  nginx_certs:
-  nginx_vhost:
+  certbot_conf:
+  certbot_www:
+  #nginx_html:
+  #nginx_certs:
+  #nginx_vhost:
 
   # Environment(s)
   env_frontend:
