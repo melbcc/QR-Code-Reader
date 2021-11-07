@@ -17,6 +17,8 @@ services:
       # served content
       - srv_static:/srv/prod/static
       - srv_frontend:/srv/prod/frontend
+    depends_on:
+      - django
     command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
 
   # --- Internal
