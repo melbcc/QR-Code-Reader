@@ -21,7 +21,7 @@ COPY ./requirements.txt .
 RUN python -m pip install -r requirements.txt
 
 # copy project
-COPY ./endpoint.sh .
+COPY ./entrypoint.sh .
 
 # run entrypoint.sh
 ENTRYPOINT ["sh", "/code/entrypoint.sh"]

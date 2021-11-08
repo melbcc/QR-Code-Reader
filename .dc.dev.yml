@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   # Web frontend - Vue application
-  frontend:
+  vue:
     build: ./frontend
     volumes:
       - ./frontend/:/code/
@@ -10,13 +10,13 @@ services:
     env_file:
       - ./env/dev.env
     depends_on:
-      - web
+      - django
     ports:
       - 8080:8080
     command: npm run serve
 
   # Web backend - Django
-  web:
+  django:
     build: ./webapp
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
@@ -27,10 +27,10 @@ services:
       - ./env/dev.env
       - ./env/civicrm.env
     depends_on:
-      - db
+      - postgres
 
   # Database(s)
-  db:
+  postgres:
     image: postgres:12.0-alpine
     volumes:
       - postgres_data:/var/lib/postgresql/data/
