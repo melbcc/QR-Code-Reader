@@ -106,6 +106,7 @@ SOCIALACCOUNT_PROVIDERS = {
         },
     },
 }
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = os.environ.get('DJANGO_ACCOUNT_DEFAULT_HTTP_PROTOCOL', 'http')
 
 if 'SITE_ID' in os.environ:
     globals()['SITE_ID'] = int(os.environ['SITE_ID'])

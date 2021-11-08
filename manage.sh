@@ -1,3 +1,2 @@
 #!/usr/bin/env bash
-
-docker-compose exec web python manage.py "$@"
+docker-compose exec django python manage.py "$@"
