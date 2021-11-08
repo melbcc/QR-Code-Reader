@@ -7,7 +7,7 @@ from rest_framework import routers, serializers
 from . import views
 
 urlpatterns = [
-    path(r'', views.RootView.as_view(), name='index'),
+    path(r'', views.root, name='index'),
 
     # Configure Scanner
     path(r'config/location', views.ConfigLocationView.as_view(), name='scanner-config-location'),
