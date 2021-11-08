@@ -241,11 +241,11 @@ class _PowerView(View):
 
 class PowerOffView(_PowerView):
     MESSAGE = "Powering Down"
-    CMD = "sudo /sbin/poweroff"
+    CMD = "true"  # TODO: remove
 
 class PowerRestartView(_PowerView):
     MESSAGE = "Restarting"
-    CMD = "sudo /sbin/reboot"
+    CMD = "true"  # TODO: remove
 
 
 # ---------- CSRF Token
