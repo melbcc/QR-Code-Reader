@@ -107,6 +107,10 @@ SOCIALACCOUNT_PROVIDERS = {
     },
 }
 ACCOUNT_DEFAULT_HTTP_PROTOCOL = os.environ.get('DJANGO_ACCOUNT_DEFAULT_HTTP_PROTOCOL', 'http')
+SOCIAL_AUTH_GOOGLE_OAUTH2_AUTH_EXTRA_ARGUMENTS = {
+    # Bugfix: google oauth giving a 403 if only 1 (non melbpc) user is pre authorised on the device
+    'prompt': 'select_account',  # Force prompt to select account
+}
 
 if 'SITE_ID' in os.environ:
     globals()['SITE_ID'] = int(os.environ['SITE_ID'])
