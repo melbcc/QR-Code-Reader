@@ -103,6 +103,8 @@ SOCIALACCOUNT_PROVIDERS = {
         ],
         'AUTH_PARAMS': {
             'access_type': 'online',
+            # Bugfix: google oauth giving a 403 if only 1 (non melbpc) user is pre authorised on the device
+            'prompt': 'select_account',  # Force prompt to select account
         },
     },
 }
