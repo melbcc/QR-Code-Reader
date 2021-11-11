@@ -3,7 +3,7 @@ import json
 import csv
 from collections import defaultdict
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.views import generic, View
 from django.template import RequestContext
@@ -14,13 +14,10 @@ from .serializers import EventSerializer, AddressSerializer
 from .conf import settings
 
 
-class RootView(generic.TemplateView):
-    template_name = 'index.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['version'] = settings.VERSION
-        return context
+def root(request):
+    if request.user.is_authenticated:
+        return redirect('/app/select')
+    return redirect('/login')
 
 
 # ---------- Session Management
@@ -244,11 +241,11 @@ class _PowerView(View):
 
 class PowerOffView(_PowerView):
     MESSAGE = "Powering Down"
-    CMD = "sudo /sbin/poweroff"
+    CMD = "true"  # TODO: remove
 
 class PowerRestartView(_PowerView):
     MESSAGE = "Restarting"
-    CMD = "sudo /sbin/reboot"
+    CMD = "true"  # TODO: remove
 
 
 # ---------- CSRF Token
