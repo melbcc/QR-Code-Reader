@@ -26,11 +26,12 @@ services:
     build:
       context: ./webapp
       dockerfile: Dockerfile.prod
-    command: gunicorn webapp.wsgi:application --bind 0.0.0.0:8000
+    command: "crond & gunicorn webapp.wsgi:application --bind 0.0.0.0:8000"
     restart: unless-stopped
     volumes:
       - ./webapp:/srv/app
       - srv_static:/srv/static
+      - ./webapp/crontab:/etc/crontabs/django-jobs
     environment:
       - DJANGO_STATIC_ROOT=/srv/static
     env_file:
