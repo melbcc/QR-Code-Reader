@@ -26,5 +26,8 @@ COPY ./requirements.txt .
 RUN python -m pip install -r requirements.txt
 RUN python -m pip install gunicorn
 
+# configure crond
+COPY --chown=root:root ./crontab /etc/crontabs/root
+
 # run entrypoint.prod.sh
 ENTRYPOINT ["sh", "/srv/app/entrypoint.prod.sh"]
