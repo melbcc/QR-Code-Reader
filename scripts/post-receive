@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+# Production : Continuous deployment
+#   This script is meant for the server at attend.melbpc.org.au
+#   It is also not run from here, but from inside a git hook
+#   (details below).
+#
+# Folder structure:
+#   /srv/
+#     ├── data/
+#     │   └── certbot/
+#     │       └── conf/  # initialised with init-letsencrypt.sh
+#     ├── env/
+#     │   └── prod.env  # production environment variables
+#     ├── git/
+#     │   └── qrcode.git/  # initially empty
+#     ├── prod/
+#     │   └── qrcode/  # initially empty
+#     └── tmp/  # empty
+#
+# The bre git repository is initialised with
+#       cd /srv/git/qrcode.git
+#       git init --bare
+#
+# This script is copied to:
+#       /srv/git/qrcode.git/hooks/post-receive
+#
+# The host deploying the system (eg: your computer) has the prod
+#   server as a remote:
+#       git remote add prod ssh://attend.melbpc.org.au:/srv/git/qrcode.git
+# Then, to deploy from the same box:
+#       git checkout master
+#       git push prod
+
+read oldrev newrev refname
+echo params: $oldrev $newrev $refname
+
+# tool versions
+python --version
+docker --version
+docker-compose --version
+
+set -ex
+
+# Directories
+ROOT=/srv
+PRJ=qrcode
+TARGET=$ROOT/prod/$PRJ
+TEMP=$ROOT/tmp/$PRJ
+REPO=$ROOT/git/$PRJ.git
+ENV_DIR=$ROOT/env
+
+GROUP=www
+
+export COMPOSE_FILE=.dc.prod.yml
+
+# --- Chekcout to temp
+rm -rf $TEMP
+mkdir -p $TEMP
+git --work-tree="$TEMP" --git-dir="$REPO" \
+    checkout --force --quiet "$refname"
+cp $ENV_DIR/prod.env $TEMP/env
+chgrp -R $GROUP $TEMP
+
+# --- Stop Services
+pushd $TARGET
+if [ -e $COMPOSE_FILE ] ; then
+    docker-compose stop
+fi
+popd
+
+# --- Deploy (temp -> target)
+rm -rf $TARGET
+mv $TEMP $TARGET
+
+# --- Restart & Build
+pushd $TARGET
+# Build & start services
+docker-compose build
+docker-compose up -d
+docker-compose run --rm vue
+popd
+
