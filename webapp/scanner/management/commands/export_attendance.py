@@ -9,6 +9,9 @@ from scanner.models import Contact, Attendance, ParticipantStatusType
 from scanner.conf import settings
 
 
+CIVICRM_API_DRYRUN_ENVVAR = 'CIVICRM_API_DRYRUN'
+
+
 class CiviCRMRequestError(Exception):
     """Raised upon erroneous response from CiviCRM"""
 
@@ -19,6 +22,11 @@ class Command(BaseCommand):
     REST_URL_BASE = 'https://www.melbpc.org.au/wp-content/plugins/civicrm/civicrm/extern/rest.php'
 
     def add_arguments(self, parser):
+
+        parser.add_argument(
+            '--quiet', '-q', default=False, action='store_const', const=True,
+            help="Only print when something is being done.",
+        )
 
         group = parser.add_argument_group('CiviCRM Options')
         group.add_argument(
@@ -49,7 +57,8 @@ class Command(BaseCommand):
         group.add_argument(
             '--dryrun', dest='dryrun',
             default=False, const=True, action='store_const',
-            help="if set, no create requests are sent to CiviCRM",
+            help="if set, no create requests are sent to CiviCRM, can also be set " +
+                 ("with environment variable {}=1".format(CIVICRM_API_DRYRUN_ENVVAR)),
         )
 
     def get(self, table_name, **kwargs):
@@ -131,9 +140,11 @@ class Command(BaseCommand):
             key=sitekey
             json={"event_id":65,"contact_id":3147}
         """
-
+        
         self.failfast = kwargs['failfast']
         self.dryrun = kwargs['dryrun']
+        if CIVICRM_API_DRYRUN_ENVVAR in os.environ:
+            self.dryrun = os.environ[CIVICRM_API_DRYRUN_ENVVAR].lower() in ('1', 'yes', 'y', 'on')
 
         # ----- Get Keys
         self.api_key = kwargs.get('user_key', None) or os.environ.get('CIVICRM_USERKEY', None)
@@ -145,7 +156,8 @@ class Command(BaseCommand):
 
         # ----- Create Guest Contacts
         if kwargs['create_guests']:
-            self.stdout.write(self.style.NOTICE('Create guest Contacts --> CiviCRM Contact objects'))
+            if not kwargs['quiet']:
+                self.stdout.write(self.style.NOTICE('Create guest Contacts --> CiviCRM Contact objects'))
             # Identify guests
             guest_attendance = Attendance.objects.filter(
                 Q(contact__remote_key__isnull=True) | Q(contact__remote_key__exact=''),  # contact signed in as a guest
@@ -156,7 +168,7 @@ class Command(BaseCommand):
             # Create each guest as a Contact on CiviCRM
             for attendance in guest_attendance:
                 contact = attendance.contact
-                self.stdout.write('    {}'.format(contact))
+                self.stdout.write('    {}{}'.format(contact, ' [dryrun]' if self.dryrun else ''))
 
                 # Export new Contact
                 self.stdout.write('        Exporting: {!r} ...'.format(contact))
@@ -189,7 +201,8 @@ class Command(BaseCommand):
                     )
 
         # Get & Export attendance list
-        self.stdout.write(self.style.NOTICE('Export local Attendance --> CiviCRM Participation objects'))
+        if not kwargs['quiet']:
+            self.stdout.write(self.style.NOTICE('Export local Attendance --> CiviCRM Participation objects'))
         attendance_queryset = Attendance.objects.filter(
             Q(contact__remote_key__isnull=False) & ~Q(contact__remote_key__exact=''),
             export_time=None,
@@ -198,7 +211,7 @@ class Command(BaseCommand):
 
         for attendance in attendance_queryset:
             (contact, event) = (attendance.contact, attendance.event)
-            self.stdout.write('    {!r} : {!r}'.format(contact, event))
+            self.stdout.write('    {!r} : {!r}{}'.format(contact, event, ' [dryrun]' if self.dryrun else ''))
 
             params = {
                 'contact_id': contact.remote_key,
@@ -223,12 +236,17 @@ class Command(BaseCommand):
                 attendance.save()
 
         if kwargs['purge']:
-            self.stdout.write(self.style.NOTICE('Purge local Attendance records'))
+            if not kwargs['quiet']:
+                self.stdout.write(self.style.NOTICE('Purge local Attendance records'))
             # Remove all attendance records exported > ATTENDANCE_PURGE_TIMEOUT ago
             purge_queryset = Attendance.objects.filter(
                 export_time__lt=(timezone.now() - timezone.timedelta(
                     seconds=settings.SCANNER_ATTENDANCE_PURGE_TIMEOUT
                 )),
             )
-            self.stdout.write('    Deleting {} Attendance objects'.format(purge_queryset.count()))
-            purge_queryset.delete()
+            if not kwargs['quiet'] or purge_queryset.count():
+                self.stdout.write('    Deleting {} Attendance objects{}'.format(
+                    purge_queryset.count(), ' [dryrun]' if self.dryrun else ''
+                ))
+            if not self.dryrun:
+                purge_queryset.delete()
