@@ -1,18 +1,32 @@
 version: '3.7'
 
 services:
+  nginx:
+    image: nginx:1.20-alpine
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      # nginx config
+      - ./nginx.dev.conf:/etc/nginx/conf.d/default.conf
+      # https certs (same as staged)
+      - ./env/staged-letsencrypt/:/etc/letsencrypt/
+    depends_on:
+      - django
+      - vue
+
   # Web frontend - Vue application
   vue:
     build: ./frontend
     volumes:
       - ./frontend/:/code/
       - frontend_libs:/code/node_modules/
+    environment:
+      - VUE_PUBLIC_PATH=/app/
     env_file:
       - ./env/dev.env
     depends_on:
       - django
-    ports:
-      - 8080:8080
     command: npm run serve
 
   # Web backend - Django
@@ -21,8 +35,6 @@ services:
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - ./webapp/:/code/
-    ports:
-      - 8000:8000
     env_file:
       - ./env/dev.env
       - ./env/civicrm.env
