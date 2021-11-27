@@ -3,9 +3,6 @@
 {% load static %}
 <html>
 <head>
-  <!-- jquery -->
-  <script src="{% static 'scanner/js/jquery.min.js' %}"></script>
-
   <!-- Template credit: Simple CSS Waves
     Daniel Österman | 2019
     License: "Free to use"
@@ -172,8 +169,8 @@
     <!--Content before waves-->
     <div class="inner-header flex">
       <div>
-        <img class="logo" src="{% static 'scanner/img/MelbCC-100x100.png' %}" />
-        <h1>MelbCC<br/>Attendance<br/>Scanner</h1>
+        <img class="logo" src="{% static 'scanner/img/MelCC-100x100.png' %}" />
+        <h1>MelCC<br/>Attendance<br/>Scanner</h1>
       </div>
       <div>
         {% if user.is_authenticated %}
