@@ -77,6 +77,6 @@ pushd $TARGET
 # Build & start services
 docker-compose build
 docker-compose up -d
-docker-compose run --rm vue
+docker-compose run --rm -e GIT_DESCRIBE=$(git -C $REPO describe) vue
 popd
 
