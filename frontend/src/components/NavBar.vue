@@ -57,6 +57,7 @@
                 <li><a href="/admin"><i class="fas fa-database"/> Database (django)</a></li>
                 <li><a href="/api"><i class="fas fa-code"/> API Docs</a></li>
             </ul>
+            <span class="version">{{ version }}</span>
         </div>
         <!-- Navigation Buttons -->
         <span v-for="(route, i) in navRoutes" :key="i" class="nav-bar-item">
@@ -70,6 +71,11 @@
 <script>
     export default {
         name: 'NavBar',
+        data() {
+            return {
+                version: process.env.GIT_DESCRIBE || 'dev',
+            }
+        },
         computed: {
             navRoutes() {
                 return this.$router.options.routes
