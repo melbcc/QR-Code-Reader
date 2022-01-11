@@ -69,11 +69,13 @@
 </template>
 
 <script>
+    import gitDescribe from '../gitDescribe';
+
     export default {
         name: 'NavBar',
         data() {
             return {
-                version: process.env.GIT_DESCRIBE || 'dev',
+                version: gitDescribe.raw,
             }
         },
         computed: {

@@ -59,6 +59,7 @@ mkdir -p $TEMP
 git --work-tree="$TEMP" --git-dir="$REPO" \
     checkout --force --quiet "$refname"
 cp $ENV_DIR/prod.env $TEMP/env
+echo "module.exports = {raw: '$(git -C $REPO describe)'};" > $TEMP/frontend/src/gitDescribe.js
 chgrp -R $GROUP $TEMP
 
 # --- Stop Services
@@ -77,6 +78,6 @@ pushd $TARGET
 # Build & start services
 docker-compose build
 docker-compose up -d
-docker-compose run --rm -e GIT_DESCRIBE=$(git -C $REPO describe) vue
+docker-compose run --rm vue
 popd
 
