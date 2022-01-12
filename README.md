@@ -1,24 +1,31 @@
 # QR-Code-Reader
 
-This project is a QR-code scanner to track how many and who is attending
-[MelbPC](https://www.melbpc.org.au/) events.
+This project is a QR-code scanner to track people attending
+[MelbPC](https://www.melbpc.org.au/) and [MelCC](https://melcc.org.au/) events.
 
+It is intended to be used on the mobile device (phone or tablet) of someone authoirised by the club... it is not accessible by the public.
 
-## Hardware
+## How it works
 
-To run this project as it's designed; as a stand-alone scanner, you'll
-need the following hardware:
+### Backend
 
-* [Raspberry Pi](https://www.raspberrypi.org/)
-* QR-Code Scanner - simply acts as a USB keyboard
-* Touch Screen - HDMI interface to Raspberry Pi
-* Keyboard (USB) [for setup]
-* Mouse (USB) [for setup]
+The backend regularly duplicates a minimal set of tables (read-only) from the CiviCRM database. These are referenced in a Django / REST API backend.
 
-However, to just test things out, all you'll need is a computer
-running Linux (preferably debian based, to directly match `apt` commands).
+Members are accepted, or denied based on this duplicate data, and recorded.
 
-## Setup
+Attendance is then pushed back upstream to a CiviCRM database, and purged from the local DB.
 
-* [Initial Setup](doc/setup.md)
-* [Update Software](doc/update.md)
+### Frontend
+
+The [frontend](frontend/) is written in vue3, and all back-end access is done via the django REST API.
+
+## Documentation
+
+- [Development Setup](doc/setup-dev.md) (public)
+- [Attendance Scanner - Howto](https://forum.melbpc.org.au/t/871) (internal to club)
+
+## Contributions
+
+At this time [2022-01-12] this project is very specific to our ([MelbPC](https://www.melbpc.org.au/)/[MelCC](https://melcc.org.au/)) use case.
+
+However, questions, and contributions are welcome.
