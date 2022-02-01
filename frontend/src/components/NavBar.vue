@@ -52,12 +52,13 @@
                     </div>
                 </span></li>
             </ul>
+            <hr/>
             <h3>Admin Links</h3>
             <ul>
                 <li><a href="/admin"><i class="fas fa-database"/> Database (django)</a></li>
                 <li><a href="/api"><i class="fas fa-code"/> API Docs</a></li>
+                <li>{{ version }} (<a href="https://github.com/melbcc/QR-Code-Reader">repo</a>)</li>
             </ul>
-            <span class="version">{{ version }}</span>
         </div>
         <!-- Navigation Buttons -->
         <span v-for="(route, i) in navRoutes" :key="i" class="nav-bar-item">
@@ -170,6 +171,10 @@
             border-radius: 1em;
             */
             padding: 0 0.5em;
+        }
+
+        hr {
+            border: 1px solid black;
         }
     }
 
