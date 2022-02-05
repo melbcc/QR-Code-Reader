@@ -53,11 +53,20 @@
                 </span></li>
             </ul>
             <hr/>
-            <h3>Admin Links</h3>
+            <h3>Links</h3>
             <ul>
-                <li><a href="/admin"><i class="fas fa-database"/> Database (django)</a></li>
-                <li><a href="/api"><i class="fas fa-code"/> API Docs</a></li>
-                <li>{{ version }} (<a href="https://github.com/melbcc/QR-Code-Reader">repo</a>)</li>
+                <li><a href="/admin">
+                    <i class="fas fa-database"/> Database (django)</a>
+                </li>
+                <li><a href="/api">
+                    <i class="fas fa-code"/> API Docs</a>
+                </li>
+                <li><a href="https://github.com/melbcc/QR-Code-Reader" target="_blank" rel="noopener noreferrer">
+                    <i class="fas fa-code-branch"/> Code
+                </a> : {{ version }}</li>
+                <li><a href="https://www.melbpc.org.au/event-calendar/" target="_blank" rel="noopener noreferrer">
+                    <i class="fas fa-calendar"/> Event Calendar
+                </a></li>
             </ul>
         </div>
         <!-- Navigation Buttons -->
