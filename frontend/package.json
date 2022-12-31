@@ -24,9 +24,9 @@
     "vuex": "^4.0.2"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "~4.5.0",
-    "@vue/cli-plugin-eslint": "~4.5.0",
-    "@vue/cli-service": "~4.5.0",
+    "@vue/cli-plugin-babel": "~5.0.8",
+    "@vue/cli-plugin-eslint": "~5.0.8",
+    "@vue/cli-service": "~5.0.8",
     "@vue/compiler-sfc": "^3.0.0",
     "babel-eslint": "^10.1.0",
     "babel-plugin-import": "^1.13.3",
@@ -36,7 +36,7 @@
     "less-loader": "^7.3.0",
     "sass": "^1.38.0",
     "sass-loader": "^10.2.0",
-    "webpack": "^4.46.0"
+    "webpack": "^5.75.0"
   },
   "eslintConfig": {
     "root": true,
